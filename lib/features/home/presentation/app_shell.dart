@@ -1,11 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/design/brutalist_components.dart';
 import '../../../core/design/design_system_showcase.dart';
 import '../../../core/design/design_tokens.dart';
-import '../../../features/roadmap/domain/roadmap.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../features/library/domain/learning_content.dart';
+import '../../../features/library/domain/learning_library_repository.dart';
+import '../../../features/notes/domain/notes_repository.dart';
+import '../../../features/notes/domain/study_note.dart';
 import '../../../features/roadmap/domain/roadmap_repository.dart';
 import '../../player/presentation/learning_player_screen.dart';
+import '../../roadmap/presentation/roadmaps_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -32,15 +39,17 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final pages = [
       _HomePage(
+        libraryRepository: serviceLocator<LearningLibraryRepository>(),
+        notesRepository: serviceLocator<NotesRepository>(),
         onOpenPlayer: _openPlayer,
         onNavigate: (index) => setState(() => _selectedIndex = index),
       ),
-      _RoadmapsPage(
-        repository: widget.repository,
+      RoadmapsPage(repository: widget.repository),
+      _LibraryPage(
+        repository: serviceLocator<LearningLibraryRepository>(),
         onOpenPlayer: _openPlayer,
       ),
-      const _LibraryPage(),
-      const _NotesPage(),
+      _NotesPage(repository: serviceLocator<NotesRepository>()),
       _SettingsPage(
         isDarkMode: widget.isDarkMode,
         onToggleTheme: widget.onToggleTheme,
@@ -52,7 +61,10 @@ class _AppShellState extends State<AppShell> {
         title: Text(_titles[_selectedIndex]),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(DesignTokens.borderStrong),
-          child: Container(height: DesignTokens.borderStrong, color: context.outlineColor),
+          child: Container(
+            height: DesignTokens.borderStrong,
+            color: context.outlineColor,
+          ),
         ),
         actions: [
           IconButton(
@@ -65,7 +77,9 @@ class _AppShellState extends State<AppShell> {
             icon: const Icon(Icons.palette_outlined),
           ),
           IconButton(
-            tooltip: widget.isDarkMode ? 'Use light appearance' : 'Use dark appearance',
+            tooltip: widget.isDarkMode
+                ? 'Use light appearance'
+                : 'Use dark appearance',
             onPressed: widget.onToggleTheme,
             icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
           ),
@@ -99,10 +113,10 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  void _openPlayer() {
-    Navigator.of(context).push(
+  Future<void> _openPlayer({String? sourceUrl}) async {
+    await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => const LearningPlayerScreen(),
+        builder: (_) => LearningPlayerScreen(initialSourceUrl: sourceUrl),
       ),
     );
   }
@@ -147,11 +161,17 @@ class _BrutalistNavigationBar extends StatelessWidget {
                     color: selectedIndex == index
                         ? context.accentColor
                         : context.surfaceColor,
-                    padding: const EdgeInsets.symmetric(vertical: DesignTokens.space2),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: DesignTokens.space2,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(_items[index].$1, color: DesignTokens.ink, size: 21),
+                        Icon(
+                          _items[index].$1,
+                          color: DesignTokens.ink,
+                          size: 21,
+                        ),
                         const SizedBox(height: DesignTokens.space1),
                         FittedBox(
                           fit: BoxFit.scaleDown,
@@ -191,14 +211,59 @@ class _PagePadding extends StatelessWidget {
   }
 }
 
-class _HomePage extends StatelessWidget {
+typedef _PlayerLauncher = Future<void> Function({String? sourceUrl});
+
+class _HomePage extends StatefulWidget {
   const _HomePage({
+    required this.libraryRepository,
+    required this.notesRepository,
     required this.onOpenPlayer,
     required this.onNavigate,
   });
 
-  final VoidCallback onOpenPlayer;
+  final LearningLibraryRepository libraryRepository;
+  final NotesRepository notesRepository;
+  final _PlayerLauncher onOpenPlayer;
   final ValueChanged<int> onNavigate;
+
+  @override
+  State<_HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<_HomePage> {
+  late Future<_HomeSummary> _summary;
+
+  @override
+  void initState() {
+    super.initState();
+    _summary = _loadSummary();
+  }
+
+  Future<_HomeSummary> _loadSummary() async {
+    final playlists = await widget.libraryRepository.getPlaylists();
+    final playlistSummaries = await Future.wait(
+      playlists.map((playlist) async {
+        final entries = await widget.libraryRepository.getPlaylistEntries(
+          playlist.id,
+        );
+        return _SavedPlaylistSummary(playlist, entries.length);
+      }),
+    );
+    final notes = await widget.notesRepository.getNotes();
+    return _HomeSummary(playlistSummaries, notes.length);
+  }
+
+  void _reload() {
+    final summary = _loadSummary();
+    setState(() {
+      _summary = summary;
+    });
+  }
+
+  Future<void> _openPlaylist(LearningPlaylist playlist) async {
+    await widget.onOpenPlayer(sourceUrl: playlist.sourceUrl);
+    if (mounted) _reload();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,69 +271,82 @@ class _HomePage extends StatelessWidget {
       children: [
         Text(
           'A LITTLE PROGRESS\nGOES A LONG WAY.',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
-                height: 1.05,
-              ),
+          style: Theme.of(context).textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.w900, height: 1.05),
         ),
         const SizedBox(height: DesignTokens.space2),
         Text(
           'Your study space. Nothing more, nothing less.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.mutedColor,
-              ),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: context.mutedColor),
         ),
         const SizedBox(height: DesignTokens.space5),
-        BrutalistCard(
-          color: context.accentColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.play_circle_outline, size: 20),
-                  const SizedBox(width: DesignTokens.space2),
-                  Text('CONTINUE LEARNING', style: Theme.of(context).textTheme.labelMedium),
-                ],
-              ),
-              const SizedBox(height: DesignTokens.space4),
-              Text('Neural Networks', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: DesignTokens.space1),
-              Text('VIDEO 07  /  FOUNDATIONS', style: Theme.of(context).textTheme.labelSmall),
-              const SizedBox(height: DesignTokens.space4),
-              const BrutalistProgressBar(value: 0.72, label: 'YOUR PROGRESS'),
-              const SizedBox(height: DesignTokens.space4),
-              BrutalistButton(
-                label: 'Continue',
-                icon: Icons.play_arrow,
-                onPressed: onOpenPlayer,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: DesignTokens.space6),
-        BrutalistSectionHeader(
-          title: 'Your roadmaps',
-          trailing: TextButton(
-            onPressed: () => onNavigate(1),
-            child: const Text('VIEW ALL'),
-          ),
-        ),
-        const SizedBox(height: DesignTokens.space3),
-        _RoadmapPreview(
-          title: 'Machine learning',
-          detail: '6 topics  ·  4 complete',
-          progress: 0.68,
-          icon: Icons.auto_graph,
-          onTap: () => onNavigate(1),
-        ),
-        const SizedBox(height: DesignTokens.space3),
-        _RoadmapPreview(
-          title: 'Deep study system',
-          detail: '3 topics  ·  1 complete',
-          progress: 0.33,
-          icon: Icons.menu_book_outlined,
-          onTap: () => onNavigate(1),
+        FutureBuilder<_HomeSummary>(
+          future: _summary,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return BrutalistErrorState(
+                message: 'Your study overview could not be loaded.',
+                onRetry: _reload,
+              );
+            }
+            if (!snapshot.hasData) return const BrutalistLoadingState();
+            final summary = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                BrutalistSectionHeader(
+                  title: 'Saved playlists (${summary.playlists.length})',
+                  trailing: TextButton(
+                    onPressed: () => widget.onNavigate(2),
+                    child: const Text('LIBRARY'),
+                  ),
+                ),
+                const SizedBox(height: DesignTokens.space3),
+                if (summary.playlists.isEmpty)
+                  BrutalistEmptyState(
+                    title: 'Nothing in progress',
+                    message: 'Save a playlist or load a lesson to get started.',
+                    action: Wrap(
+                      spacing: DesignTokens.space2,
+                      runSpacing: DesignTokens.space2,
+                      children: [
+                        BrutalistButton(
+                          label: 'Open player',
+                          icon: Icons.play_arrow,
+                          onPressed: () => unawaited(widget.onOpenPlayer()),
+                        ),
+                        BrutalistButton(
+                          label: 'View roadmaps',
+                          icon: Icons.account_tree_outlined,
+                          secondary: true,
+                          onPressed: () => widget.onNavigate(1),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  for (final item in summary.playlists) ...[
+                    BrutalistListItem(
+                      title: item.playlist.title,
+                      subtitle:
+                          '${item.playlist.creator} · ${item.entryCount} lessons',
+                      icon: Icons.queue_music,
+                      trailing: const Icon(Icons.play_arrow),
+                      onTap: () => unawaited(_openPlaylist(item.playlist)),
+                    ),
+                    const SizedBox(height: DesignTokens.space2),
+                  ],
+                BrutalistListItem(
+                  title: 'Study notes',
+                  subtitle: '${summary.noteCount} saved notes',
+                  icon: Icons.edit_note,
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => widget.onNavigate(3),
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: DesignTokens.space6),
         const BrutalistSectionHeader(title: 'Quick actions'),
@@ -278,16 +356,15 @@ class _HomePage extends StatelessWidget {
           runSpacing: DesignTokens.space3,
           children: [
             BrutalistButton(
-              label: 'Add material',
-              icon: Icons.add_link,
-              secondary: true,
-              onPressed: () => _showNotice(context, 'Add material is ready for the library workflow.'),
+              label: 'Open player',
+              icon: Icons.play_arrow,
+              onPressed: () => unawaited(widget.onOpenPlayer()),
             ),
             BrutalistButton(
               label: 'New roadmap',
               icon: Icons.account_tree_outlined,
               secondary: true,
-              onPressed: () => onNavigate(1),
+              onPressed: () => widget.onNavigate(1),
             ),
           ],
         ),
@@ -297,280 +374,160 @@ class _HomePage extends StatelessWidget {
   }
 }
 
-class _RoadmapPreview extends StatelessWidget {
-  const _RoadmapPreview({
-    required this.title,
-    required this.detail,
-    required this.progress,
-    required this.icon,
-    required this.onTap,
-  });
+class _SavedPlaylistSummary {
+  const _SavedPlaylistSummary(this.playlist, this.entryCount);
 
-  final String title;
-  final String detail;
-  final double progress;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BrutalistCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(DesignTokens.space3),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: context.accentColor,
-              border: Border.all(color: context.outlineColor, width: 2),
-            ),
-            child: Icon(icon),
-          ),
-          const SizedBox(width: DesignTokens.space3),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleSmall),
-                Text(detail, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: DesignTokens.space2),
-                BrutalistProgressBar(value: progress),
-              ],
-            ),
-          ),
-          const SizedBox(width: DesignTokens.space2),
-          const Icon(Icons.chevron_right),
-        ],
-      ),
-    );
-  }
+  final LearningPlaylist playlist;
+  final int entryCount;
 }
 
-class _RoadmapsPage extends StatefulWidget {
-  const _RoadmapsPage({
-    required this.repository,
-    required this.onOpenPlayer,
-  });
+class _HomeSummary {
+  const _HomeSummary(this.playlists, this.noteCount);
 
-  final RoadmapRepository repository;
-  final VoidCallback onOpenPlayer;
-
-  @override
-  State<_RoadmapsPage> createState() => _RoadmapsPageState();
-}
-
-class _RoadmapsPageState extends State<_RoadmapsPage> {
-  late Future<List<Roadmap>> _roadmaps;
-
-  @override
-  void initState() {
-    super.initState();
-    _roadmaps = widget.repository.getRoadmaps();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Roadmap>>(
-      future: _roadmaps,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.all(DesignTokens.space4),
-            child: BrutalistErrorState(
-              message: 'Your roadmaps could not be loaded.',
-              onRetry: () => setState(() {
-                _roadmaps = widget.repository.getRoadmaps();
-              }),
-            ),
-          );
-        }
-        if (!snapshot.hasData) return const BrutalistLoadingState();
-
-        final roadmaps = snapshot.data!;
-        return ListView(
-          padding: const EdgeInsets.all(DesignTokens.space4),
-          children: [
-            Text('ONE STEP AT A TIME.', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: DesignTokens.space2),
-            Text(
-              'Keep each subject organized into a clear learning path.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.mutedColor),
-            ),
-            const SizedBox(height: DesignTokens.space4),
-            BrutalistButton(
-              label: 'Create roadmap',
-              icon: Icons.add,
-              onPressed: () => _showNotice(context, 'Roadmap builder is the next step.'),
-            ),
-            const SizedBox(height: DesignTokens.space5),
-            const BrutalistSectionHeader(title: 'Your learning paths'),
-            const SizedBox(height: DesignTokens.space3),
-            if (roadmaps.isEmpty)
-              BrutalistEmptyState(
-                title: 'No roadmaps yet',
-                message: 'Build your first learning roadmap to bring videos and topics together.',
-                action: BrutalistButton(
-                  label: 'Create roadmap',
-                  onPressed: () => _showNotice(context, 'Roadmap builder is the next step.'),
-                ),
-              )
-            else
-              for (var index = 0; index < roadmaps.length; index++) ...[
-                _RoadmapListCard(
-                  roadmap: roadmaps[index],
-                  progress: index == 0 ? 0.68 : 0.33,
-                  onTap: widget.onOpenPlayer,
-                ),
-                if (index != roadmaps.length - 1)
-                  const SizedBox(height: DesignTokens.space3),
-              ],
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _RoadmapListCard extends StatelessWidget {
-  const _RoadmapListCard({
-    required this.roadmap,
-    required this.progress,
-    required this.onTap,
-  });
-
-  final Roadmap roadmap;
-  final double progress;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BrutalistCard(
-      color: roadmap.isActive ? context.accentColor : context.surfaceColor,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(roadmap.title, style: Theme.of(context).textTheme.titleLarge),
-              ),
-              if (roadmap.isActive)
-                const BrutalistChip(label: 'Active', selected: true),
-            ],
-          ),
-          const SizedBox(height: DesignTokens.space2),
-          Text(roadmap.description, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: DesignTokens.space4),
-          BrutalistProgressBar(value: progress, label: 'ROADMAP PROGRESS'),
-          const SizedBox(height: DesignTokens.space3),
-          Row(
-            children: [
-              const Icon(Icons.play_circle_outline, size: 18),
-              const SizedBox(width: DesignTokens.space1),
-              Text('OPEN STUDY PATH', style: Theme.of(context).textTheme.labelSmall),
-              const Spacer(),
-              const Icon(Icons.arrow_forward),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  final List<_SavedPlaylistSummary> playlists;
+  final int noteCount;
 }
 
 class _LibraryPage extends StatefulWidget {
-  const _LibraryPage();
+  const _LibraryPage({required this.repository, required this.onOpenPlayer});
+
+  final LearningLibraryRepository repository;
+  final _PlayerLauncher onOpenPlayer;
 
   @override
   State<_LibraryPage> createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<_LibraryPage> {
-  final _searchController = TextEditingController();
-  var _query = '';
-  var _filter = 'ALL';
-
-  static const _items = [
-    ('Gradient Descent, Clearly Explained', 'StatQuest  ·  18:32', 'VIDEO'),
-    ('Neural Networks from Scratch', '3Blue1Brown  ·  24:10', 'VIDEO'),
-    ('Linear Algebra Essentials', 'Khan Academy  ·  12 items', 'PLAYLIST'),
-    ('Probability for Machine Learning', 'MIT OpenCourseWare  ·  31:06', 'SAVED'),
-  ];
+  late Future<_LibraryContents> _contents;
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _contents = _loadContents();
+  }
+
+  Future<_LibraryContents> _loadContents() async {
+    final videos = await widget.repository.getVideos();
+    final playlists = await widget.repository.getPlaylists();
+    return _LibraryContents(videos, playlists);
+  }
+
+  void _reload() {
+    final contents = _loadContents();
+    setState(() {
+      _contents = contents;
+    });
+  }
+
+  Future<void> _openSource(String sourceUrl) async {
+    await widget.onOpenPlayer(sourceUrl: sourceUrl);
+    if (mounted) _reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    final visible = _items.where((item) {
-      final matchesSearch = '${item.$1} ${item.$2}'.toLowerCase().contains(_query.toLowerCase());
-      final matchesFilter = _filter == 'ALL' || item.$3 == _filter;
-      return matchesSearch && matchesFilter;
-    }).toList();
-
-    return ListView(
-      padding: const EdgeInsets.all(DesignTokens.space4),
-      children: [
-        const BrutalistSectionHeader(title: 'Your study library'),
-        const SizedBox(height: DesignTokens.space2),
-        Text(
-          'Only material you chose to keep.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.mutedColor),
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        BrutalistSearchField(
-          controller: _searchController,
-          hint: 'Search videos and playlists',
-          onChanged: (value) => setState(() => _query = value),
-        ),
-        const SizedBox(height: DesignTokens.space3),
-        Wrap(
-          spacing: DesignTokens.space2,
-          runSpacing: DesignTokens.space2,
-          children: [
-            for (final filter in ['ALL', 'VIDEO', 'PLAYLIST', 'SAVED'])
-              BrutalistChip(
-                label: filter,
-                selected: filter == _filter,
-                onTap: () => setState(() => _filter = filter),
-              ),
-          ],
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        if (visible.isEmpty)
-          const BrutalistEmptyState(
-            title: 'No matching material',
-            message: 'Try a different search or clear the selected filter.',
-          )
-        else
-          for (final item in visible) ...[
-            BrutalistListItem(
-              title: item.$1,
-              subtitle: item.$2,
-              icon: item.$3 == 'PLAYLIST' ? Icons.queue_music : Icons.play_circle_outline,
-              trailing: const Icon(Icons.bookmark_border),
-              onTap: () => _showNotice(context, 'Open this saved study material.'),
+    return FutureBuilder<_LibraryContents>(
+      future: _contents,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Padding(
+            padding: const EdgeInsets.all(DesignTokens.space4),
+            child: BrutalistErrorState(
+              message: 'Your library could not be loaded.',
+              onRetry: _reload,
             ),
-            const SizedBox(height: DesignTokens.space3),
+          );
+        }
+        if (!snapshot.hasData) return const BrutalistLoadingState();
+        final contents = snapshot.data!;
+        final empty = contents.videos.isEmpty && contents.playlists.isEmpty;
+        return ListView(
+          padding: const EdgeInsets.all(DesignTokens.space4),
+          children: [
+            const BrutalistSectionHeader(title: 'Your study library'),
+            const SizedBox(height: DesignTokens.space2),
+            Text(
+              'Only material you chose to keep.',
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: context.mutedColor),
+            ),
+            const SizedBox(height: DesignTokens.space4),
+            if (empty)
+              BrutalistEmptyState(
+                title: 'Your library is empty',
+                message: 'Saved videos and playlists will appear here.',
+                action: BrutalistButton(
+                  label: 'Open player',
+                  icon: Icons.add_link,
+                  onPressed: () => unawaited(widget.onOpenPlayer()),
+                ),
+              ),
+            if (contents.playlists.isNotEmpty) ...[
+              const BrutalistSectionHeader(title: 'Playlists'),
+              const SizedBox(height: DesignTokens.space3),
+              for (final playlist in contents.playlists) ...[
+                BrutalistListItem(
+                  title: playlist.title,
+                  subtitle: playlist.creator,
+                  icon: Icons.queue_music,
+                  trailing: IconButton(
+                    tooltip: 'Remove playlist',
+                    onPressed: () => unawaited(_deletePlaylist(playlist)),
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+                  onTap: () => unawaited(_openSource(playlist.sourceUrl)),
+                ),
+                const SizedBox(height: DesignTokens.space2),
+              ],
+            ],
+            if (contents.videos.isNotEmpty) ...[
+              const SizedBox(height: DesignTokens.space3),
+              const BrutalistSectionHeader(title: 'Videos'),
+              const SizedBox(height: DesignTokens.space3),
+              for (final video in contents.videos) ...[
+                BrutalistListItem(
+                  title: video.title,
+                  subtitle: video.creator,
+                  icon: Icons.play_circle_outline,
+                  trailing: IconButton(
+                    tooltip: 'Remove video',
+                    onPressed: () => unawaited(_deleteVideo(video)),
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+                  onTap: () => unawaited(_openSource(video.sourceUrl)),
+                ),
+                const SizedBox(height: DesignTokens.space2),
+              ],
+            ],
           ],
-        BrutalistButton(
-          label: 'Add video or playlist',
-          icon: Icons.add_link,
-          onPressed: () => _showNotice(context, 'Paste a learning video or playlist link.'),
-        ),
-      ],
+        );
+      },
     );
+  }
+
+  Future<void> _deletePlaylist(LearningPlaylist playlist) async {
+    await widget.repository.deletePlaylist(playlist.id);
+    if (mounted) _reload();
+  }
+
+  Future<void> _deleteVideo(LearningVideo video) async {
+    await widget.repository.deleteVideo(video.id);
+    if (mounted) _reload();
   }
 }
 
+class _LibraryContents {
+  const _LibraryContents(this.videos, this.playlists);
+
+  final List<LearningVideo> videos;
+  final List<LearningPlaylist> playlists;
+}
+
 class _NotesPage extends StatefulWidget {
-  const _NotesPage();
+  const _NotesPage({required this.repository});
+
+  final NotesRepository repository;
 
   @override
   State<_NotesPage> createState() => _NotesPageState();
@@ -578,15 +535,25 @@ class _NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<_NotesPage> {
   final _noteController = TextEditingController();
-  final List<String> _notes = [
-    'Gradient descent minimizes the cost function by taking repeated steps in the direction of steepest descent.',
-    'A neural network learns useful representations through layers of weighted transformations.',
-  ];
+  late Future<List<StudyNote>> _notes;
+
+  @override
+  void initState() {
+    super.initState();
+    _notes = widget.repository.getNotes();
+  }
 
   @override
   void dispose() {
     _noteController.dispose();
     super.dispose();
+  }
+
+  void _reload() {
+    final notes = widget.repository.getNotes();
+    setState(() {
+      _notes = notes;
+    });
   }
 
   @override
@@ -598,7 +565,8 @@ class _NotesPageState extends State<_NotesPage> {
         const SizedBox(height: DesignTokens.space2),
         Text(
           'Ideas and important moments, kept with your learning.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.mutedColor),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: context.mutedColor),
         ),
         const SizedBox(height: DesignTokens.space4),
         BrutalistCard(
@@ -606,7 +574,10 @@ class _NotesPageState extends State<_NotesPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('ADD A NOTE', style: Theme.of(context).textTheme.labelMedium),
+              Text(
+                'ADD A NOTE',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
               const SizedBox(height: DesignTokens.space2),
               BrutalistInput(
                 controller: _noteController,
@@ -620,7 +591,7 @@ class _NotesPageState extends State<_NotesPage> {
                 child: BrutalistButton(
                   label: 'Save note',
                   icon: Icons.save_outlined,
-                  onPressed: _saveNote,
+                  onPressed: () => unawaited(_saveNote()),
                 ),
               ),
             ],
@@ -629,64 +600,94 @@ class _NotesPageState extends State<_NotesPage> {
         const SizedBox(height: DesignTokens.space5),
         const BrutalistSectionHeader(title: 'Recent notes'),
         const SizedBox(height: DesignTokens.space3),
-        for (var index = 0; index < _notes.length; index++) ...[
-          BrutalistCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        FutureBuilder<List<StudyNote>>(
+          future: _notes,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return BrutalistErrorState(
+                message: 'Your notes could not be loaded.',
+                onRetry: _reload,
+              );
+            }
+            if (!snapshot.hasData) return const BrutalistLoadingState();
+            if (snapshot.data!.isEmpty) {
+              return const BrutalistEmptyState(
+                title: 'No notes yet',
+                message: 'Saved notes will appear here.',
+              );
+            }
+            return Column(
               children: [
-                Row(
-                  children: [
-                    const BrutalistChip(label: '12:42', selected: true),
-                    const SizedBox(width: DesignTokens.space2),
-                    Text('NEURAL NETWORKS', style: Theme.of(context).textTheme.labelSmall),
-                    const Spacer(),
-                    IconButton(
-                      tooltip: 'Attach a file',
-                      onPressed: () => _showNotice(context, 'Attach an image or PDF to this topic.'),
-                      icon: const Icon(Icons.attach_file),
+                for (final note in snapshot.data!) ...[
+                  BrutalistCard(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(note.content),
+                              const SizedBox(height: DesignTokens.space2),
+                              Text(
+                                _noteSubtitle(note),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: context.mutedColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Delete note',
+                          onPressed: () => unawaited(_deleteNote(note)),
+                          icon: const Icon(Icons.delete_outline),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: DesignTokens.space2),
-                Text(_notes[index], style: Theme.of(context).textTheme.bodyMedium),
+                  ),
+                  const SizedBox(height: DesignTokens.space3),
+                ],
               ],
-            ),
-          ),
-          const SizedBox(height: DesignTokens.space3),
-        ],
-        const BrutalistSectionHeader(title: 'Attachments'),
-        const SizedBox(height: DesignTokens.space3),
-        const Wrap(
-          spacing: DesignTokens.space2,
-          runSpacing: DesignTokens.space2,
-          children: [
-            BrutalistChip(label: 'handwritten-notes.png'),
-            BrutalistChip(label: 'lecture-notes.pdf'),
-          ],
+            );
+          },
         ),
       ],
     );
   }
 
-  void _saveNote() {
-    final text = _noteController.text.trim();
-    if (text.isEmpty) {
-      _showNotice(context, 'Write a note before saving.');
-      return;
-    }
-    setState(() {
-      _notes.insert(0, text);
-      _noteController.clear();
-    });
-    _showNotice(context, 'Note saved for this study session.');
+  Future<void> _saveNote() async {
+    final content = _noteController.text.trim();
+    if (content.isEmpty) return;
+    final now = DateTime.now();
+    await widget.repository.saveNote(
+      StudyNote(
+        id: now.microsecondsSinceEpoch.toString(),
+        content: content,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
+    if (!mounted) return;
+    _noteController.clear();
+    _reload();
+  }
+
+  Future<void> _deleteNote(StudyNote note) async {
+    await widget.repository.deleteNote(note.id);
+    if (mounted) _reload();
+  }
+
+  String _noteSubtitle(StudyNote note) {
+    final timestamp = note.timestampSeconds;
+    if (timestamp == null) return 'Saved ${note.updatedAt.toLocal()}';
+    final duration = Duration(seconds: timestamp);
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return 'At $minutes:$seconds · ${note.updatedAt.toLocal()}';
   }
 }
 
 class _SettingsPage extends StatelessWidget {
-  const _SettingsPage({
-    required this.isDarkMode,
-    required this.onToggleTheme,
-  });
+  const _SettingsPage({required this.isDarkMode, required this.onToggleTheme});
 
   final bool isDarkMode;
   final VoidCallback onToggleTheme;
@@ -696,7 +697,10 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(DesignTokens.space4),
       children: [
-        const Text('MAKE IT YOURS.', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+        const Text(
+          'MAKE IT YOURS.',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+        ),
         const SizedBox(height: DesignTokens.space5),
         const _SettingsSectionLabel(label: 'APPEARANCE'),
         BrutalistCard(
@@ -708,7 +712,10 @@ class _SettingsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Dark appearance', style: TextStyle(fontWeight: FontWeight.w700)),
+                    Text(
+                      'Dark appearance',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
                     Text('Keep the strong contrast, day or night.'),
                   ],
                 ),
@@ -724,54 +731,18 @@ class _SettingsPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: DesignTokens.space4),
-        const _SettingsSectionLabel(label: 'PLAYBACK'),
-        const _SettingsRow(
-          icon: Icons.speed,
-          title: 'Default speed',
-          subtitle: '1.0×',
-        ),
-        const SizedBox(height: DesignTokens.space2),
-        const _SettingsRow(
-          icon: Icons.replay,
-          title: 'Resume playback',
-          subtitle: 'Continue where you left off',
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        const _SettingsSectionLabel(label: 'STORAGE'),
+        const _SettingsSectionLabel(label: 'ABOUT'),
         BrutalistCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Expanded(child: Text('Storage usage', style: Theme.of(context).textTheme.titleSmall)),
-                  Text('1.2 GB / 5 GB', style: Theme.of(context).textTheme.labelSmall),
-                ],
-              ),
-              const SizedBox(height: DesignTokens.space3),
-              const BrutalistProgressBar(value: 0.24),
-              const SizedBox(height: DesignTokens.space3),
-              BrutalistButton(
-                label: 'Clear cached files',
-                secondary: true,
-                onPressed: () => _showNotice(context, 'No cached files need clearing.'),
+              const Icon(Icons.school_outlined),
+              const SizedBox(width: DesignTokens.space3),
+              Text(
+                'Voyager Learning',
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
           ),
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        const _SettingsSectionLabel(label: 'LEARNING'),
-        const _SettingsRow(
-          icon: Icons.check_circle_outline,
-          title: 'Completion behavior',
-          subtitle: 'Confirm before completing a topic',
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        const _SettingsSectionLabel(label: 'ABOUT'),
-        const _SettingsRow(
-          icon: Icons.info_outline,
-          title: 'Voyager Learning',
-          subtitle: 'Version 0.1.0 · Local-first study',
         ),
       ],
     );
@@ -790,40 +761,11 @@ class _SettingsSectionLabel extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: context.blueAccentColor,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1,
-            ),
+          color: context.blueAccentColor,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1,
+        ),
       ),
     );
   }
-}
-
-class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return BrutalistListItem(
-      title: title,
-      subtitle: subtitle,
-      icon: icon,
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => _showNotice(context, '$title settings'),
-    );
-  }
-}
-
-void _showNotice(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-  );
 }

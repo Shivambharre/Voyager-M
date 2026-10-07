@@ -13,7 +13,7 @@ The presentation layer follows the supplied Neo-Brutalist UI direction: warm pap
 
 ## UI boundaries
 
-The screens use repository contracts and mock interaction state only. They do not access SQLite, device files, media extraction, or a concrete player engine. Production implementations can be connected through existing domain and infrastructure interfaces without restyling the presentation layer.
+The screens use real repository contracts for Home, Library, Notes, and the player. The presentation layer still avoids direct SQLite or provider SDK calls, but the app shell and player now load and persist user data through their domain adapters.
 
 ## Review notes
 
@@ -22,5 +22,6 @@ The screens use repository contracts and mock interaction state only. They do no
 - Layouts scroll on small screens and are width-constrained on larger displays.
 - Dark appearance has a separate palette and keeps the outline-and-shadow character.
 - The Design System Showcase is available from the palette icon in the app bar.
+- Player controls expose accessible labeling for fullscreen, seeking, and quality selection.
 
-The app shell and player are intentionally presentation prototypes; roadmap creation, real media playback, durable notes, file attachments, and search indexing require follow-on feature work.
+The app shell and player remain intentionally focused, but the repository-backed library and note flows are no longer only mock UI state.

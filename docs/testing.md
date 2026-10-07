@@ -17,8 +17,11 @@ flutter build apk --debug
   repository create/read/delete behavior, and media/player/policy/storage
   contracts.
 - `test/widget_test.dart` checks the Home-to-player flow and primary
-  navigation/showcase. The Home/player flow constrains the viewport to a
-  360-by-800 phone-sized display.
+  navigation/showcase, plus roadmap create/edit/topic-status/progress/delete
+  flows. The Home/player flow constrains the viewport to a 360-by-800
+  phone-sized display.
+- `test/media/player_features_test.dart` covers playlist saving, note saving,
+  quality switching, and fullscreen entry/exit.
 
 ## Platform validation
 
@@ -27,7 +30,7 @@ flutter build apk --debug
   plugins.
 - Android: a debug APK build has passed for the initial UI prototype. Repeat
   after plugin, database, or platform integration changes.
-- No automated migration, durable storage, or real playback tests exist yet.
+- No live upstream extraction or physical-device playback tests exist yet.
 
 ## Testing rules
 

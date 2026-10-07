@@ -8,14 +8,17 @@ recommendation feeds, social engagement, or autoplay discovery.
 
 ## Current state
 
-The current app shell uses roadmap-led screens and does not implement discovery
-feeds. `ContentPolicy` is a small, unconnected mock. No ad blocking, ad
-interception, DRM circumvention, hidden provider-specific bypass, or equivalent
-behavior has been implemented.
+The app shell uses roadmap-led screens and does not implement discovery feeds.
+`ContentFilterService` is an independent, disabled-by-default boundary.
+`ContentFilterEngine` can evaluate only requests explicitly scoped as
+`applicationManaged`; it always allows YouTube player and extracted-media
+requests. `NativeFilterBridge` defines a MethodChannel contract, but no Android
+or Rust engine is currently included.
 
 ## Future handling
 
-Only implement controls supported by the selected provider/player architecture
-and permitted by applicable service restrictions. Keep provider-specific
-behavior inside replaceable media adapters; explain limitations directly to the
-user rather than implying unsupported ad-free playback.
+Only filter content the application is permitted to filter. Do not manipulate
+YouTube advertising/player requests, claim ad-free YouTube playback, or use
+stream extraction as an advertising bypass. Brave `adblock-rust` was reviewed
+(MPL-2.0) but is not packaged; native FFI/ABI, filter-list updates, and Android
+request-owner integration remain a separately gated task.

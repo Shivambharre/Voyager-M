@@ -18,12 +18,14 @@ class Topic {
     required this.roadmapId,
     required this.title,
     required this.status,
+    this.position = 0,
   });
 
   final String id;
   final String roadmapId;
   final String title;
   final TopicStatus status;
+  final int position;
 }
 
 enum TopicStatus {

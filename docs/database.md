@@ -10,24 +10,27 @@ SQLite.
 
 ## Current state
 
-- `sqflite` is included in `pubspec.yaml`.
-- `AppDatabase` and `SqfliteAppDatabase` are placeholders in
-  `lib/core/database/database.dart`.
-- The placeholder does not open a database, create tables, migrate versions, or
-  implement any feature repository.
-- GetIt currently registers in-memory feature repositories instead.
-- The app can therefore run without SQLite, but user changes are not durable.
+- `SqfliteAppDatabase` opens `voyager_learning.db` and creates the core
+  roadmap, library, playlist, note, progress, bookmark, settings, and metadata
+  cache tables.
+- Schema version 2 adds `video_metadata_cache`; the version-1 upgrade is tested
+  to create that table and preserve existing study records.
+- SQLite-backed repositories exist for roadmaps, library, notes, progress, and
+  settings. Android DI selects these repositories; mock/Web mode uses
+  in-memory implementations.
+- Metadata caching stores title, thumbnail, duration, author, and playlist
+  entry order, but intentionally excludes temporary media stream URLs.
 
-## Phase 2.1 work remaining
+## Current database status
 
-1. Decide schema version 1 and record entity relationships and delete behavior.
-2. Implement database opening and versioned migration callbacks.
-3. Create tables and indexes for IDs, foreign keys, order, and query patterns.
-4. Implement repositories behind current feature contracts with transactions
-   where multiple related records change.
-5. Test CRUD, constraints, migration from prior schema versions, duplicate IDs,
-   and persistence after close/reopen.
-6. Only switch dependency injection from mocks once adapter tests pass.
+1. Migration-from-v1 coverage is in place for the schema v2 metadata cache table
+   and existing study records.
+2. Roadmap, library, notes, progress, settings, and metadata repositories are
+   wired to real SQLite adapters on Android.
+3. The Home, Library, and Notes screens now read repository state instead of
+   local sample lists.
+4. Close/reopen behavior and repository CRUD tests remain the main regression
+   safety net for schema and persistence changes.
 
-Do not claim persistence based only on having the package dependency or a
-database class name.
+Device-file storage remains a separate deferred adapter; do not store large
+media bytes in SQLite.

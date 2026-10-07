@@ -2,27 +2,41 @@
 
 ## Contract
 
-`MediaProvider` resolves a source URL to the app-owned `MediaAsset` model. UI and
-feature code should use this model rather than provider-specific SDK objects.
+Source resolution is handled by `SourceDetector` and `VideoSourceAdapter`.
+These adapters return app-owned `VideoInfo`, `PlaylistInfo`, and
+`MediaStreamInfo` models instead of platform SDK objects, making the player
+state independent from any one YouTube or MIT implementation.
 
 ## Current state
 
-`MockMediaProvider` validates that the source parses as a URI and returns a
-placeholder asset. It does not contact a media site, extract metadata, retrieve
-playable streams, or validate whether a URL is actually supported.
+The app resolves supported URLs through `SourceDetector`, which routes YouTube
+videos/playlists and MIT OCW sources to domain adapters. Metadata and playlist
+entries are cached with `VideoMetadataCache` while stream URLs remain transient
+and are selected only when the player loads a lecture.
 
-The Library screen's sample rows are not resolved through this provider yet.
+`YoutubeAdapter` uses `youtube_explode_dart` to resolve stream metadata and
+playlist metadata. On Android, `NewPipeYoutubeAdapter` is also available for
+metadata extraction and playlist entry discovery. `MitOcwAdapter` parses direct
+MIT-hosted media links and metadata from OCW pages.
 
-## Production integration is deferred
+`StreamSelector` only keeps fresh, combined audio/video streams that match the
+supported MIME types, resolution cap, and bitrate policy. The player retains the
+available stream list to support quality switching and preserves the current
+playback position when switching streams.
 
-Before selecting an implementation, evaluate Android integration options,
-project/license obligations, maintenance and compatibility, supported content,
-network failures, service terms, and restrictions. Keep all provider-specific
-code inside its adapter and map results into app-owned models.
+## Production integration boundaries
+
+Extraction and playback are replaceable, but YouTube extraction is
+reverse-engineered and may be restricted by service terms. Do not filter
+YouTube's player/ad requests, extract full video files, persist temporary stream
+URLs, or provide offline YouTube copies. Before release, review current service
+terms, package updates, platform behavior, attribution, and license obligations.
+Any third-party adapter remains subject to its respective license and no app
+release should proceed without review. See `THIRD_PARTY_NOTICES.md`.
 
 ## Error behavior
 
-Invalid input should remain an explicit format/validation error. Provider
-failures should eventually map to documented domain-level outcomes such as
-unsupported source, unavailable item, or network failure; avoid success-shaped
-placeholder assets in production.
+Invalid input stays an explicit format/validation error. Adapter failures map to
+player-level domain errors such as unsupported source, unavailable item, expired
+stream, or incompatible format. The app no longer depends on placeholder
+provider assets for valid media workflows.

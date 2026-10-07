@@ -26,45 +26,50 @@ tracked in [`implementation-status.md`](implementation-status.md).
 
 ## Phase 2 — Local data layer
 
-- **2.1 SQLite — Not started.** Build schema/versioning/migrations and
-  repository adapters behind existing contracts. Do not treat the current
-  `SqfliteAppDatabase` placeholder or dependency as completed persistence.
+- **2.1 SQLite — Core implemented.** Schema versioning, migration, and SQLite
+  repository adapters exist for roadmaps, library, notes, progress, settings,
+  and metadata. Additional edge-case coverage remains.
 - **2.2 Device file storage — Not started.** Implement app-managed durable
   storage for images/PDFs after the structured data layer is underway.
 
 ## Phase 3 — Library and roadmap system
 
-- **3.1 Learning library — Not started.** Implement persistent references and
-  provider metadata resolution.
-- **3.2 Roadmap builder — Not started.** Add editing, sections, source items,
-  ordering, completion, and continue/resume selection.
+- **3.1 Learning library — Implemented in core workflow.** Saved playlists,
+  playlist entries, and videos persist through the repository, and the app shell
+  displays these records in Home and Library.
+- **3.2 Roadmap builder — Partially implemented.** Roadmaps can be created,
+  edited, deleted, activated, and organized with topics whose completion state
+  drives displayed progress. Topic reordering, source-item linking, and
+  continue/resume selection remain.
 
 ## Phase 4 — Real media
 
-- **4.1 Provider integration — Not started.** Evaluate supported integration,
-  license, maintenance, compatibility, service restrictions, and failure
-  behavior before selecting an extractor.
-- **4.2 Android player — Not started.** Implement an Android playback engine
-  behind `PlayerEngine`, retaining the mock for tests.
+- **4.1 Source adapters and extraction — Implemented with limitations.** Source
+  detection, YouTube video/playlist adapters, MIT OCW direct-media parsing, and
+  stable metadata caching are implemented.
+- **4.2 Playback controller — Implemented; validation pending.** The player
+  retains supported stream options for quality switching, includes fullscreen
+  and seek controls, and writes saved recipe data for library and note flows.
 
 ## Phase 5 — Distraction and content policy
 
 - **5.1 Policy behavior — Interface/mock only.** Connect decisions to import
   and playback use cases and document provider limitations.
-- **5.2 Ad/distraction handling — Not started.** Keep discovery/social surfaces
-  absent. Do not implement DRM circumvention or hidden provider bypasses.
+- **5.2 Ad/distraction handling — Filter boundary only.** Discovery and social
+  surfaces remain absent; filtering is disabled by default and no native Rust
+  bridge is packaged.
 
 ## Phase 6 — Study tools and progress
 
-- **6.1 Notes — UI/contracts/mock only.** Wire durable typed and timestamped
-  notes, attachments, and note search.
+- **6.1 Notes — Repository-backed text notes.** Player notes and Notes-tab notes
+  persist through `NotesRepository` with optional video/timestamp metadata.
 - **6.2 Progress/resume — Contracts/mock only.** Connect player lifecycle,
   completion policy, roadmap calculations, and resume behavior.
 
 ## Phase 7 — Search, offline reliability, and polish
 
-- **7.1 Search — UI sample only.** Add local search across persisted content.
-- **7.2 Offline reliability — Not complete.** Preserve organization and
+- **7.1 Search — Not implemented.** Add local search across persisted content.
+- **7.2 Offline reliability — Foundation only.** Preserve organization and
   learning records offline; media availability depends on provider policy.
 - **7.3 Final polish — Deferred.** Audit performance, accessibility, errors,
   device behavior, and release builds after core features stabilize.

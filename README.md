@@ -28,6 +28,7 @@ See the docs folder for architecture and workflow references:
 - [docs/content-policy.md](docs/content-policy.md)
 - [docs/ad-handling.md](docs/ad-handling.md)
 - [docs/decisions.md](docs/decisions.md)
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ## Local development
 

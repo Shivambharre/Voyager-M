@@ -24,37 +24,38 @@ Voyager Learning is a local-first Android study app built around a strict separa
 
 | Concern | Interface | Current selection | Status |
 | --- | --- | --- | --- |
-| Structured database | `AppDatabase` | `SqfliteAppDatabase` placeholder | No open/schema/migrations yet |
-| Feature repositories | Feature-specific repository interfaces | In-memory implementations | Mock mode |
+| Structured database | `AppDatabase` | `SqfliteAppDatabase` on Android | Core schema v2 and migration implemented; more migration coverage remains |
+| Feature repositories | Feature-specific repository interfaces | SQLite on Android, in-memory on mock/Web | Repository adapters are active for roadmaps, library, notes, settings, and metadata caching |
 | File storage | `LocalFileStorage` | `InMemoryFileStorage` | Mock only; device files not implemented |
-| Media resolution | `MediaProvider` | `MockMediaProvider` | Mock only; no extraction |
-| Player control | `PlayerEngine` | `MockPlayerEngine` | Contract/mock; UI is not wired to it |
-| Content decisions | `ContentPolicy` | `LearningContentPolicy` | Basic mock; not connected to import/playback |
+| Media resolution | `VideoSourceAdapter` / `SourceDetector` | YouTube + MIT OCW adapters | Source adapters resolve, normalize, and stream direct media metadata; no app-owned file extraction yet |
+| Player control | `PlaybackController` | `DefaultPlaybackController` + `FlutterMediaPlayer` | Available streams are retained for quality switching; fullscreen and playback controls are in the screen |
+| Content filtering | `ContentFilterService` / `ContentFilterEngine` | Disabled no-op engine | Separate MethodChannel adapter contract; Rust engine not packaged |
+| Content decisions | `ContentPolicy` | `LearningContentPolicy` | Basic mock; separate from request filtering |
 | Search | To be defined | None | Not implemented |
 | OCR | To be defined | None | Not implemented |
 | Future sync | To be defined | None | Optional and deferred |
 
 ## Current implementation checkpoint
 
-Phase 0.1 project and documentation foundation, Phase 0.2 mock contracts/DI,
-and Phase 1 UI prototypes are established. The dependency-injection composition
-root currently selects in-memory repositories, a mock media provider/player, a
-sample content policy, and in-memory attachment storage. This lets the UI run
-without internet, SQLite, or production media services.
+The composition root uses SQLite-backed repositories on Android, in-memory
+repositories/cache in mock and Web mode, and creates a disposable playback
+pipeline per player route. The app shell now reads saved library playlists and
+notes from their repository contracts. Media extraction/playback still requires
+network access, but quality selection and fullscreen are now part of the player
+screen state rather than ad hoc UI logic.
 
 Available domain contracts cover:
 
 - Roadmaps and topics
-- Videos, playlists, and playlist entries
-- Study notes
+- Videos, playlists, playlist entries, and stream metadata models
+- Study notes with timestamp/video context
 - Playback progress and bookmarks
 - Learning settings
-- Media resolution, player control, content policy, and file storage
+- Source detection, player control, filtering boundaries, and file storage
 
-SQLite persistence, durable device-file handling, and production provider/player
-implementations are intentionally subsequent roadmap steps, not fallbacks inside
-these mocks. See [`implementation-status.md`](implementation-status.md) for
-completion boundaries and validation evidence.
+Durable device-file handling and native Rust filtering remain deferred. See
+[`implementation-status.md`](implementation-status.md) for completion
+boundaries and validation evidence.
 
 ## Module boundaries
 
@@ -79,9 +80,9 @@ Each feature is isolated. Current domain modules include roadmaps, the learning 
 
 ## Data flow
 
-The current concrete startup and mock-mode flow is documented in
-[`data-flow.md`](data-flow.md). The repository-to-SQLite and player-to-platform
-flows there are target architecture, not yet production-connected paths.
+The current startup and mock-mode flow is documented in [`data-flow.md`](data-flow.md).
+Player routing is connected; live provider extraction, physical-device playback,
+and native filtering remain validation or implementation gaps.
 
 ## Why this matters
 

@@ -12,22 +12,22 @@ implementations for development.
 | --- | --- | --- |
 | `core/design` | Presentation tokens, themes, reusable controls, showcase | Implemented |
 | `core/di` | Central interface-to-implementation registration | Mock registrations implemented |
-| `core/database` | Structured local database boundary | Placeholder only |
+| `core/database` | Structured local database boundary | SQLite schema v2 and migration are implemented |
 | `core/storage` | Large device-file boundary | In-memory mock only |
-| `core/media` | Provider asset and player engine contracts | Mock provider/player only |
+| `core/media` | Source adapters, stream selection, playback state, platform player bridge | Active in player flow; quality switching and fullscreen built in |
 | `core/filtering` | Content decision contract | Basic mock policy only |
 
 ## Features
 
 | Feature | Domain/data boundary | Presentation state |
 | --- | --- | --- |
-| `features/roadmap` | Roadmap/topic models and repository interface/mock | Screen in app shell reads roadmap repository |
-| `features/library` | Video, playlist, playlist-entry models and mock repository | Sample rows and local-only filtering |
-| `features/notes` | Study note model and mock repository | Sample/editable screen state, not repository-backed yet |
-| `features/progress` | Progress/bookmark models and mock repository | Sample progress values; not connected to player |
-| `features/settings` | Settings model and mock repository | Theme toggle is current shell state, not durable settings |
-| `features/home` | Main shell and primary navigation | Implemented for prototype |
-| `features/player` | Learning player presentation | Mock UI; not connected to `PlayerEngine` |
+| `features/roadmap` | Roadmap/topic models and repository interface/mock | Screen reads the roadmap repository; create/edit/delete flows are active |
+| `features/library` | Video, playlist, playlist-entry models and repository implementations | Home and Library display saved playlists/videos; save and reopen actions are connected |
+| `features/notes` | Study note model and repository implementations | Notes tab and player note actions both persist data |
+| `features/progress` | Progress/bookmark models and repository implementations | Repository-backed progress/bookmarks exist but resume integration remains separate work |
+| `features/settings` | Settings model and repository implementations | Theme toggle is wired through app state and persisted through the repository layer |
+| `features/home` | Main shell and primary navigation | Home reads saved playlists and note totals from repositories |
+| `features/player` | Learning player presentation | Quality selector, fullscreen, save playlist, and save-note flows are active |
 
 ## Dependency direction
 

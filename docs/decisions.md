@@ -3,6 +3,26 @@
 Record significant project choices here. Add new decisions with date, context,
 decision, and consequences; do not silently change a foundational boundary.
 
+## 2026-10-03 — Use replaceable direct-stream playback adapters
+
+- **Context:** The learning screen needs one playback interface for YouTube and
+  MIT OCW, with playlist streams loaded only when a lecture is selected.
+- **Decision:** Route providers through `VideoSourceAdapter`, select a fresh
+  combined stream, and play the direct media URI through `video_player` behind
+  `PlaybackController`. Use `youtube_explode_dart` (BSD-3-Clause); do not add
+  NewPipe Extractor (GPL-3.0) without a separate distribution-license review.
+- **Consequences:** YouTube extraction is reverse-engineered and can break;
+  current service terms/compliance require legal review before release. Direct
+  streams may be transient, split-track formats are unsupported without a mux
+  backend, and no stream URLs are cached. YouTube ad/player requests are
+  explicitly excluded from content filtering. Browser codec/CORS support varies.
+
+## 2026-09-28 — Use YouTube's official embedded player (superseded)
+
+- **Context:** The initial prototype used the official IFrame API.
+- **Decision:** Superseded by the 2026-10-03 adapter/playback decision above.
+- **Consequences:** `youtube_player_iframe` has been removed from the app.
+
 ## 2026-09-27 — Local-first, replaceable boundaries
 
 - **Context:** This is a personal learning app and should work without requiring

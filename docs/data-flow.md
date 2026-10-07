@@ -1,44 +1,46 @@
 # Current Data Flow
 
-## Startup and mock mode
+## Startup and environment selection
 
-1. `main()` ensures Flutter bindings are initialized.
+1. `main()` initializes Flutter and boots the app shell.
 2. `configureDependencies()` registers interfaces in GetIt.
-3. The initial registration selects in-memory repositories, `MockMediaProvider`,
-   `MockPlayerEngine`, `LearningContentPolicy`, and `InMemoryFileStorage`.
-4. `VoyagerApp` gets the `RoadmapRepository` from the composition root unless a
-   repository is explicitly injected by a test.
-5. The app shell passes the roadmap contract to the roadmap screen.
+3. On Android, the app selects SQLite-backed repositories and a metadata cache.
+4. In mock/Web builds, the same composition root selects in-memory repositories,
+   `LearningContentPolicy`, and `InMemoryFileStorage`.
+5. `VoyagerApp` receives the roadmap repository and passes the app shell and
+   feature screens whatever domain contracts they need.
 
-No backend, user account, or internet connection is required to start the mock UI.
+The app is local-first by design, with a mock mode that works without a backend
+or real media service. The app shell now reads saved playlist and note data from
+real repository implementations instead of hidden sample state.
 
-## Implemented contracts not yet connected to screen actions
-
-Library, notes, progress, settings, media, player, content policy, and file
-storage interfaces are registered, but the current UI screens do not yet route
-their state changes through these repositories/services. The screen sample data
-is presentation-only.
-
-## Target local-first flow
+## Player and persistence flow
 
 ```text
-Screen
-  -> feature action/use case
-  -> domain repository/service interface
-  -> selected data adapter
-  -> SQLite for structured records / device storage for large files
+Player screen
+  -> `PlaybackController`
+  -> selected `VideoSourceAdapter`
+  -> direct media stream selection
+  -> `FlutterMediaPlayer` / platform player
 ```
 
-Playback is a separate replaceable path:
+Library and notes use the repository path:
 
 ```text
-Player UI
-  -> player-facing feature state
-  -> PlayerEngine
-  -> selected platform player
+Screen action
+  -> feature repository interface
+  -> SQLite adapter or in-memory adapter
+  -> saved playlist/video/note rows
 ```
 
-Source resolution similarly goes through `MediaProvider`; content decisions go
-through `ContentPolicy`. Provider-specific types should not flow back to the UI.
+Library playlist saves persist playlist metadata, ordered entries, and nested
+video records. Player notes save an authored note plus optional video ID and
+playback timestamp. These flows are in the current code path, not only the
+intended target architecture.
 
-The target flows describe intended architecture, not completed behavior.
+## Content and provider boundaries
+
+Source resolution flows through `SourceDetector` and `VideoSourceAdapter`
+implementations rather than the older `MediaProvider` abstraction. Content
+policies remain separate from playback and are intentionally disabled by default.
+Provider-specific media details should not leak into the UI layer.
