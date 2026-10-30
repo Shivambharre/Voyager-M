@@ -13,7 +13,8 @@ The presentation layer follows the supplied Neo-Brutalist UI direction: warm pap
 
 ## UI boundaries
 
-The screens use real repository contracts for Home, Library, Notes, and the player. The presentation layer still avoids direct SQLite or provider SDK calls, but the app shell and player now load and persist user data through their domain adapters.
+Home, Library, Notes, and player flows use repository contracts. The
+presentation layer avoids direct SQLite or provider SDK calls.
 
 ## Review notes
 
@@ -24,4 +25,5 @@ The screens use real repository contracts for Home, Library, Notes, and the play
 - The Design System Showcase is available from the palette icon in the app bar.
 - Player controls expose accessible labeling for fullscreen, seeking, and quality selection.
 
-The app shell and player remain intentionally focused, but the repository-backed library and note flows are no longer only mock UI state.
+The app shell and player remain intentionally focused; progress and settings
+repositories exist but are not yet connected to those screens.

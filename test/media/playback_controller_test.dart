@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voyager_learning/core/config/app_config.dart';
-import 'package:voyager_learning/core/content_filter/filter_engine.dart';
-import 'package:voyager_learning/core/content_filter/filter_service.dart';
 import 'package:voyager_learning/core/media/media_player.dart';
 import 'package:voyager_learning/core/media/playback_controller.dart';
-import 'package:voyager_learning/core/media/player_engine.dart';
+import 'package:voyager_learning/core/media/playback_state.dart';
 import 'package:voyager_learning/core/media/source_detector.dart';
 import 'package:voyager_learning/core/media/stream_selector.dart';
 import 'package:voyager_learning/core/media/video_metadata_cache.dart';
@@ -33,10 +31,6 @@ void main() {
         networkQuality: NetworkQuality.fast,
       ),
       config: const AppConfig(),
-      contentFilter: ContentFilterService(
-        config: const AppConfig(),
-        engine: NoOpContentFilterEngine(),
-      ),
     );
   });
 
@@ -52,10 +46,7 @@ void main() {
       expect(controller.currentVideo?.id, 'dQw4w9WgXcQ');
       expect(adapter.videoInfoCalls, 1);
       expect(adapter.streamCalls, 1);
-      expect(
-        player.loadedUri,
-        Uri.parse('https://media.example/combined-720.mp4'),
-      );
+      expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
       expect(
         player.loadedUri,
         isNot(Uri.parse('https://www.youtube.com/watch?v=dQw4w9WgXcQ')),
@@ -79,10 +70,7 @@ void main() {
       );
 
       expect(adapter.streamCalls, 1);
-      expect(
-        player.loadedUri,
-        Uri.parse('https://media.example/combined-720.mp4'),
-      );
+      expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
     },
   );
 
@@ -98,12 +86,40 @@ void main() {
     expect(controller.selectedStream, lowerQuality);
     expect(player.loadedUri, lowerQuality.url);
   });
+
+  test(
+    'selects and loads a video-only HD stream with its paired audio',
+    () async {
+      adapter.hasAdaptiveStream = true;
+
+      await controller.load('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+
+      expect(
+        controller.availableStreams.map((stream) => stream.resolutionHeight),
+        contains(1080),
+      );
+      expect(controller.selectedStream?.resolutionHeight, 1080);
+      expect(
+        controller.selectedStream?.audioUrl,
+        Uri.parse('https://media.example/audio.m4a'),
+      );
+      expect(
+        player.loadedUri,
+        Uri.parse('https://media.example/video-only.mp4'),
+      );
+      expect(
+        player.loadedAudioUri,
+        Uri.parse('https://media.example/audio.m4a'),
+      );
+    },
+  );
 }
 
 class _FakeAdapter implements VideoSourceAdapter {
   int videoInfoCalls = 0;
   int playlistCalls = 0;
   int streamCalls = 0;
+  bool hasAdaptiveStream = false;
 
   @override
   bool canHandle(Uri url) => url.host.endsWith('youtube.com');
@@ -144,8 +160,19 @@ class _FakeAdapter implements VideoSourceAdapter {
   Future<List<MediaStreamInfo>> getStreams(VideoInfo video) async {
     streamCalls++;
     return [
+      if (hasAdaptiveStream)
+        MediaStreamInfo(
+          url: Uri.parse('https://media.example/video-only.mp4'),
+          audioUrl: Uri.parse('https://media.example/audio.m4a'),
+          mimeType: 'video/mp4',
+          container: 'mp4',
+          resolutionHeight: 1080,
+          bitrateBitsPerSecond: 5000000,
+          hasAudio: true,
+          hasVideo: true,
+        ),
       MediaStreamInfo(
-        url: Uri.parse('https://media.example/combined-720.mp4'),
+        url: Uri.parse('https://media.example/combined.mp4'),
         mimeType: 'video/mp4',
         container: 'mp4',
         resolutionHeight: 720,
@@ -173,6 +200,7 @@ class _FakeMediaPlayer implements MediaPlayer {
   final _snapshots = StreamController<PlayerSnapshot>.broadcast();
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
   Uri? loadedUri;
+  Uri? loadedAudioUri;
 
   @override
   PlayerSnapshot get snapshot => _snapshot;
@@ -181,8 +209,9 @@ class _FakeMediaPlayer implements MediaPlayer {
   Stream<PlayerSnapshot> get snapshots => _snapshots.stream;
 
   @override
-  Future<void> load(Uri mediaUri) async {
+  Future<void> load(Uri mediaUri, {Uri? audioUri}) async {
     loadedUri = mediaUri;
+    loadedAudioUri = audioUri;
     _snapshot = const PlayerSnapshot(
       status: PlayerStatus.ready,
       position: Duration.zero,

@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../config/app_config.dart';
-import '../content_filter/filter_service.dart';
 import 'media_player.dart';
-import 'player_engine.dart';
+import 'playback_state.dart';
 import 'source_detector.dart';
 import 'stream_selector.dart';
 import 'video_metadata_cache.dart';
@@ -23,12 +22,12 @@ abstract interface class PlaybackController {
 
   Future<void> load(String sourceUrl);
   Future<void> selectLecture(PlaylistEntryInfo entry);
+  Future<void> selectStream(MediaStreamInfo stream);
   Widget buildSurface();
   Future<void> play();
   Future<void> pause();
   Future<void> seekTo(Duration position);
   Future<void> setPlaybackSpeed(double speed);
-  Future<void> selectStream(MediaStreamInfo stream);
   Future<Duration> get currentPosition;
   Future<void> dispose();
 }
@@ -40,7 +39,6 @@ class DefaultPlaybackController implements PlaybackController {
     required this.mediaPlayer,
     required this.streamPolicy,
     required this.config,
-    required this.contentFilter,
   });
 
   final VideoSourceRegistry sources;
@@ -48,7 +46,6 @@ class DefaultPlaybackController implements PlaybackController {
   final MediaPlayer mediaPlayer;
   final StreamSelectionPolicy streamPolicy;
   final AppConfig config;
-  final ContentFilterService contentFilter;
   VideoSourceAdapter? _activeAdapter;
   VideoInfo? _currentVideo;
   PlaylistInfo? _currentPlaylist;
@@ -175,12 +172,25 @@ class DefaultPlaybackController implements PlaybackController {
       );
     }
     _currentVideo = video;
+    await mediaPlayer.load(stream.url, audioUri: stream.audioUrl);
     _selectedStream = stream;
-    try {
-      await mediaPlayer.load(stream.url);
-    } on Object {
-      rethrow;
+  }
+
+  @override
+  Future<void> selectStream(MediaStreamInfo stream) async {
+    _ensureOpen();
+    if (!_availableStreams.contains(stream)) {
+      throw ArgumentError.value(stream, 'stream', 'Stream is not available.');
     }
+    if (stream == _selectedStream) return;
+
+    final position = await mediaPlayer.currentPosition;
+    final wasPlaying = snapshot.status == PlayerStatus.playing;
+    await mediaPlayer.pause();
+    await mediaPlayer.load(stream.url, audioUri: stream.audioUrl);
+    if (position > Duration.zero) await mediaPlayer.seekTo(position);
+    if (wasPlaying) await mediaPlayer.play();
+    _selectedStream = stream;
   }
 
   String _streamSelectionMessage(StreamSelectionFailure? failure) =>
@@ -212,23 +222,6 @@ class DefaultPlaybackController implements PlaybackController {
       mediaPlayer.setPlaybackSpeed(speed);
 
   @override
-  Future<void> selectStream(MediaStreamInfo stream) async {
-    _ensureOpen();
-    if (!_availableStreams.contains(stream)) {
-      throw ArgumentError.value(stream, 'stream', 'Stream is not available.');
-    }
-    if (stream == _selectedStream) return;
-
-    final position = await mediaPlayer.currentPosition;
-    final wasPlaying = snapshot.status == PlayerStatus.playing;
-    await mediaPlayer.pause();
-    await mediaPlayer.load(stream.url);
-    if (position > Duration.zero) await mediaPlayer.seekTo(position);
-    if (wasPlaying) await mediaPlayer.play();
-    _selectedStream = stream;
-  }
-
-  @override
   Future<Duration> get currentPosition => mediaPlayer.currentPosition;
 
   void _ensureOpen() {
@@ -239,7 +232,6 @@ class DefaultPlaybackController implements PlaybackController {
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
-    await contentFilter.dispose();
     await mediaPlayer.dispose();
     await sources.dispose();
   }

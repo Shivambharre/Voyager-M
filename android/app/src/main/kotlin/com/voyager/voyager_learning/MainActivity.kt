@@ -2,9 +2,19 @@ package com.voyager.voyager_learning
 
 import android.os.Handler
 import android.os.Looper
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.ui.PlayerView
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.platform.PlatformView
+import io.flutter.plugin.platform.PlatformViewFactory
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.downloader.Downloader
 import org.schabi.newpipe.extractor.downloader.Request
@@ -18,12 +28,67 @@ import java.util.concurrent.Executors
 class MainActivity : FlutterActivity() {
 	private val extractionExecutor = Executors.newSingleThreadExecutor()
 	private val mainHandler = Handler(Looper.getMainLooper())
+	private lateinit var mediaPlayer: ExoPlayer
 
 	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 		super.configureFlutterEngine(flutterEngine)
+		mediaPlayer = ExoPlayer.Builder(this).build()
+		flutterEngine.platformViewsController.registry.registerViewFactory(
+			PLAYER_VIEW_TYPE,
+			NativePlayerViewFactory(mediaPlayer),
+		)
+		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, PLAYER_CHANNEL)
+			.setMethodCallHandler { call, result ->
+				try {
+					when (call.method) {
+						"load" -> {
+							val videoUrl = call.argument<String>("videoUrl")
+							if (videoUrl.isNullOrBlank()) {
+								result.error("invalid_url", "A video URL is required.", null)
+								return@setMethodCallHandler
+							}
+							val videoSource = mediaSource(videoUrl)
+							val audioUrl = call.argument<String>("audioUrl")
+							val source = if (audioUrl.isNullOrBlank()) {
+								videoSource
+							} else {
+								MergingMediaSource(videoSource, mediaSource(audioUrl))
+							}
+							mediaPlayer.setMediaSource(source)
+							mediaPlayer.prepare()
+							result.success(null)
+						}
+						"play" -> {
+							mediaPlayer.play()
+							result.success(null)
+						}
+						"pause" -> {
+							mediaPlayer.pause()
+							result.success(null)
+						}
+						"seekTo" -> {
+							mediaPlayer.seekTo(call.argument<Number>("positionMs")?.toLong() ?: 0L)
+							result.success(null)
+						}
+						"setPlaybackSpeed" -> {
+							val speed = call.argument<Number>("speed")?.toFloat()
+								?: throw IllegalArgumentException("Playback speed is required.")
+							mediaPlayer.playbackParameters = PlaybackParameters(speed)
+							result.success(null)
+						}
+						"getState" -> result.success(playerState())
+						else -> result.notImplemented()
+					}
+				} catch (error: Exception) {
+					result.error("player_error", error.message, null)
+				}
+			}
 		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
 			.setMethodCallHandler { call, result ->
-				if (call.method != "resolveVideo" && call.method != "resolvePlaylist") {
+				if (call.method != "resolveVideo" &&
+					call.method != "resolvePlaylist" &&
+					call.method != "resolveStreams"
+				) {
 					result.notImplemented()
 					return@setMethodCallHandler
 				}
@@ -38,7 +103,8 @@ class MainActivity : FlutterActivity() {
 					try {
 						val info = when (call.method) {
 							"resolveVideo" -> resolveVideo(sourceUrl)
-							else -> resolvePlaylist(sourceUrl)
+							"resolvePlaylist" -> resolvePlaylist(sourceUrl)
+							else -> resolveStreams(sourceUrl)
 						}
 						mainHandler.post { result.success(info) }
 					} catch (error: Exception) {
@@ -60,6 +126,68 @@ class MainActivity : FlutterActivity() {
 			"durationSeconds" to extractor.length,
 			"author" to extractor.uploaderName,
 			"thumbnailUrl" to extractor.thumbnails.firstOrNull()?.url,
+			"streams" to mapVideoStreams(extractor),
+		)
+	}
+
+	private fun resolveStreams(sourceUrl: String): List<Map<String, Any?>> {
+		NewPipeExtractorRuntime.initialize()
+		val extractor = NewPipe.getServiceByUrl(sourceUrl).getStreamExtractor(sourceUrl)
+		extractor.fetchPage()
+		return mapVideoStreams(extractor)
+	}
+
+	private fun mapVideoStreams(
+		extractor: org.schabi.newpipe.extractor.stream.StreamExtractor,
+	): List<Map<String, Any?>> {
+		val audioUrl = extractor.audioStreams
+			.filter { it.isUrl && !it.content.isNullOrBlank() }
+			.maxByOrNull { it.bitrate }
+			?.content
+		return extractor.videoStreams.mapNotNull { mapVideoStream(it, null) } +
+			extractor.videoOnlyStreams.mapNotNull { mapVideoStream(it, audioUrl) }
+	}
+
+	private fun mapVideoStream(
+		stream: org.schabi.newpipe.extractor.stream.VideoStream,
+		audioUrl: String?,
+	): Map<String, Any?>? {
+		val format = stream.format ?: return null
+		val url = stream.content
+		if (!stream.isUrl || url.isNullOrBlank()) return null
+		if (stream.isVideoOnly && audioUrl.isNullOrBlank()) return null
+		return mapOf(
+			"url" to url,
+			"audioUrl" to audioUrl.takeIf { stream.isVideoOnly },
+			"mimeType" to format.mimeType,
+			"container" to format.suffix,
+			"resolutionHeight" to stream.height.takeIf { it > 0 },
+			"bitrateBitsPerSecond" to stream.bitrate.takeIf { it > 0 },
+			"hasAudio" to true,
+			"hasVideo" to true,
+		)
+	}
+
+	private fun mediaSource(url: String): MediaSource =
+		DefaultMediaSourceFactory(this).createMediaSource(
+			MediaItem.fromUri(android.net.Uri.parse(url)),
+		)
+
+	private fun playerState(): Map<String, Any?> {
+		val status = when {
+			mediaPlayer.playerError != null -> "error"
+			mediaPlayer.playbackState == ExoPlayer.STATE_BUFFERING -> "loading"
+			mediaPlayer.playbackState == ExoPlayer.STATE_ENDED -> "completed"
+			mediaPlayer.playWhenReady && mediaPlayer.isPlaying -> "playing"
+			mediaPlayer.playbackState == ExoPlayer.STATE_READY -> "paused"
+			else -> "idle"
+		}
+		return mapOf(
+			"status" to status,
+			"positionMs" to mediaPlayer.currentPosition,
+			"durationMs" to (mediaPlayer.duration.takeIf { it >= 0 } ?: 0L),
+			"playbackSpeed" to mediaPlayer.playbackParameters.speed,
+			"errorMessage" to mediaPlayer.playerError?.message,
 		)
 	}
 
@@ -109,12 +237,38 @@ class MainActivity : FlutterActivity() {
 
 	override fun onDestroy() {
 		extractionExecutor.shutdownNow()
+		if (::mediaPlayer.isInitialized) mediaPlayer.release()
 		super.onDestroy()
 	}
 
 	companion object {
 		private const val CHANNEL = "com.voyager/newpipe"
+		private const val PLAYER_CHANNEL = "com.voyager/player"
+		private const val PLAYER_VIEW_TYPE = "com.voyager/player_view"
 		private const val MAX_PLAYLIST_ENTRIES = 500
+	}
+}
+
+private class NativePlayerViewFactory(
+	private val player: ExoPlayer,
+) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+	override fun create(context: android.content.Context, viewId: Int, args: Any?): PlatformView =
+		NativePlayerView(context, player)
+}
+
+private class NativePlayerView(
+	context: android.content.Context,
+	player: ExoPlayer,
+) : PlatformView {
+	private val view = PlayerView(context).apply {
+		this.player = player
+		useController = false
+	}
+
+	override fun getView() = view
+
+	override fun dispose() {
+		view.player = null
 	}
 }
 

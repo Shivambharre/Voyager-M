@@ -51,19 +51,18 @@ abstract final class StreamSelector {
     StreamSelectionPolicy policy,
   ) {
     final now = DateTime.now();
-    final available = streams
-        .where(
-          (stream) =>
-              stream.hasAudio &&
-              stream.hasVideo &&
-              policy.supportedMimeTypes.contains(
-                _normalizedMimeType(stream.mimeType),
-              ) &&
-              (stream.resolutionHeight ?? 0) <= policy.maxResolutionHeight &&
-              (stream.expiresAt == null || stream.expiresAt!.isAfter(now)),
-        )
-        .toList(growable: false);
-    return List.unmodifiable(available);
+    return List.unmodifiable(
+      streams.where(
+        (stream) =>
+            stream.hasAudio &&
+            stream.hasVideo &&
+            policy.supportedMimeTypes.contains(
+              _normalizedMimeType(stream.mimeType),
+            ) &&
+            (stream.resolutionHeight ?? 0) <= policy.maxResolutionHeight &&
+            (stream.expiresAt == null || stream.expiresAt!.isAfter(now)),
+      ),
+    );
   }
 
   static StreamSelection select(

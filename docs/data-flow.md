@@ -5,8 +5,7 @@
 1. `main()` initializes Flutter and boots the app shell.
 2. `configureDependencies()` registers interfaces in GetIt.
 3. On Android, the app selects SQLite-backed repositories and a metadata cache.
-4. In mock/Web builds, the same composition root selects in-memory repositories,
-   `LearningContentPolicy`, and `InMemoryFileStorage`.
+4. In mock/Web builds, the same composition root selects in-memory repositories.
 5. `VoyagerApp` receives the roadmap repository and passes the app shell and
    feature screens whatever domain contracts they need.
 
@@ -21,7 +20,7 @@ Player screen
   -> `PlaybackController`
   -> selected `VideoSourceAdapter`
   -> direct media stream selection
-  -> `FlutterMediaPlayer` / platform player
+  -> Android Media3 player or Flutter `video_player` fallback
 ```
 
 Library and notes use the repository path:
@@ -38,9 +37,9 @@ video records. Player notes save an authored note plus optional video ID and
 playback timestamp. These flows are in the current code path, not only the
 intended target architecture.
 
-## Content and provider boundaries
+## Provider boundary
 
 Source resolution flows through `SourceDetector` and `VideoSourceAdapter`
-implementations rather than the older `MediaProvider` abstraction. Content
-policies remain separate from playback and are intentionally disabled by default.
-Provider-specific media details should not leak into the UI layer.
+implementations. Android uses NewPipe; other platforms lazily create the
+`youtube_explode_dart` fallback. Provider-specific media details do not leak
+into the UI layer. Unused mock-media and content-filter prototypes were removed.

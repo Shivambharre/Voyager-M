@@ -1,13 +1,14 @@
 # Voyager Learning
 
-A local-first Android learning app for managing learning roadmaps, study materials, notes, and progress while keeping the media and content-distraction layer replaceable.
+A local-first Android learning app for managing roadmaps, saved learning
+materials, and study notes, with YouTube and MIT OpenCourseWare playback.
 
 ## Project goals
 
 - Organize educational videos and playlists into structured roadmaps
-- Keep study content, notes, bookmarks, and progress locally
+- Keep study content and notes locally
 - Optimize for deep learning rather than endless content consumption
-- Separate storage, media, filtering, and UI behind interfaces
+- Keep playback and persistence behind small app-owned interfaces
 
 ## Architecture
 
@@ -25,8 +26,6 @@ See the docs folder for architecture and workflow references:
 - [docs/database.md](docs/database.md)
 - [docs/media-provider.md](docs/media-provider.md)
 - [docs/player.md](docs/player.md)
-- [docs/content-policy.md](docs/content-policy.md)
-- [docs/ad-handling.md](docs/ad-handling.md)
 - [docs/decisions.md](docs/decisions.md)
 - [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 

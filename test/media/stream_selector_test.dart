@@ -38,6 +38,48 @@ void main() {
     expect(selection.stream?.url.path, '/720');
   });
 
+  test('keeps 3360p streams out of the available quality list', () {
+    final streams = [
+      stream(path: '1080', height: 1080, bitrate: 5000000),
+      stream(path: '3360', height: 3360, bitrate: 15000000),
+    ];
+    const fastPolicy = StreamSelectionPolicy(
+      supportedMimeTypes: {'video/mp4'},
+      maxResolutionHeight: 1080,
+      networkQuality: NetworkQuality.fast,
+    );
+
+    expect(
+      StreamSelector.available(
+        streams,
+        fastPolicy,
+      ).map((stream) => stream.resolutionHeight),
+      [1080],
+    );
+    expect(
+      StreamSelector.select(streams, fastPolicy).stream?.url.path,
+      '/1080',
+    );
+  });
+
+  test('normalizes MIME types before filtering and selecting', () {
+    final streams = [
+      MediaStreamInfo(
+        url: Uri.parse('https://media.example/720'),
+        mimeType: 'video/mp4; codecs="avc1.4d401f, mp4a.40.2"',
+        container: 'mp4',
+        resolutionHeight: 720,
+        bitrateBitsPerSecond: 2500000,
+        hasAudio: true,
+        hasVideo: true,
+      ),
+      stream(path: '360', height: 360, bitrate: 600000),
+    ];
+
+    expect(StreamSelector.available(streams, policy), hasLength(2));
+    expect(StreamSelector.select(streams, policy).stream?.url.path, '/720');
+  });
+
   test('rejects separate audio and video streams without mux support', () {
     final selection = StreamSelector.select([
       stream(
@@ -53,31 +95,6 @@ void main() {
       selection.failure,
       StreamSelectionFailure.noCombinedAudioVideoStream,
     );
-  });
-
-  test('accepts normalized mime types with codec parameters', () {
-    final selection = StreamSelector.select([
-      MediaStreamInfo(
-        url: Uri.parse('https://media.example/720'),
-        mimeType: 'video/mp4; codecs="avc1.4d401f, mp4a.40.2"',
-        container: 'mp4',
-        resolutionHeight: 720,
-        bitrateBitsPerSecond: 2500000,
-        hasAudio: true,
-        hasVideo: true,
-      ),
-      MediaStreamInfo(
-        url: Uri.parse('https://media.example/360'),
-        mimeType: 'video/mp4',
-        container: 'mp4',
-        resolutionHeight: 360,
-        bitrateBitsPerSecond: 600000,
-        hasAudio: true,
-        hasVideo: true,
-      ),
-    ], policy);
-
-    expect(selection.stream?.url.path, '/720');
   });
 
   test('rejects unsupported formats', () {

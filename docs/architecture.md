@@ -6,8 +6,8 @@ Voyager Learning is a local-first Android study app built around a strict separa
 
 ## Core architectural principles
 
-1. Local-first by default. Structured learning data lives in SQLite, media files on device storage, and any cloud dependency remains optional.
-2. Replaceable components. Every major subsystem exposes an interface and is implemented behind a contract.
+1. Local-first by default. Structured learning data lives in SQLite on Android; Web uses in-memory repositories.
+2. Small replaceable boundaries where the application currently needs them.
 3. Study-oriented workflow. The app should guide the user from roadmap selection to topic completion with minimal distraction.
 4. Strict module isolation. Feature code depends on interfaces, not concrete implementations.
 5. Testability. Business logic and repository interfaces are unit-testable without wiring to UI or platform APIs.
@@ -16,44 +16,38 @@ Voyager Learning is a local-first Android study app built around a strict separa
 
 - Presentation: screens, widgets, navigation, theming, state handling
 - Domain: entities, use cases, value objects, feature rules
-- Data: repositories, persistence adapters, file storage adapters
-- Infrastructure: SQLite, media provider adapters, device storage, filtering policies
+- Data: repositories and persistence adapters
+- Infrastructure: SQLite and platform-specific media extraction/playback
 - Application shell: dependency injection, app composition root, bootstrapping
 
 ## Replaceability map
 
-| Concern | Interface | Current selection | Status |
-| --- | --- | --- | --- |
-| Structured database | `AppDatabase` | `SqfliteAppDatabase` on Android | Core schema v2 and migration implemented; more migration coverage remains |
-| Feature repositories | Feature-specific repository interfaces | SQLite on Android, in-memory on mock/Web | Repository adapters are active for roadmaps, library, notes, settings, and metadata caching |
-| File storage | `LocalFileStorage` | `InMemoryFileStorage` | Mock only; device files not implemented |
-| Media resolution | `VideoSourceAdapter` / `SourceDetector` | YouTube + MIT OCW adapters | Source adapters resolve, normalize, and stream direct media metadata; no app-owned file extraction yet |
-| Player control | `PlaybackController` | `DefaultPlaybackController` + `FlutterMediaPlayer` | Available streams are retained for quality switching; fullscreen and playback controls are in the screen |
-| Content filtering | `ContentFilterService` / `ContentFilterEngine` | Disabled no-op engine | Separate MethodChannel adapter contract; Rust engine not packaged |
-| Content decisions | `ContentPolicy` | `LearningContentPolicy` | Basic mock; separate from request filtering |
-| Search | To be defined | None | Not implemented |
-| OCR | To be defined | None | Not implemented |
-| Future sync | To be defined | None | Optional and deferred |
+| Concern | Current implementation | Status |
+| --- | --- | --- |
+| Structured data | `AppDatabase`; SQLite repositories on Android, in-memory repositories on Web/mock | Schema v3; migration and repository tests exist |
+| Active learning data | Roadmap, library, and note repositories | Used by app screens and player save flows |
+| Progress and settings data | SQLite and in-memory repositories | Data adapters exist; screens do not yet read or write these repositories |
+| YouTube extraction | Native NewPipe adapter on Android; lazily created `youtube_explode_dart` fallback elsewhere | Platform-specific extractor paths; no duplicate Android extractor instance |
+| MIT OCW extraction | `MitOcwAdapter` | Supports recognized pages and direct media only |
+| Playback | `PlaybackController` → `AndroidMediaPlayer` (Media3) on Android or `FlutterMediaPlayer` elsewhere | One controller pipeline; Android merges adaptive video-only and audio tracks |
 
 ## Current implementation checkpoint
 
 The composition root uses SQLite-backed repositories on Android, in-memory
-repositories/cache in mock and Web mode, and creates a disposable playback
-pipeline per player route. The app shell now reads saved library playlists and
-notes from their repository contracts. Media extraction/playback still requires
-network access, but quality selection and fullscreen are now part of the player
-screen state rather than ad hoc UI logic.
+repositories/cache in mock and Web mode, and creates one disposable playback
+pipeline per player route. Media extraction/playback requires network access.
 
 Available domain contracts cover:
 
 - Roadmaps and topics
-- Videos, playlists, playlist entries, and stream metadata models
-- Study notes with timestamp/video context
-- Playback progress and bookmarks
-- Learning settings
-- Source detection, player control, filtering boundaries, and file storage
+- Videos, playlists, and playlist entries, plus source/stream metadata models
+- Study notes
+- Playback progress and settings data models/repositories
+- Source extraction, stream selection, and player control
 
-Durable device-file handling and native Rust filtering remain deferred. See
+Durable attachment storage, progress/resume wiring, and settings persistence
+remain out of the active app flow. Experimental content filtering and mock
+media/player abstractions were removed. See
 [`implementation-status.md`](implementation-status.md) for completion
 boundaries and validation evidence.
 
@@ -71,8 +65,6 @@ Holds cross-cutting abstractions:
 - design
 - di
 - media
-- storage
-- filtering
 
 ### Features
 
@@ -80,10 +72,13 @@ Each feature is isolated. Current domain modules include roadmaps, the learning 
 
 ## Data flow
 
-The current startup and mock-mode flow is documented in [`data-flow.md`](data-flow.md).
-Player routing is connected; live provider extraction, physical-device playback,
-and native filtering remain validation or implementation gaps.
+The current startup and mock-mode flow is documented in
+[`data-flow.md`](data-flow.md).
+Player routing is connected; live provider extraction and physical-device
+playback remain validation gaps.
 
 ## Why this matters
 
-The architecture prevents any single implementation detail from becoming the default dependency for all business rules. If a future requirement replaces SQLite with a different storage engine, or a new media provider is added for a different platform, the rest of the app continues to work with minimal change.
+The architecture keeps the active UI independent from SQLite and provider SDK
+types, without shipping unused abstractions for features that are not wired into
+the app.

@@ -92,19 +92,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - No package source was copied or modified. The complete license is available
   from the package's `LICENSE` file and is bundled through Flutter's notices.
 
-## NewPipe Extractor v0.26.5 (Experimental Android Integration)
+## Additional Dependencies and Reviewed Projects
 
-- [NewPipe Extractor](https://github.com/TeamNewPipe/NewPipeExtractor) is
-  GPL-3.0-or-later.
-- Use: Android single-video metadata and playlist-entry extraction through a
-  Flutter MethodChannel. Stream extraction still uses `youtube_explode_dart`.
-- No NewPipe source files were copied into this repository.
-- This experimental integration is not cleared for distribution. GPL-compatible
-  licensing, corresponding-source availability, and required license notices
-  need legal review before any release containing this dependency.
-
-## Reviewed, Not Integrated
-
+- [NewPipe Extractor](https://github.com/TeamNewPipe/NewPipeExtractor) is used
+  by the Android YouTube adapter and is GPL-3.0-or-later. Distribution of a
+  combined application may require corresponding source and GPL-compatible
+  licensing; obtain legal review before release.
 - [Brave adblock-rust](https://github.com/brave/adblock-rust) is MPL-2.0. It was
   reviewed but is not a dependency and no Rust code is included. MPL conditions
   apply to covered files and modifications; source changes to MPL-covered files

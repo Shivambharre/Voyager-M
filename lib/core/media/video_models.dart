@@ -75,6 +75,7 @@ class MediaStreamInfo {
     this.audioCodec,
     this.videoCodec,
     this.expiresAt,
+    this.audioUrl,
   });
 
   final Uri url;
@@ -88,4 +89,5 @@ class MediaStreamInfo {
   final String? audioCodec;
   final String? videoCodec;
   final DateTime? expiresAt;
+  final Uri? audioUrl;
 }

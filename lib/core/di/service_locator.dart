@@ -2,9 +2,12 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../core/database/database.dart';
-import '../../features/library/data/sqlite_learning_library_repository.dart';
 import '../../features/library/data/in_memory_learning_library_repository.dart';
+import '../../features/library/data/sqlite_learning_library_repository.dart';
 import '../../features/library/domain/learning_library_repository.dart';
+import '../../features/history/data/in_memory_recent_watch_history_repository.dart';
+import '../../features/history/data/sqlite_recent_watch_history_repository.dart';
+import '../../features/history/domain/recent_watch_history_repository.dart';
 import '../../features/notes/data/in_memory_notes_repository.dart';
 import '../../features/notes/data/sqlite_notes_repository.dart';
 import '../../features/notes/domain/notes_repository.dart';
@@ -17,21 +20,15 @@ import '../../features/roadmap/domain/roadmap_repository.dart';
 import '../../features/settings/data/in_memory_settings_repository.dart';
 import '../../features/settings/data/sqlite_settings_repository.dart';
 import '../../features/settings/domain/settings_repository.dart';
-import '../filtering/content_policy.dart';
 import '../config/app_config.dart';
-import '../content_filter/filter_engine.dart';
-import '../content_filter/filter_service.dart';
 import '../media/media_player.dart';
-import '../media/media_provider.dart';
+import '../media/android_media_player.dart';
 import '../media/mit_ocw_adapter.dart';
-import '../media/newpipe_youtube_adapter.dart';
 import '../media/playback_controller.dart';
-import '../media/player_engine.dart';
 import '../media/stream_selector.dart';
 import '../media/video_metadata_cache.dart';
+import '../media/newpipe_youtube_adapter.dart';
 import '../media/video_source_registry.dart';
-import '../media/youtube_adapter.dart';
-import '../storage/local_file_storage.dart';
 
 final GetIt serviceLocator = GetIt.instance;
 
@@ -45,6 +42,9 @@ Future<void> configureDependencies({bool? useMocks}) async {
     _registerIfMissing<NotesRepository>(InMemoryNotesRepository.new);
     _registerIfMissing<ProgressRepository>(InMemoryProgressRepository.new);
     _registerIfMissing<SettingsRepository>(InMemorySettingsRepository.new);
+    _registerIfMissing<RecentWatchHistoryRepository>(
+      InMemoryRecentWatchHistoryRepository.new,
+    );
   } else if (!serviceLocator.isRegistered<AppDatabase>()) {
     final database = SqfliteAppDatabase();
     await database.initialize();
@@ -67,25 +67,11 @@ Future<void> configureDependencies({bool? useMocks}) async {
     serviceLocator.registerLazySingleton<SettingsRepository>(
       () => SqliteSettingsRepository(serviceLocator<AppDatabase>()),
     );
+    serviceLocator.registerLazySingleton<RecentWatchHistoryRepository>(
+      () => SqliteRecentWatchHistoryRepository(serviceLocator<AppDatabase>()),
+    );
   }
-  _registerIfMissing<MediaProvider>(MockMediaProvider.new);
-  _registerIfMissing<PlayerEngine>(MockPlayerEngine.new);
-  _registerIfMissing<ContentPolicy>(LearningContentPolicy.new);
-  _registerIfMissing<LocalFileStorage>(InMemoryFileStorage.new);
   _registerIfMissing<AppConfig>(() => AppConfig.fromEnvironment);
-  _registerIfMissing<ContentFilterEngine>(() {
-    final config = serviceLocator<AppConfig>();
-    if (!config.contentFilteringEnabled || config.filterEngine == 'none') {
-      return NoOpContentFilterEngine();
-    }
-    return UnavailableContentFilterEngine(config.filterEngine);
-  });
-  _registerIfMissing<ContentFilterService>(
-    () => ContentFilterService(
-      config: serviceLocator<AppConfig>(),
-      engine: serviceLocator<ContentFilterEngine>(),
-    ),
-  );
   _registerIfMissing<VideoMetadataCache>(
     shouldUseMocks
         ? InMemoryVideoMetadataCache.new
@@ -95,20 +81,19 @@ Future<void> configureDependencies({bool? useMocks}) async {
     serviceLocator.registerFactory<PlaybackController>(
       () => DefaultPlaybackController(
         sources: VideoSourceRegistry([
-          !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-              ? NewPipeYoutubeAdapter()
-              : YoutubeAdapter(),
+          NewPipeYoutubeAdapter(),
           MitOcwAdapter(),
         ]),
         metadataCache: serviceLocator<VideoMetadataCache>(),
-        mediaPlayer: FlutterMediaPlayer(),
+        mediaPlayer: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+            ? AndroidMediaPlayer()
+            : FlutterMediaPlayer(),
         streamPolicy: const StreamSelectionPolicy(
           supportedMimeTypes: {'video/mp4', 'video/webm'},
-          maxResolutionHeight: 2160,
+          maxResolutionHeight: 1080,
           networkQuality: NetworkQuality.fast,
         ),
         config: serviceLocator<AppConfig>(),
-        contentFilter: serviceLocator<ContentFilterService>(),
       ),
     );
   }

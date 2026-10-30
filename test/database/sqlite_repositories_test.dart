@@ -6,6 +6,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:voyager_learning/core/database/database.dart';
 import 'package:voyager_learning/features/library/data/sqlite_learning_library_repository.dart';
 import 'package:voyager_learning/features/library/domain/learning_content.dart';
+import 'package:voyager_learning/features/history/data/sqlite_recent_watch_history_repository.dart';
+import 'package:voyager_learning/features/history/domain/recent_watch_entry.dart';
 import 'package:voyager_learning/features/notes/data/sqlite_notes_repository.dart';
 import 'package:voyager_learning/features/notes/domain/study_note.dart';
 import 'package:voyager_learning/features/progress/data/sqlite_progress_repository.dart';
@@ -55,6 +57,7 @@ void main() {
         'bookmarks',
         'settings',
         'video_metadata_cache',
+        'recent_watch_history',
       ]),
     );
     final indexes = await database.query(
@@ -152,6 +155,49 @@ void main() {
     },
   );
 
+  test('persists and orders recent watch history', () async {
+    final repository = SqliteRecentWatchHistoryRepository(database);
+    final firstWatch = DateTime.utc(2026, 10, 29);
+    final latestWatch = firstWatch.add(const Duration(hours: 1));
+    await repository.record(
+      RecentWatchEntry(
+        videoId: 'v1',
+        sourceUrl: 'https://example.test/v1',
+        title: 'Lesson one',
+        creator: 'Teacher',
+        durationSeconds: 240,
+        watchedAt: firstWatch,
+      ),
+    );
+    await repository.record(
+      RecentWatchEntry(
+        videoId: 'v2',
+        sourceUrl: 'https://example.test/v2',
+        title: 'Lesson two',
+        creator: 'Teacher',
+        durationSeconds: 300,
+        watchedAt: latestWatch,
+      ),
+    );
+    await repository.record(
+      RecentWatchEntry(
+        videoId: 'v1',
+        sourceUrl: 'https://example.test/v1',
+        title: 'Lesson one',
+        creator: 'Teacher',
+        durationSeconds: 240,
+        watchedAt: latestWatch.add(const Duration(minutes: 1)),
+      ),
+    );
+
+    final recent = await repository.getRecent();
+    expect(recent.map((entry) => entry.videoId), ['v1', 'v2']);
+    expect(recent.first.title, 'Lesson one');
+
+    await repository.clear();
+    expect(await repository.getRecent(), isEmpty);
+  });
+
   test(
     'persists notes, progress, bookmarks, and settings across reopen',
     () async {
@@ -244,7 +290,7 @@ void main() {
       path.join(directory.path, SqfliteAppDatabase.databaseFileName),
       endsWith('voyager_learning.db'),
     );
-    expect(SqfliteAppDatabase.schemaVersion, 2);
+    expect(SqfliteAppDatabase.schemaVersion, 3);
   });
 
   test(
@@ -283,6 +329,14 @@ void main() {
             columns: ['name'],
             where: "type = 'table' AND name = 'video_metadata_cache'",
           )),
+          hasLength(1),
+        );
+        expect(
+          await upgraded.query(
+            'sqlite_master',
+            columns: ['name'],
+            where: "type = 'table' AND name = 'recent_watch_history'",
+          ),
           hasLength(1),
         );
         expect(await upgraded.query('migration_probe'), [

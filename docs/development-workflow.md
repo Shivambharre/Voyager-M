@@ -8,7 +8,8 @@
 4. Build a feature screen using the Design System and app shell.
 5. Validate with targeted widget or unit tests.
 
-During architecture and UI work, the dependency injection container selects in-memory mocks. This mode must remain usable without internet, platform storage, or a production media provider.
+Mock/Web mode selects in-memory repositories. Media playback still requires
+network access and uses the same player pipeline as Android.
 
 ## Current roadmap position
 
@@ -17,9 +18,9 @@ The phase-by-phase status and implementation evidence are maintained in
 [`development-roadmap.md`](development-roadmap.md).
 
 - Phase 0.1: complete — project skeleton and architecture documentation
-- Phase 0.2: complete for mock mode — interfaces and centralized in-memory DI
+- Phase 0.2: active repository interfaces and centralized platform-specific DI
 - Phase 1.1–1.2: complete as UI prototypes
-- Next: Phase 2.1 — SQLite schema, migrations, and repository implementations
+- Current: maintain and validate the SQLite-backed Android repository flow
 
 ## Validation commands
 
@@ -47,7 +48,7 @@ The phase-by-phase status and implementation evidence are maintained in
 
 ## Production readiness checklist
 
-- Replaceable interfaces document every subsystem boundary.
+- Keep interfaces only for active or implemented subsystem boundaries.
 - No feature is hard-wired to SQLite or a single media provider.
 - UI works through app state and domain contracts.
 - Feature behavior is covered by tests.

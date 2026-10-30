@@ -9,13 +9,13 @@ decision, and consequences; do not silently change a foundational boundary.
   MIT OCW, with playlist streams loaded only when a lecture is selected.
 - **Decision:** Route providers through `VideoSourceAdapter`, select a fresh
   combined stream, and play the direct media URI through `video_player` behind
-  `PlaybackController`. Use `youtube_explode_dart` (BSD-3-Clause); do not add
-  NewPipe Extractor (GPL-3.0) without a separate distribution-license review.
+  `PlaybackController`. Android uses the NewPipe Extractor bridge; other
+  platforms lazily use `youtube_explode_dart`.
 - **Consequences:** YouTube extraction is reverse-engineered and can break;
-  current service terms/compliance require legal review before release. Direct
-  streams may be transient, split-track formats are unsupported without a mux
-  backend, and no stream URLs are cached. YouTube ad/player requests are
-  explicitly excluded from content filtering. Browser codec/CORS support varies.
+  current service terms and the GPL-3.0-or-later Android dependency require
+  review before release. Direct streams may be transient, split-track formats
+  are unsupported without a mux backend, and stream URLs are not cached.
+  Browser codec/CORS support varies.
 
 ## 2026-09-28 — Use YouTube's official embedded player (superseded)
 
@@ -23,24 +23,24 @@ decision, and consequences; do not silently change a foundational boundary.
 - **Decision:** Superseded by the 2026-10-03 adapter/playback decision above.
 - **Consequences:** `youtube_player_iframe` has been removed from the app.
 
-## 2026-09-27 — Local-first, replaceable boundaries
+## 2026-09-27 — Local-first, focused boundaries
 
 - **Context:** This is a personal learning app and should work without requiring
   a cloud backend.
-- **Decision:** Use SQLite for structured local data, device storage for large
-  files, and interfaces for persistence, media, player, and content policy.
+- **Decision:** Use SQLite for structured Android data and in-memory
+  repositories for mock/Web mode. Keep active persistence and playback behind
+  app-owned contracts.
 - **Consequences:** Feature/UI logic must not depend directly on SQLite, a media
-  extractor, or a concrete player. Cloud sync remains optional and deferred.
+  extractor, or the concrete player. Device-file storage and cloud sync remain
+  deferred; unused prototypes are not kept in the runtime architecture.
 
-## 2026-09-27 — Central mock-mode dependency injection
+## 2026-09-27 — Central repository selection
 
-- **Context:** UI and architecture work need to run before production
-  persistence/media exists.
-- **Decision:** Register in-memory repositories and mock media/player/storage
-  implementations through the GetIt composition root.
-- **Consequences:** The app can start without network or production services.
-  Mock behavior is not durable and must not be represented as completed
-  persistence/playback.
+- **Context:** Web and deterministic tests need an in-memory data backend.
+- **Decision:** Register in-memory repository adapters through the GetIt
+  composition root for mock/Web mode.
+- **Consequences:** Those repositories are not durable. Media playback still
+  uses the production player pipeline and requires network/provider access.
 
 ## 2026-09-27 — Android first, Chrome for UI iteration
 

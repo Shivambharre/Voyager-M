@@ -6,6 +6,8 @@ import '../../../core/design/brutalist_components.dart';
 import '../../../core/design/design_system_showcase.dart';
 import '../../../core/design/design_tokens.dart';
 import '../../../core/di/service_locator.dart';
+import '../../../features/history/domain/recent_watch_entry.dart';
+import '../../../features/history/domain/recent_watch_history_repository.dart';
 import '../../../features/library/domain/learning_content.dart';
 import '../../../features/library/domain/learning_library_repository.dart';
 import '../../../features/notes/domain/notes_repository.dart';
@@ -41,6 +43,7 @@ class _AppShellState extends State<AppShell> {
       _HomePage(
         libraryRepository: serviceLocator<LearningLibraryRepository>(),
         notesRepository: serviceLocator<NotesRepository>(),
+        historyRepository: serviceLocator<RecentWatchHistoryRepository>(),
         onOpenPlayer: _openPlayer,
         onNavigate: (index) => setState(() => _selectedIndex = index),
       ),
@@ -116,7 +119,11 @@ class _AppShellState extends State<AppShell> {
   Future<void> _openPlayer({String? sourceUrl}) async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => LearningPlayerScreen(initialSourceUrl: sourceUrl),
+        builder: (_) => LearningPlayerScreen(
+          initialSourceUrl: sourceUrl,
+          recentWatchHistoryRepository:
+              serviceLocator<RecentWatchHistoryRepository>(),
+        ),
       ),
     );
   }
@@ -217,12 +224,14 @@ class _HomePage extends StatefulWidget {
   const _HomePage({
     required this.libraryRepository,
     required this.notesRepository,
+    required this.historyRepository,
     required this.onOpenPlayer,
     required this.onNavigate,
   });
 
   final LearningLibraryRepository libraryRepository;
   final NotesRepository notesRepository;
+  final RecentWatchHistoryRepository historyRepository;
   final _PlayerLauncher onOpenPlayer;
   final ValueChanged<int> onNavigate;
 
@@ -262,6 +271,18 @@ class _HomePageState extends State<_HomePage> {
 
   Future<void> _openPlaylist(LearningPlaylist playlist) async {
     await widget.onOpenPlayer(sourceUrl: playlist.sourceUrl);
+    if (mounted) _reload();
+  }
+
+  Future<void> _openWatchHistory() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => _WatchHistoryPage(
+          repository: widget.historyRepository,
+          onOpenVideo: widget.onOpenPlayer,
+        ),
+      ),
+    );
     if (mounted) _reload();
   }
 
@@ -366,6 +387,13 @@ class _HomePageState extends State<_HomePage> {
               secondary: true,
               onPressed: () => widget.onNavigate(1),
             ),
+            BrutalistButton(
+              key: const Key('open-watch-history-button'),
+              label: 'Watch history',
+              icon: Icons.history,
+              secondary: true,
+              onPressed: () => unawaited(_openWatchHistory()),
+            ),
           ],
         ),
         const SizedBox(height: DesignTokens.space5),
@@ -386,6 +414,90 @@ class _HomeSummary {
 
   final List<_SavedPlaylistSummary> playlists;
   final int noteCount;
+}
+
+class _WatchHistoryPage extends StatefulWidget {
+  const _WatchHistoryPage({
+    required this.repository,
+    required this.onOpenVideo,
+  });
+
+  final RecentWatchHistoryRepository repository;
+  final _PlayerLauncher onOpenVideo;
+
+  @override
+  State<_WatchHistoryPage> createState() => _WatchHistoryPageState();
+}
+
+class _WatchHistoryPageState extends State<_WatchHistoryPage> {
+  late Future<List<RecentWatchEntry>> _history;
+
+  @override
+  void initState() {
+    super.initState();
+    _reload();
+  }
+
+  void _reload() {
+    _history = widget.repository.getRecent();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('WATCH HISTORY')),
+      body: FutureBuilder<List<RecentWatchEntry>>(
+        future: _history,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Padding(
+              padding: const EdgeInsets.all(DesignTokens.space4),
+              child: BrutalistErrorState(
+                message: 'Watch history could not be loaded.',
+                onRetry: () => setState(_reload),
+              ),
+            );
+          }
+          if (!snapshot.hasData) return const BrutalistLoadingState();
+          if (snapshot.data!.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(DesignTokens.space4),
+              child: BrutalistEmptyState(
+                title: 'No recently watched videos',
+                message: 'Videos you play will appear here.',
+              ),
+            );
+          }
+          return ListView(
+            padding: const EdgeInsets.all(DesignTokens.space4),
+            children: [
+              for (final entry in snapshot.data!)
+                BrutalistListItem(
+                  title: entry.title,
+                  subtitle: entry.creator.isEmpty
+                      ? _watchedTime(entry.watchedAt)
+                      : '${entry.creator} · ${_watchedTime(entry.watchedAt)}',
+                  icon: Icons.play_circle_outline,
+                  trailing: const Icon(Icons.play_arrow),
+                  onTap: () async {
+                    await widget.onOpenVideo(sourceUrl: entry.sourceUrl);
+                    if (mounted) setState(_reload);
+                  },
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  String _watchedTime(DateTime watchedAt) {
+    final date = watchedAt.toLocal();
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return 'Watched ${date.year}-${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')} $hour:$minute';
+  }
 }
 
 class _LibraryPage extends StatefulWidget {

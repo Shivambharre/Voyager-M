@@ -47,15 +47,14 @@ class SqfliteAppDatabase implements AppDatabase {
   SqfliteAppDatabase({
     Future<String> Function()? databasePathProvider,
     sqlite.DatabaseFactory? databaseFactory,
-  })  : _databasePathProvider =
-            databasePathProvider ?? sqlite.getDatabasesPath,
-        _databaseFactory = databaseFactory ?? sqlite.databaseFactory;
+  }) : _databasePathProvider = databasePathProvider ?? sqlite.getDatabasesPath,
+       _databaseFactory = databaseFactory ?? sqlite.databaseFactory;
 
   final Future<String> Function() _databasePathProvider;
   final sqlite.DatabaseFactory _databaseFactory;
   sqlite.Database? _database;
 
-  static const int schemaVersion = 2;
+  static const int schemaVersion = 3;
   static const String databaseFileName = 'voyager_learning.db';
 
   Future<sqlite.Database> get _connection async {
@@ -80,6 +79,7 @@ class SqfliteAppDatabase implements AppDatabase {
         onCreate: (db, version) async {
           await _createSchema(db);
           await _createMetadataCache(db);
+          await _createRecentWatchHistory(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
           await _upgradeSchema(db, oldVersion, newVersion);
@@ -176,11 +176,21 @@ class SqfliteAppDatabase implements AppDatabase {
           CHECK (confirm_topic_completion IN (0, 1))
       )
     ''');
-    await db.execute('CREATE INDEX topics_roadmap_position ON topics(roadmap_id, position)');
-    await db.execute('CREATE INDEX playlist_entries_order ON playlist_entries(playlist_id, position)');
-    await db.execute('CREATE INDEX notes_video_updated ON notes(video_id, updated_at)');
-    await db.execute('CREATE INDEX notes_topic_updated ON notes(topic_id, updated_at)');
-    await db.execute('CREATE INDEX bookmarks_video_position ON bookmarks(video_id, position_seconds)');
+    await db.execute(
+      'CREATE INDEX topics_roadmap_position ON topics(roadmap_id, position)',
+    );
+    await db.execute(
+      'CREATE INDEX playlist_entries_order ON playlist_entries(playlist_id, position)',
+    );
+    await db.execute(
+      'CREATE INDEX notes_video_updated ON notes(video_id, updated_at)',
+    );
+    await db.execute(
+      'CREATE INDEX notes_topic_updated ON notes(topic_id, updated_at)',
+    );
+    await db.execute(
+      'CREATE INDEX bookmarks_video_position ON bookmarks(video_id, position_seconds)',
+    );
   }
 
   Future<void> _createMetadataCache(sqlite.DatabaseExecutor db) async {
@@ -196,6 +206,23 @@ class SqfliteAppDatabase implements AppDatabase {
     ''');
   }
 
+  Future<void> _createRecentWatchHistory(sqlite.DatabaseExecutor db) async {
+    await db.execute('''
+      CREATE TABLE recent_watch_history (
+        video_id TEXT PRIMARY KEY NOT NULL,
+        source_url TEXT NOT NULL,
+        title TEXT NOT NULL,
+        creator TEXT NOT NULL DEFAULT '',
+        duration_seconds INTEGER NOT NULL DEFAULT 0 CHECK (duration_seconds >= 0),
+        thumbnail_url TEXT,
+        watched_at TEXT NOT NULL
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX recent_watch_history_order ON recent_watch_history(watched_at DESC)',
+    );
+  }
+
   Future<void> _upgradeSchema(
     sqlite.DatabaseExecutor db,
     int oldVersion,
@@ -206,6 +233,9 @@ class SqfliteAppDatabase implements AppDatabase {
     }
     if (oldVersion < 2 && newVersion >= 2) {
       await _createMetadataCache(db);
+    }
+    if (oldVersion < 3 && newVersion >= 3) {
+      await _createRecentWatchHistory(db);
     }
   }
 

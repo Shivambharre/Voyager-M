@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart' as video_player;
 
-import 'player_engine.dart';
+import 'playback_state.dart';
 import 'video_source_adapter.dart';
 
 abstract interface class MediaPlayer {
   PlayerSnapshot get snapshot;
   Stream<PlayerSnapshot> get snapshots;
 
-  Future<void> load(Uri mediaUri);
+  Future<void> load(Uri mediaUri, {Uri? audioUri});
   Future<void> play();
   Future<void> pause();
   Future<void> seekTo(Duration position);
@@ -34,8 +34,13 @@ class FlutterMediaPlayer implements MediaPlayer {
   Stream<PlayerSnapshot> get snapshots => _snapshots.stream;
 
   @override
-  Future<void> load(Uri mediaUri) async {
+  Future<void> load(Uri mediaUri, {Uri? audioUri}) async {
     _ensureOpen();
+    if (audioUri != null) {
+      throw UnsupportedError(
+        'Separate audio and video tracks require the Android media player.',
+      );
+    }
     if (mediaUri.scheme != 'https' && mediaUri.scheme != 'http') {
       throw const VideoSourceException(
         VideoSourceFailure.unsupportedFormat,

@@ -106,16 +106,14 @@ class YoutubeAdapter implements VideoSourceAdapter {
   }
 
   MediaStreamInfo _mapStream(youtube.StreamInfo stream) {
-    final isMuxed = stream is youtube.MuxedStreamInfo;
-    final hasAudio = stream is youtube.AudioStreamInfo || isMuxed;
-    final hasVideo = stream is youtube.VideoStreamInfo || isMuxed;
+    final hasAudio = stream is youtube.AudioStreamInfo;
+    final hasVideo = stream is youtube.VideoStreamInfo;
     final expireSeconds = int.tryParse(
       stream.url.queryParameters['expire'] ?? '',
     );
     final mimeType = stream.codec.mimeType.split(';').first.trim();
     final resolutionHeight = switch (stream) {
       youtube.VideoStreamInfo(:final videoResolution) => videoResolution.height,
-      youtube.MuxedStreamInfo(:final videoResolution) => videoResolution.height,
       _ => null,
     };
     return MediaStreamInfo(
@@ -129,12 +127,10 @@ class YoutubeAdapter implements VideoSourceAdapter {
       codecs: stream.codec.parameters['codecs'],
       audioCodec: switch (stream) {
         youtube.AudioStreamInfo(:final audioCodec) => audioCodec,
-        youtube.MuxedStreamInfo(:final audioCodec) => audioCodec,
         _ => null,
       },
       videoCodec: switch (stream) {
         youtube.VideoStreamInfo(:final videoCodec) => videoCodec,
-        youtube.MuxedStreamInfo(:final videoCodec) => videoCodec,
         _ => null,
       },
       expiresAt: expireSeconds == null

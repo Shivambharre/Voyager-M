@@ -33,13 +33,27 @@ void main() {
             'durationSeconds': 95,
             'author': 'Voyager',
             'thumbnailUrl': 'https://example.com/thumbnail.jpg',
+            'streams': <Map<String, Object?>>[
+              <String, Object?>{
+                'url': 'https://media.example/720.mp4',
+                'mimeType': 'video/mp4',
+                'container': 'mp4',
+                'resolutionHeight': 720,
+                'bitrateBitsPerSecond': 1500000,
+                'audioUrl': 'https://media.example/audio.m4a',
+                'hasAudio': true,
+                'hasVideo': true,
+              },
+            ],
           };
         });
 
     final source = SourceDetector.detect(
       'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     )!;
-    final video = await NewPipeYoutubeAdapter().getVideoInfo(source);
+    final adapter = NewPipeYoutubeAdapter();
+    addTearDown(adapter.dispose);
+    final video = await adapter.getVideoInfo(source);
 
     expect(video.id, 'dQw4w9WgXcQ');
     expect(video.source, VideoSourceKind.youtubeVideo);
@@ -47,7 +61,112 @@ void main() {
     expect(video.duration, const Duration(seconds: 95));
     expect(video.author, 'Voyager');
     expect(video.thumbnailUrl, Uri.parse('https://example.com/thumbnail.jpg'));
-    expect(video.streams, isEmpty);
+    expect(video.streams, hasLength(1));
+    expect(
+      video.streams.single.url,
+      Uri.parse('https://media.example/720.mp4'),
+    );
+    expect(
+      video.streams.single.audioUrl,
+      Uri.parse('https://media.example/audio.m4a'),
+    );
+    expect((await adapter.getStreams(video)).single.resolutionHeight, 720);
+  });
+
+  test('loads fresh streams for cached video metadata', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          expect(call.method, 'resolveStreams');
+          expect(
+            (call.arguments as Map<Object?, Object?>)['url'],
+            'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          );
+          return <Map<String, Object?>>[
+            <String, Object?>{
+              'url': 'https://media.example/720.mp4',
+              'mimeType': 'video/mp4',
+              'container': 'mp4',
+              'resolutionHeight': 720,
+              'bitrateBitsPerSecond': 1500000,
+              'audioUrl': 'https://media.example/audio.m4a',
+              'hasAudio': true,
+              'hasVideo': true,
+            },
+          ];
+        });
+
+    final video = VideoInfo(
+      id: 'dQw4w9WgXcQ',
+      source: VideoSourceKind.youtubeVideo,
+      url: Uri.parse('https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
+      title: 'Cached lesson',
+      duration: const Duration(minutes: 2),
+      streams: const [],
+    );
+    final adapter = NewPipeYoutubeAdapter();
+    addTearDown(adapter.dispose);
+    final streams = await adapter.getStreams(video);
+
+    expect(streams, hasLength(1));
+    expect(streams.single.hasAudio, isTrue);
+    expect(streams.single.hasVideo, isTrue);
+    expect(streams.single.bitrateBitsPerSecond, 1500000);
+    expect(
+      streams.single.audioUrl,
+      Uri.parse('https://media.example/audio.m4a'),
+    );
+  });
+
+  test('resolves a playlist entry to a playable stream', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          switch (call.method) {
+            case 'resolvePlaylist':
+              return <String, Object?>{
+                'id': 'PL1234567890ABC',
+                'title': 'Example course',
+                'entries': <Map<String, Object?>>[
+                  <String, Object?>{
+                    'title': 'Lecture one',
+                    'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                  },
+                ],
+              };
+            case 'resolveVideo':
+              return <String, Object?>{
+                'id': 'dQw4w9WgXcQ',
+                'title': 'Lecture one',
+                'streams': <Map<String, Object?>>[
+                  <String, Object?>{
+                    'url': 'https://media.example/720.mp4',
+                    'mimeType': 'video/mp4',
+                    'container': 'mp4',
+                    'resolutionHeight': 720,
+                    'hasAudio': true,
+                    'hasVideo': true,
+                  },
+                ],
+              };
+            default:
+              fail('Unexpected NewPipe method: ${call.method}');
+          }
+        });
+
+    final adapter = NewPipeYoutubeAdapter();
+    addTearDown(adapter.dispose);
+    final playlistSource = SourceDetector.detect(
+      'https://www.youtube.com/playlist?list=PL1234567890ABC',
+    )!;
+    final playlist = await adapter.getPlaylistInfo(playlistSource);
+    final lectureSource = SourceDetector.detect(
+      playlist.entries.single.url.toString(),
+    )!;
+    final video = await adapter.getVideoInfo(lectureSource);
+    final streams = await adapter.getStreams(video);
+
+    expect(video.id, playlist.entries.single.videoId);
+    expect(streams.single.hasAudio, isTrue);
+    expect(streams.single.url, Uri.parse('https://media.example/720.mp4'));
   });
 
   test('maps NewPipe playlist pages to ordered lecture entries', () async {

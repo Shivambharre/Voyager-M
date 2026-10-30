@@ -5,51 +5,49 @@
 `PlaybackController` is the player-facing contract used by
 `LearningPlayerScreen`. It coordinates a `VideoSourceRegistry`, metadata cache,
 `StreamSelector`, and `MediaPlayer`; extraction stays outside the screen.
-`PlayerEngine` remains as the older provider-neutral mock contract for
-deterministic architecture tests.
 
 ## Current state
 
 The source detector routes YouTube video URLs, playlist URLs, and MIT OCW URLs
-to separate adapters. `YoutubeAdapter` uses `youtube_explode_dart` for metadata,
-playlist entries, and stream descriptors. Playlist stream manifests are
-requested only after a lecture is selected. `MitOcwAdapter` handles MIT-hosted
-pages and direct media links; it does not treat every OCW page or YouTube embed
-as playable.
+to separate adapters. Android uses the NewPipe Extractor bridge for YouTube
+metadata, playlist entries, and combined or adaptive audio/video streams. Web
+and other platforms use `youtube_explode_dart`. Android pairs adaptive
+video-only tracks with NewPipe audio streams. Playlist stream extraction is
+deferred until a lecture is selected. `MitOcwAdapter` handles MIT-hosted pages
+and direct media links; it does not treat every OCW page or YouTube embed as
+playable.
 
-`StreamSelector` selects only fresh streams with combined audio and video in a
-supported MIME type, resolution, and network budget. Separate audio/video
-tracks are intentionally rejected because this backend does not mux tracks.
-The player retains the available compatible streams and supports switching
-quality without losing the current playback position. A fullscreen action
-temporarily enables immersive landscape playback; seek controls expose labels
-and remain disabled until duration is known.
-`FlutterMediaPlayer` passes the selected direct media URI to `video_player`,
-which uses ExoPlayer on Android. It never passes a YouTube webpage URL to the
-native player and never downloads a complete video for metadata.
+`StreamSelector` selects fresh streams with combined audio and video in a
+supported MIME type, up to 1080p. The player defaults to the highest available
+supported stream without a network-bitrate cap. Android NewPipe results include
+YouTube video-only tracks paired with an audio track; Android Media3 merges the
+two sources during playback. This prevents the previous 360p ceiling caused by
+discarding all video-only formats. The player exposes a YouTube-style
+seek/progress overlay, playback and skip controls, speed and quality choices,
+and fullscreen controls directly on the video surface in both normal and
+fullscreen layouts. Compact phone controls fit within the 16:9 video surface,
+and the fullscreen back control or device Back returns to the normal player.
+Playlist controls remain above the playlist entries rather than after the
+playlist.
+`AndroidMediaPlayer` uses Media3 ExoPlayer for direct and merged audio/video
+sources. Other platforms use `FlutterMediaPlayer` and `video_player`; neither
+player receives a YouTube webpage URL or downloads complete video files for
+metadata.
 
 SQLite caches stable video/playlist metadata and playlist ordering. Temporary
 stream URLs are not cached; a new stream manifest is requested whenever a
-lecture is loaded again. Saving a playlist stores its metadata, ordered entries,
-and video records through `LearningLibraryRepository`. Player notes save through
-`NotesRepository` with the current video and timestamp, when available.
+lecture is loaded again. Saving a playlist or a timestamped note writes through
+the corresponding repository; saved moments remain screen-local.
 
 ## Migration from the IFrame player
 
 The `youtube_player_iframe` dependency and screen-level controller have been
 removed. Existing saved YouTube page URLs remain valid inputs; first load now
 detects the URL, caches stable metadata, selects a current direct media stream,
-and gives that stream URI to `video_player`. Schema v2 adds a metadata cache and
-upgrades schema v1 without rewriting existing learning records. No video files
-or temporary stream URLs are migrated.
-
-## Filtering boundary
-
-`ContentFilterService` and `ContentFilterEngine` are separate from playback.
-Filtering is disabled by default. Only `applicationManaged` requests are
-forwarded; YouTube player and extracted-media scopes are always allowed. The
-MethodChannel adapter is a bridge contract only: no Android Rust library is
-currently packaged or enabled.
+and gives its direct stream source to the platform player. Schema v2 adds a
+metadata cache and upgrades existing schemas without rewriting learning
+records. Recent watch history stores stable video details and timestamps, never
+temporary stream URLs. No video files are migrated.
 
 ## Limitations
 
@@ -59,4 +57,5 @@ restrictions and private videos remain unavailable. Stream URLs expire and are
 treated as transient. Browser playback depends on browser codec/CORS support.
 OCW pages are heterogeneous and only direct MIT-hosted media is recognized.
 
-Retain a mock implementation for deterministic widget and application tests.
+Playback widgets and controller behavior are tested with fakes; Android uses
+`AndroidMediaPlayer`, while other platforms use `FlutterMediaPlayer`.
