@@ -9,6 +9,8 @@ import 'features/roadmap/domain/roadmap_repository.dart';
 import 'features/settings/domain/learning_settings.dart';
 import 'features/settings/domain/settings_repository.dart';
 
+// App starts here. We prepare the app, load saved settings,
+// and then show the real UI.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
@@ -24,6 +26,8 @@ Future<void> main() async {
   );
 }
 
+// This is the root app widget. It keeps the app theme and user settings
+// in one place and passes them down to the screens.
 class VoyagerApp extends StatefulWidget {
   const VoyagerApp({
     this.repository,
@@ -43,6 +47,7 @@ class VoyagerApp extends StatefulWidget {
 class _VoyagerAppState extends State<VoyagerApp> {
   late LearningSettings _settings = widget.initialSettings;
 
+  // Save the new preferences and refresh the app UI right away.
   Future<void> _saveSettings(LearningSettings settings) async {
     await serviceLocator<SettingsRepository>().saveSettings(settings);
     if (mounted) setState(() => _settings = settings);

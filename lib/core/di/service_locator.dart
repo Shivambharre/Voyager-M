@@ -33,10 +33,14 @@ import '../media/video_metadata_cache.dart';
 import '../media/newpipe_youtube_adapter.dart';
 import '../media/video_source_registry.dart';
 
+// This file is the app's wiring hub.
+// It decides which real services or fake services the app should use.
 final GetIt serviceLocator = GetIt.instance;
 
+// Simple version: "build the app, connect the repos, and prepare the player."
 Future<void> configureDependencies({bool? useMocks}) async {
   final shouldUseMocks = useMocks ?? kIsWeb;
+  // On web, fake repos are easier and safer than a real local database.
   if (shouldUseMocks) {
     _registerIfMissing<RoadmapRepository>(InMemoryRoadmapRepository.new);
     _registerIfMissing<LearningLibraryRepository>(
@@ -78,12 +82,14 @@ Future<void> configureDependencies({bool? useMocks}) async {
       () => SqliteDailyGoalRepository(serviceLocator<AppDatabase>()),
     );
   }
+  // Keep app-wide settings and video metadata ready for the rest of the app.
   _registerIfMissing<AppConfig>(() => AppConfig.fromEnvironment);
   _registerIfMissing<VideoMetadataCache>(
     shouldUseMocks
         ? InMemoryVideoMetadataCache.new
         : () => SqliteVideoMetadataCache(serviceLocator<AppDatabase>()),
   );
+  // This is the media engine: source detector, cache, player, and stream rules.
   if (!serviceLocator.isRegistered<PlaybackController>()) {
     serviceLocator.registerFactory<PlaybackController>(
       () => DefaultPlaybackController(

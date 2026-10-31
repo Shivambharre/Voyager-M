@@ -26,6 +26,8 @@ abstract final class SourceDetector {
   static final _youtubeId = RegExp(r'^[A-Za-z0-9_-]{11}$');
   static final _playlistId = RegExp(r'^[A-Za-z0-9_-]{2,200}$');
 
+  // This is the URL checker.
+  // It decides: "Is this a YouTube video, a playlist, or an MIT course page?"
   static SourceDescriptor? detect(String source) {
     final url = Uri.tryParse(source.trim());
     if (url == null ||
@@ -66,6 +68,7 @@ abstract final class SourceDetector {
     return null;
   }
 
+  // Pull the real YouTube video id out of links like /watch?v=... or short links.
   static String? _videoIdFromUrl(Uri url, String host) {
     String? candidate;
     if (host == 'youtu.be' || host == 'www.youtu.be') {

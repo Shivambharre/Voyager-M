@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -70,13 +69,12 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   PlaylistInfo? _playlist;
   String? _errorMessage;
   bool _isLoading = false;
-  bool _isSaved = false;
-  String? _currentBookmarkId;
   bool _isLessonComplete = false;
   bool _isPlaylistSaved = false;
   bool _isSavingPlaylist = false;
   bool _isFullscreen = false;
   bool _controlsVisible = true;
+  bool _isSourceCollapsed = false;
 
   @override
   void initState() {
@@ -176,18 +174,14 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                           onPressed: () => unawaited(_addTimestampedNote()),
                         ),
                         BrutalistButton(
-                          label: _isSaved ? 'Saved moment' : 'Save moment',
-                          icon: _isSaved
-                              ? Icons.bookmark
-                              : Icons.bookmark_border,
+                          label: 'Save to playlist',
+                          icon: Icons.playlist_add,
                           secondary: true,
-                          onPressed: () => unawaited(_toggleBookmark()),
+                          onPressed: () => unawaited(_saveVideoToPlaylistPrompt()),
                         ),
                         BrutalistButton(
                           key: const Key('mark-lesson-complete'),
-                          label: _isLessonComplete
-                              ? 'Lesson complete'
-                              : 'Complete lesson',
+                          label: _isLessonComplete ? 'Done' : 'Done',
                           icon: _isLessonComplete
                               ? Icons.check_circle
                               : Icons.check_circle_outline,
@@ -195,13 +189,6 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                           onPressed: _isLessonComplete
                               ? null
                               : () => unawaited(_markLessonComplete()),
-                        ),
-                        BrutalistButton(
-                          key: const Key('player-share-link-button'),
-                          label: 'Share link',
-                          icon: Icons.share_outlined,
-                          secondary: true,
-                          onPressed: () => unawaited(_shareCurrentSource()),
                         ),
                       ],
                     ),
@@ -212,49 +199,65 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          'VIDEO OR COURSE URL',
-                          style: Theme.of(context).textTheme.labelMedium,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'VIDEO OR COURSE URL',
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: _isSourceCollapsed ? 'Expand URL box' : 'Collapse URL box',
+                              onPressed: () => setState(() => _isSourceCollapsed = !_isSourceCollapsed),
+                              icon: Icon(
+                                _isSourceCollapsed ? Icons.add : Icons.remove,
+                                size: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: DesignTokens.space2),
-                        BrutalistInput(
-                          controller: _urlController,
-                          hint: 'YouTube video, playlist, or MIT OCW URL',
-                          minLines: 1,
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: DesignTokens.space3),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: BrutalistButton(
-                            label: _isLoading ? 'Loading' : 'Load video',
-                            icon: _isLoading
-                                ? Icons.hourglass_top
-                                : Icons.play_arrow,
-                            onPressed: _isLoading
-                                ? null
-                                : () => unawaited(_loadSource()),
-                          ),
-                        ),
-                        if (_errorMessage != null) ...[
+                        if (!_isSourceCollapsed) ...[
                           const SizedBox(height: DesignTokens.space2),
-                          Text(
-                            _errorMessage!,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                          BrutalistInput(
+                            controller: _urlController,
+                            hint: 'YouTube video, playlist, or MIT OCW URL',
+                            minLines: 1,
+                            maxLines: 1,
                           ),
-                        ],
-                        if (_snapshot.errorMessage != null) ...[
-                          const SizedBox(height: DesignTokens.space2),
-                          Text(
-                            'Playback failed. Reload the lecture to refresh its stream.',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                          const SizedBox(height: DesignTokens.space3),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: BrutalistButton(
+                              label: _isLoading ? 'Loading' : 'Load video',
+                              icon: _isLoading
+                                  ? Icons.hourglass_top
+                                  : Icons.play_arrow,
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => unawaited(_loadSource()),
+                            ),
                           ),
+                          if (_errorMessage != null) ...[
+                            const SizedBox(height: DesignTokens.space2),
+                            Text(
+                              _errorMessage!,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                            ),
+                          ],
+                          if (_snapshot.errorMessage != null) ...[
+                            const SizedBox(height: DesignTokens.space2),
+                            Text(
+                              'Playback failed. Reload the lecture to refresh its stream.',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                            ),
+                          ],
                         ],
                       ],
                     ),
@@ -268,12 +271,6 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                             playlist.title,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
-                        ),
-                        IconButton(
-                          key: const Key('player-share-playlist-button'),
-                          tooltip: 'Share playlist',
-                          onPressed: () => unawaited(_shareCurrentSource()),
-                          icon: const Icon(Icons.share_outlined),
                         ),
                         BrutalistButton(
                           key: const Key('save-playlist-button'),
@@ -879,8 +876,6 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       _video = null;
       _playlist = null;
       _isPlaylistSaved = false;
-      _isSaved = false;
-      _currentBookmarkId = null;
       _isLessonComplete = false;
     });
     try {
@@ -921,8 +916,6 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       if (!mounted) return;
       setState(() {
         _video = _playbackController.currentVideo;
-        _isSaved = false;
-        _currentBookmarkId = null;
         _isLessonComplete = false;
       });
       if (_playbackController.currentVideo case final video?) {
@@ -1123,79 +1116,83 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
     }
   }
 
-  Future<void> _toggleBookmark() async {
+  Future<void> _saveVideoToPlaylistPrompt() async {
+    final video = _video;
+    if (video == null) return;
+    final playlists = await _libraryRepository.getPlaylists();
+    if (!mounted) return;
+    if (playlists.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Create a playlist in the Library first.'),
+        ),
+      );
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Save to playlist'),
+        children: [
+          for (final playlist in playlists)
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(context).pop();
+                unawaited(_saveVideoToPlaylist(playlist));
+              },
+              child: Text(playlist.title),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveVideoToPlaylist(LearningPlaylist playlist) async {
     final video = _video;
     if (video == null) return;
     try {
-      final bookmarkId = _currentBookmarkId;
-      if (bookmarkId != null) {
-        await _progressRepository.deleteBookmark(bookmarkId);
+      await _libraryRepository.saveVideo(
+        LearningVideo(
+          id: video.id,
+          sourceId: video.id,
+          sourceUrl: video.url.toString(),
+          title: video.title,
+          creator: video.author ?? '',
+          durationSeconds: video.duration.inSeconds,
+          thumbnailUrl: video.thumbnailUrl?.toString(),
+        ),
+      );
+      final existingEntries = await _libraryRepository.getPlaylistEntries(
+        playlist.id,
+      );
+      if (existingEntries.any((entry) => entry.videoId == video.id)) {
         if (mounted) {
-          setState(() {
-            _currentBookmarkId = null;
-            _isSaved = false;
-          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('This video is already in the playlist.')),
+          );
         }
         return;
       }
-      await _saveVideoMetadata(video);
-      final position = await _playbackController.currentPosition;
-      final bookmark = LearningBookmark(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        videoId: video.id,
-        positionSeconds: position.inSeconds,
-        createdAt: DateTime.now(),
-      );
-      await _progressRepository.saveBookmark(bookmark);
+      await _libraryRepository.savePlaylistEntries(playlist.id, [
+        ...existingEntries,
+        PlaylistEntry(
+          playlistId: playlist.id,
+          videoId: video.id,
+          position: existingEntries.length,
+        ),
+      ]);
       if (mounted) {
-        setState(() {
-          _currentBookmarkId = bookmark.id;
-          _isSaved = true;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Saved to ${playlist.title}')),
+        );
       }
     } on Object {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save this moment.')),
+        const SnackBar(content: Text('Could not save this video to the playlist.')),
       );
     }
-  }
-
-  Future<void> _shareCurrentSource() async {
-    final sourceUrl = _video?.url ?? _playlist?.url;
-    if (sourceUrl == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Load a lesson or playlist first.')),
-      );
-      return;
-    }
-    try {
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-        await const MethodChannel('com.voyager/share_action')
-            .invokeMethod<void>('shareUrl', {
-              'url': sourceUrl.toString(),
-              'title': _video?.title ?? _playlist?.title ?? 'VoyagerM',
-            });
-      } else {
-        await Clipboard.setData(ClipboardData(text: sourceUrl.toString()));
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Link copied to clipboard.')),
-          );
-        }
-      }
-    } on PlatformException {
-      _showShareFailure();
-    } on MissingPluginException {
-      _showShareFailure();
-    }
-  }
-
-  void _showShareFailure() {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Could not share this link.')));
   }
 
   Future<void> _cycleSpeed() async {

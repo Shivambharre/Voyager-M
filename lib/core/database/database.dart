@@ -35,6 +35,8 @@ abstract interface class DatabaseExecutor {
 
 abstract interface class DatabaseTransaction implements DatabaseExecutor {}
 
+// This is the main database contract.
+// Every feature repo talks to this instead of using raw SQLite calls.
 abstract interface class AppDatabase implements DatabaseExecutor {
   Future<void> initialize();
   Future<void> close();
@@ -66,6 +68,7 @@ class SqfliteAppDatabase implements AppDatabase {
   }
 
   @override
+  // Create the SQLite file once, then keep using it for the app life.
   Future<void> initialize() async {
     if (_database != null) return;
     final directory = await _databasePathProvider();
@@ -89,6 +92,8 @@ class SqfliteAppDatabase implements AppDatabase {
     );
   }
 
+  // This is the app's main data schema.
+  // It stores topics, notes, videos, progress, and user settings.
   Future<void> _createSchema(sqlite.DatabaseExecutor db) async {
     await db.execute('''
       CREATE TABLE roadmaps (
@@ -199,6 +204,7 @@ class SqfliteAppDatabase implements AppDatabase {
     );
   }
 
+  // Small cache for video metadata so the app does not fetch the same info again and again.
   Future<void> _createMetadataCache(sqlite.DatabaseExecutor db) async {
     await db.execute('''
       CREATE TABLE video_metadata_cache (

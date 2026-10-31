@@ -102,9 +102,12 @@ class _AppShellState extends State<AppShell> {
         repository: serviceLocator<LearningLibraryRepository>(),
         onOpenPlayer: _openPlayer,
       ),
-      _NotesPage(repository: serviceLocator<NotesRepository>()),
-      _SettingsPage(
-        settings: widget.settings,
+      _NotesPage(
+    repository: serviceLocator<NotesRepository>(),
+    libraryRepository: serviceLocator<LearningLibraryRepository>(),
+    onOpenPlayer: _openPlayer,
+      ),
+      _SettingsPage(        settings: widget.settings,
         onSettingsChanged: widget.onSettingsChanged,
       ),
     ];
@@ -187,30 +190,32 @@ class _AppShellState extends State<AppShell> {
   }
 
   Future<void> _resumeLastLesson() async {
-    final progresses = await serviceLocator<ProgressRepository>()
-        .getAllProgress();
-    final progress = progresses.cast<LearningProgress?>().firstWhere(
-      (item) => item != null && !item.isCompleted && item.positionSeconds > 0,
-      orElse: () => null,
-    );
-    if (progress == null) {
+    final recentHistory = await serviceLocator<RecentWatchHistoryRepository>()
+        .getRecent(limit: 1);
+    final recent = recentHistory.isNotEmpty ? recentHistory.first : null;
+    if (recent == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('There is no lesson to resume yet.')),
       );
       return;
     }
-    final video = await serviceLocator<LearningLibraryRepository>().getVideo(
-      progress.videoId,
+
+    final progress = await serviceLocator<ProgressRepository>().getProgress(
+      recent.videoId,
     );
+    final fallbackPosition = recent.durationSeconds > 300
+        ? const Duration(minutes: 5)
+        : Duration(seconds: recent.durationSeconds);
+    final resumePosition = progress != null && progress.positionSeconds > 0
+        ? Duration(seconds: progress.positionSeconds)
+        : fallbackPosition;
+
     if (!mounted) return;
-    if (video == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('The saved lesson could not be found.')),
-      );
-      return;
-    }
-    await _openPlayer(sourceUrl: video.sourceUrl);
+    await _openPlayer(
+      sourceUrl: recent.sourceUrl,
+      initialPosition: resumePosition,
+    );
   }
 
   Future<void> _openDailyGoals() async {
@@ -562,7 +567,7 @@ class _HomePageState extends State<_HomePage> {
         const BrutalistSectionHeader(title: 'Quick actions'),
         const SizedBox(height: DesignTokens.space3),
         SizedBox(
-          height: 152,
+          height: 220,
           child: GridView.count(
             crossAxisCount: 2,
             crossAxisSpacing: DesignTokens.space3,
@@ -1138,12 +1143,21 @@ class _LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<_LibraryPage> {
+  final _playlistNameController = TextEditingController();
+  final _playlistDescriptionController = TextEditingController();
   late Future<_LibraryContents> _contents;
 
   @override
   void initState() {
     super.initState();
     _contents = _loadContents();
+  }
+
+  @override
+  void dispose() {
+    _playlistNameController.dispose();
+    _playlistDescriptionController.dispose();
+    super.dispose();
   }
 
   Future<_LibraryContents> _loadContents() async {
@@ -1190,6 +1204,42 @@ class _LibraryPageState extends State<_LibraryPage> {
               'Only material you chose to keep.',
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(color: context.mutedColor),
+            ),
+            const SizedBox(height: DesignTokens.space4),
+            BrutalistCard(
+              color: context.raisedColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'CREATE PLAYLIST',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: DesignTokens.space2),
+                  BrutalistInput(
+                    controller: _playlistNameController,
+                    hint: 'Playlist name',
+                    minLines: 1,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: DesignTokens.space2),
+                  BrutalistInput(
+                    controller: _playlistDescriptionController,
+                    hint: 'Description (optional)',
+                    minLines: 2,
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: DesignTokens.space3),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: BrutalistButton(
+                      label: 'Create playlist',
+                      icon: Icons.playlist_add,
+                      onPressed: () => unawaited(_createPlaylist()),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: DesignTokens.space4),
             if (empty)
@@ -1245,6 +1295,30 @@ class _LibraryPageState extends State<_LibraryPage> {
     );
   }
 
+  Future<void> _createPlaylist() async {
+    final title = _playlistNameController.text.trim();
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Give your playlist a name first.')),
+      );
+      return;
+    }
+
+    final playlist = LearningPlaylist(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      sourceId: DateTime.now().microsecondsSinceEpoch.toString(),
+      sourceUrl: '',
+      title: title,
+      creator: 'You',
+      description: _playlistDescriptionController.text.trim(),
+    );
+    await widget.repository.savePlaylist(playlist);
+    if (!mounted) return;
+    _playlistNameController.clear();
+    _playlistDescriptionController.clear();
+    _reload();
+  }
+
   Future<void> _deletePlaylist(LearningPlaylist playlist) async {
     await widget.repository.deletePlaylist(playlist.id);
     if (mounted) _reload();
@@ -1264,9 +1338,15 @@ class _LibraryContents {
 }
 
 class _NotesPage extends StatefulWidget {
-  const _NotesPage({required this.repository});
+  const _NotesPage({
+    required this.repository,
+    required this.libraryRepository,
+    required this.onOpenPlayer,
+  });
 
   final NotesRepository repository;
+  final LearningLibraryRepository libraryRepository;
+  final _PlayerLauncher onOpenPlayer;
 
   @override
   State<_NotesPage> createState() => _NotesPageState();
@@ -1274,12 +1354,12 @@ class _NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<_NotesPage> {
   final _noteController = TextEditingController();
-  late Future<List<StudyNote>> _notes;
+  late Future<List<_NoteGroup>> _notes;
 
   @override
   void initState() {
     super.initState();
-    _notes = widget.repository.getNotes();
+    _notes = _loadNoteGroups();
   }
 
   @override
@@ -1288,8 +1368,26 @@ class _NotesPageState extends State<_NotesPage> {
     super.dispose();
   }
 
+  Future<List<_NoteGroup>> _loadNoteGroups() async {
+    final notes = await widget.repository.getNotes();
+    final groups = <String, _NoteGroup>{};
+    for (final note in notes) {
+      final key = note.videoId ?? '__general__';
+      final video = note.videoId == null
+          ? null
+          : await widget.libraryRepository.getVideo(note.videoId!);
+      final title = video?.title ??
+          (note.videoId == null ? 'General notes' : 'Video note');
+      groups.putIfAbsent(
+        key,
+        () => _NoteGroup(title: title, notes: <StudyNote>[]),
+      ).notes.add(note);
+    }
+    return groups.values.toList(growable: false);
+  }
+
   void _reload() {
-    final notes = widget.repository.getNotes();
+    final notes = _loadNoteGroups();
     setState(() {
       _notes = notes;
     });
@@ -1339,7 +1437,7 @@ class _NotesPageState extends State<_NotesPage> {
         const SizedBox(height: DesignTokens.space5),
         const BrutalistSectionHeader(title: 'Recent notes'),
         const SizedBox(height: DesignTokens.space3),
-        FutureBuilder<List<StudyNote>>(
+        FutureBuilder<List<_NoteGroup>>(
           future: _notes,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -1357,33 +1455,48 @@ class _NotesPageState extends State<_NotesPage> {
             }
             return Column(
               children: [
-                for (final note in snapshot.data!) ...[
-                  BrutalistCard(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(note.content),
-                              const SizedBox(height: DesignTokens.space2),
-                              Text(
-                                _noteSubtitle(note),
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: context.mutedColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: 'Delete note',
-                          onPressed: () => unawaited(_deleteNote(note)),
-                          icon: const Icon(Icons.delete_outline),
-                        ),
-                      ],
+                for (final group in snapshot.data!) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      group.title.toUpperCase(),
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
-                  const SizedBox(height: DesignTokens.space3),
+                  const SizedBox(height: DesignTokens.space2),
+                  for (final note in group.notes) ...[
+                    GestureDetector(
+                      onTap: note.timestampSeconds == null || note.videoId == null
+                          ? null
+                          : () => unawaited(_openNoteTimestamp(note)),
+                      child: BrutalistCard(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(note.content),
+                                  const SizedBox(height: DesignTokens.space2),
+                                  Text(
+                                    _noteSubtitle(note),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(color: context.mutedColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'Delete note',
+                              onPressed: () => unawaited(_deleteNote(note)),
+                              icon: const Icon(Icons.delete_outline),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: DesignTokens.space3),
+                  ],
                 ],
               ],
             );
@@ -1415,6 +1528,16 @@ class _NotesPageState extends State<_NotesPage> {
     if (mounted) _reload();
   }
 
+  Future<void> _openNoteTimestamp(StudyNote note) async {
+    if (note.videoId == null || note.timestampSeconds == null) return;
+    final video = await widget.libraryRepository.getVideo(note.videoId!);
+    if (video == null || !mounted) return;
+    await widget.onOpenPlayer(
+      sourceUrl: video.sourceUrl,
+      initialPosition: Duration(seconds: note.timestampSeconds!),
+    );
+  }
+
   String _noteSubtitle(StudyNote note) {
     final timestamp = note.timestampSeconds;
     if (timestamp == null) return 'Saved ${note.updatedAt.toLocal()}';
@@ -1423,6 +1546,13 @@ class _NotesPageState extends State<_NotesPage> {
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return 'At $minutes:$seconds · ${note.updatedAt.toLocal()}';
   }
+}
+
+class _NoteGroup {
+  const _NoteGroup({required this.title, required this.notes});
+
+  final String title;
+  final List<StudyNote> notes;
 }
 
 class _SettingsPage extends StatefulWidget {
