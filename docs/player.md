@@ -1,61 +1,80 @@
-# Player Boundary
+# Player
 
-## Contract
+## Player path
 
-`PlaybackController` is the player-facing contract used by
-`LearningPlayerScreen`. It coordinates a `VideoSourceRegistry`, metadata cache,
-`StreamSelector`, and `MediaPlayer`; extraction stays outside the screen.
+`LearningPlayerScreen` uses `PlaybackController`. The controller detects a
+source, selects an adapter, gets current stream data, and sends a playable URL
+to a platform player.
 
-## Current state
+```text
+LearningPlayerScreen
+  -> PlaybackController
+  -> SourceDetector and VideoSourceRegistry
+  -> VideoSourceAdapter
+  -> StreamSelector
+  -> MediaPlayer
+```
 
-The source detector routes YouTube video URLs, playlist URLs, and MIT OCW URLs
-to separate adapters. Android uses the NewPipe Extractor bridge for YouTube
-metadata, playlist entries, and combined or adaptive audio/video streams. Web
-and other platforms use `youtube_explode_dart`. Android pairs adaptive
-video-only tracks with NewPipe audio streams. Playlist stream extraction is
-deferred until a lecture is selected. `MitOcwAdapter` handles MIT-hosted pages
-and direct media links; it does not treat every OCW page or YouTube embed as
-playable.
+## Providers and players
 
-`StreamSelector` selects fresh streams with combined audio and video in a
-supported MIME type, up to 1080p. The player defaults to the highest available
-supported stream without a network-bitrate cap. Android NewPipe results include
-YouTube video-only tracks paired with an audio track; Android Media3 merges the
-two sources during playback. This prevents the previous 360p ceiling caused by
-discarding all video-only formats. The player exposes a YouTube-style
-seek/progress overlay, playback and skip controls, speed and quality choices,
-and fullscreen controls directly on the video surface in both normal and
-fullscreen layouts. Compact phone controls fit within the 16:9 video surface,
-and the fullscreen back control or device Back returns to the normal player.
-Playlist controls remain above the playlist entries rather than after the
-playlist.
-`AndroidMediaPlayer` uses Media3 ExoPlayer for direct and merged audio/video
-sources. Other platforms use `FlutterMediaPlayer` and `video_player`; neither
-player receives a YouTube webpage URL or downloads complete video files for
-metadata.
+- Android uses NewPipe for YouTube extraction and Media3 for playback.
+- Other platforms use `youtube_explode_dart` and `video_player`.
+- `MitOcwAdapter` reads supported MIT OpenCourseWare pages and media links.
+- The player loads a playlist first. It resolves a lecture stream when the
+  user selects that lecture.
+- Android can merge a video-only URL with a separate audio URL. The Flutter
+  player rejects a separate audio URL.
 
-SQLite caches stable video/playlist metadata and playlist ordering. Temporary
-stream URLs are not cached; a new stream manifest is requested whenever a
-lecture is loaded again. Saving a playlist or a timestamped note writes through
-the corresponding repository; saved moments remain screen-local.
+The player sends a direct media stream URL to the media player. It does not
+send a YouTube page URL.
 
-## Migration from the IFrame player
+## Stream selection
 
-The `youtube_player_iframe` dependency and screen-level controller have been
-removed. Existing saved YouTube page URLs remain valid inputs; first load now
-detects the URL, caches stable metadata, selects a current direct media stream,
-and gives its direct stream source to the platform player. Schema v2 adds a
-metadata cache and upgrades existing schemas without rewriting learning
-records. Recent watch history stores stable video details and timestamps, never
-temporary stream URLs. No video files are migrated.
+The current policy accepts `video/mp4` and `video/webm` streams up to 1080
+pixels high. It selects a fresh stream with both audio and video. The default
+network quality setting is `fast`, which has no bitrate limit.
 
-## Limitations
+Android can map a video-only track with a paired audio URL as a combined
+playable stream. Media3 merges the two sources. The stream selector does not
+select audio-only streams.
 
-YouTube extraction relies on reverse-engineered endpoints and may stop working;
-terms and distribution compliance require review before release. Age/region
-restrictions and private videos remain unavailable. Stream URLs expire and are
-treated as transient. Browser playback depends on browser codec/CORS support.
-OCW pages are heterogeneous and only direct MIT-hosted media is recognized.
+## Learning data
 
-Playback widgets and controller behavior are tested with fakes; Android uses
-`AndroidMediaPlayer`, while other platforms use `FlutterMediaPlayer`.
+The player saves the lesson position and duration while a lesson plays. It
+also saves progress when playback stops and when the player closes. The
+Resume setting controls automatic position restore. A completed lesson does
+not resume automatically. The player does not start playback after restore.
+
+The user can mark a lesson complete. This action updates progress and today's
+lesson goal. The Save moment control stores a bookmark at the current position.
+The Bookmarks screen opens the saved position and can delete a bookmark.
+
+The player stores video metadata so that progress and bookmarks can refer to
+the lesson. This metadata alone does not add the lesson to the saved Library.
+Saving a playlist or video adds it to the Library.
+
+Daily study time counts only while playback reports that it is playing. The
+player saves this time in local-date sections. Default daily targets are 30
+minutes and one completed lesson. Users can change both targets in Settings.
+
+## Controls and settings
+
+The player provides playback, seek, speed, quality, and fullscreen controls.
+Playback speed can range from 0.25x to 3x. Settings store the default
+playback speed, resume preference, topic-completion confirmation, appearance,
+and daily-goal targets.
+
+The player can save a playlist and a note with the current video and time.
+Share link uses the Android share sheet on Android. Other platforms copy the
+link to the clipboard.
+
+## Cache and playback data
+
+The database caches stable video and playlist metadata. It does not cache
+temporary stream URLs. A new stream request occurs when the player loads a
+lesson. Recent history stores video metadata and watch time. Progress stores
+the current playback position.
+
+See [database.md](database.md) for storage details,
+[media-provider.md](media-provider.md) for provider behavior, and
+[testing.md](testing.md) for validation.

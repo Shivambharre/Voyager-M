@@ -1,29 +1,58 @@
-# Neo-Brutalist Design System
+# Design System
 
-The presentation layer follows the supplied Neo-Brutalist UI direction: warm paper backgrounds, near-black outlines, tactile hard-offset shadows, editorial type hierarchy, and a restrained yellow/blue accent palette.
+VoyagerM uses a Classical Archive style. It uses warm surfaces, dark text,
+antique colors, serif headings, and sans-serif interface text.
 
-## Implementation
+## Colors
 
-- Tokens: `lib/core/design/design_tokens.dart`
-- Shared components: `lib/core/design/brutalist_components.dart`
-- Light/dark themes: `lib/core/design/app_theme.dart`
-- Component reference screen: `lib/core/design/design_system_showcase.dart`
-- Application shell and primary navigation: `lib/features/home/presentation/app_shell.dart`
-- Mock learning player: `lib/features/player/presentation/learning_player_screen.dart`
+| Name | Hex | Main use |
+| --- | --- | --- |
+| Parchment | `#E8DDC7` | Light page background |
+| Sandstone | `#B49B78` | Borders and quiet accents |
+| Pompeian red | `#6C3028` | Light-mode primary action |
+| Roman olive | `#263B35` | Selected navigation and contrast |
+| Antique gold | `#A8894E` | Highlights and progress |
+| Charcoal umber | `#292724` | Main text and dark background |
+| Marble grey | `#D6D0C3` | Raised surfaces |
+| Fresco blue | `#8796A0` | Secondary accents |
 
-## UI boundaries
+`DesignTokens` also defines light and dark surfaces, text colors, dividers,
+borders, spacing, and tap-target sizes. Use these tokens instead of adding
+screen-specific values.
 
-Home, Library, Notes, and player flows use repository contracts. The
-presentation layer avoids direct SQLite or provider SDK calls.
+## Type
 
-## Review notes
+- Use **Cormorant Garamond** for editorial headings and screen titles.
+- Use **Inter** for body text, labels, buttons, and controls.
+- The app includes regular and italic variable font files in `assets/fonts/`.
+- The font license notices are in the same folder.
 
-- Common controls use strong borders and offset, zero-blur shadows.
-- Contrast, touch target sizes, descriptive semantics, text progress values, and visible focus borders are considered in reusable controls.
-- Layouts scroll on small screens and are width-constrained on larger displays.
-- Dark appearance has a separate palette and keeps the outline-and-shadow character.
-- The Design System Showcase is available from the palette icon in the app bar.
-- Player controls expose accessible labeling for fullscreen, seeking, and quality selection.
+## Components and accessibility
 
-The app shell and player remain intentionally focused; progress and settings
-repositories exist but are not yet connected to those screens.
+Shared controls are in
+[`brutalist_components.dart`](../lib/core/design/brutalist_components.dart).
+The file name is historical; the active theme uses the Classical Archive
+style.
+
+Keep controls easy to read and operate:
+
+- Use a tap area of at least 48 logical pixels when practical.
+- Keep keyboard focus visible.
+- Add useful semantic labels.
+- Show loading, empty, and error states.
+- Check layouts on narrow screens.
+
+Home quick actions are disabled. The player Share link control is also
+disabled. The Save moment control is active, but it does not save data. Do not
+give these controls new behavior unless the feature is approved and
+implemented. See [`TODO.md`](../TODO.md).
+
+## Source files
+
+- Colors and spacing: `lib/core/design/design_tokens.dart`
+- Light and dark themes: `lib/core/design/app_theme.dart`
+- Shared controls: `lib/core/design/brutalist_components.dart`
+- Component showcase: `lib/core/design/design_system_showcase.dart`
+- App shell and main pages: `lib/features/home/presentation/app_shell.dart`
+- Roadmaps: `lib/features/roadmap/presentation/roadmaps_page.dart`
+- Player: `lib/features/player/presentation/learning_player_screen.dart`

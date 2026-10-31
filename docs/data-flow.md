@@ -1,45 +1,76 @@
-# Current Data Flow
+# Data Flow
 
-## Startup and environment selection
+## App startup
 
-1. `main()` initializes Flutter and boots the app shell.
-2. `configureDependencies()` registers interfaces in GetIt.
-3. On Android, the app selects SQLite-backed repositories and a metadata cache.
-4. In mock/Web builds, the same composition root selects in-memory repositories.
-5. `VoyagerApp` receives the roadmap repository and passes the app shell and
-   feature screens whatever domain contracts they need.
+1. `main()` initializes Flutter.
+2. `configureDependencies()` registers the repositories and media services.
+3. The app uses in-memory repositories on Web by default.
+4. Android uses SQLite repositories.
+5. Tests can pass `useMocks: true` to select in-memory repositories.
+6. `VoyagerApp` builds the app shell and passes the roadmap repository.
 
-The app is local-first by design, with a mock mode that works without a backend
-or real media service. The app shell now reads saved playlist and note data from
-real repository implementations instead of hidden sample state.
+The composition root is
+[`service_locator.dart`](../lib/core/di/service_locator.dart). It also creates
+a playback controller when a player screen opens.
 
-## Player and persistence flow
+## Roadmap flow
 
 ```text
-Player screen
-  -> `PlaybackController`
-  -> selected `VideoSourceAdapter`
-  -> direct media stream selection
-  -> Android Media3 player or Flutter `video_player` fallback
+Roadmap screen
+  -> RoadmapRepository
+  -> SQLite repository on Android
+     or in-memory repository in mock/Web mode
 ```
 
-Library and notes use the repository path:
+The roadmap screen reads and saves roadmaps and topics through the repository.
+It does not access SQLite directly.
+
+## Library and notes flow
 
 ```text
 Screen action
-  -> feature repository interface
-  -> SQLite adapter or in-memory adapter
-  -> saved playlist/video/note rows
+  -> repository contract
+  -> SQLite repository or in-memory repository
+  -> saved learning data
 ```
 
-Library playlist saves persist playlist metadata, ordered entries, and nested
-video records. Player notes save an authored note plus optional video ID and
-playback timestamp. These flows are in the current code path, not only the
-intended target architecture.
+The player can save playlist details, playlist entries, videos, and notes.
+The Library screen can open or delete saved items. The Notes screen can create
+and delete notes.
 
-## Provider boundary
+## Player flow
 
-Source resolution flows through `SourceDetector` and `VideoSourceAdapter`
-implementations. Android uses NewPipe; other platforms lazily create the
-`youtube_explode_dart` fallback. Provider-specific media details do not leak
-into the UI layer. Unused mock-media and content-filter prototypes were removed.
+```text
+Player screen
+  -> PlaybackController
+  -> SourceDetector
+  -> VideoSourceRegistry
+  -> source adapter
+  -> StreamSelector
+  -> Android Media3 or Flutter video_player
+```
+
+Android resolves YouTube data through the NewPipe MethodChannel bridge.
+Other platforms use `youtube_explode_dart`. MIT OpenCourseWare uses
+`MitOcwAdapter`.
+
+On Android, a video-only stream can include a separate audio URL. The native
+Media3 player merges the two streams. `FlutterMediaPlayer` does not accept a
+separate audio URL.
+
+The player writes stable video metadata to the metadata cache. It records
+recent watch history after a video loads. It does not save temporary stream
+URLs.
+
+## Android share flow
+
+Android sends shared text to the Flutter app through an EventChannel.
+`SharedYoutubeLink` finds a valid YouTube video or playlist link in that text.
+The app opens the player with that link. Other shared text shows an error.
+
+## Data that is not connected
+
+Progress and settings repositories exist, but the active screens do not use
+them. The appearance switch uses in-memory app state. The save-moment control
+does not write a bookmark. See
+[implementation-status.md](implementation-status.md).

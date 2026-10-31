@@ -5,8 +5,8 @@ class LearningProgress {
     required this.durationSeconds,
     required this.updatedAt,
     this.isCompleted = false,
-  })  : assert(positionSeconds >= 0),
-        assert(durationSeconds >= 0);
+  }) : assert(positionSeconds >= 0),
+       assert(durationSeconds >= 0);
 
   final String videoId;
   final int positionSeconds;

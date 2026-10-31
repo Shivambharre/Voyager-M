@@ -4,6 +4,7 @@ abstract interface class LearningLibraryRepository {
   Future<List<LearningVideo>> getVideos();
   Future<LearningVideo?> getVideo(String id);
   Future<void> saveVideo(LearningVideo video);
+  Future<void> saveVideoMetadata(LearningVideo video);
   Future<void> deleteVideo(String id);
 
   Future<List<LearningPlaylist>> getPlaylists();

@@ -29,10 +29,12 @@ class _BrutalistButtonState extends State<BrutalistButton> {
   Widget build(BuildContext context) {
     final background = widget.secondary
         ? context.surfaceColor
-        : context.accentColor;
+        : (context.isDarkMode
+              ? DesignTokens.darkYellow
+              : DesignTokens.pompeianRed);
     final foreground = widget.secondary
         ? context.inkColor
-        : DesignTokens.ink;
+        : (context.isDarkMode ? DesignTokens.ink : DesignTokens.white);
 
     return Semantics(
       button: true,
@@ -52,8 +54,8 @@ class _BrutalistButtonState extends State<BrutalistButton> {
             minHeight: DesignTokens.minTapTarget,
           ),
           transform: Matrix4.translationValues(
-            _pressed ? 2 : 0,
-            _pressed ? 2 : 0,
+            _pressed ? 1 : 0,
+            _pressed ? 1 : 0,
             0,
           ),
           padding: const EdgeInsets.symmetric(
@@ -62,21 +64,20 @@ class _BrutalistButtonState extends State<BrutalistButton> {
           ),
           decoration: BoxDecoration(
             color: widget.onPressed == null
-                ? background.withValues(alpha: 0.55)
+                ? background.withValues(alpha: 0.45)
                 : background,
             border: Border.all(
-              color: context.outlineColor,
-              width: DesignTokens.borderStrong,
+              color: widget.secondary ? context.outlineColor : background,
+              width: DesignTokens.border,
             ),
+            borderRadius: BorderRadius.circular(8),
             boxShadow: _pressed
                 ? const []
                 : [
                     BoxShadow(
-                      color: context.hardShadowColor,
-                      offset: const Offset(
-                        DesignTokens.shadowSmall,
-                        DesignTokens.shadowSmall,
-                      ),
+                      color: context.hardShadowColor.withValues(alpha: 0.1),
+                      blurRadius: DesignTokens.shadowSmall,
+                      offset: const Offset(0, 3),
                     ),
                   ],
           ),
@@ -90,10 +91,8 @@ class _BrutalistButtonState extends State<BrutalistButton> {
               ],
               Text(
                 widget.label.toUpperCase(),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: foreground,
-                      fontWeight: FontWeight.w800,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: foreground, fontWeight: FontWeight.w800),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -138,6 +137,7 @@ class BrutalistIconButton extends StatelessWidget {
                 color: context.outlineColor,
                 width: DesignTokens.border,
               ),
+              borderRadius: BorderRadius.circular(DesignTokens.radius),
             ),
             child: Icon(icon, color: context.inkColor),
           ),
@@ -171,16 +171,15 @@ class BrutalistCard extends StatelessWidget {
         color: color ?? context.surfaceColor,
         border: Border.all(
           color: context.outlineColor,
-          width: DesignTokens.borderStrong,
+          width: DesignTokens.border,
         ),
+        borderRadius: BorderRadius.circular(DesignTokens.radius),
         boxShadow: shadow
             ? [
                 BoxShadow(
-                  color: context.hardShadowColor,
-                  offset: const Offset(
-                    DesignTokens.shadowSmall,
-                    DesignTokens.shadowSmall,
-                  ),
+                  color: context.hardShadowColor.withValues(alpha: 0.08),
+                  blurRadius: DesignTokens.shadowMedium,
+                  offset: const Offset(0, 4),
                 ),
               ]
             : null,
@@ -193,18 +192,18 @@ class BrutalistCard extends StatelessWidget {
       button: true,
       child: Material(
         color: Colors.transparent,
-        child: InkWell(onTap: onTap, child: card),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(DesignTokens.radius),
+          onTap: onTap,
+          child: card,
+        ),
       ),
     );
   }
 }
 
 class BrutalistSectionHeader extends StatelessWidget {
-  const BrutalistSectionHeader({
-    required this.title,
-    this.trailing,
-    super.key,
-  });
+  const BrutalistSectionHeader({required this.title, this.trailing, super.key});
 
   final String title;
   final Widget? trailing;
@@ -215,11 +214,13 @@ class BrutalistSectionHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            title.toUpperCase(),
+            title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.7,
-                ),
+              color: context.isDarkMode
+                  ? DesignTokens.darkText
+                  : DesignTokens.romanOlive,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         trailing ?? const SizedBox.shrink(),
@@ -252,14 +253,16 @@ class BrutalistChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: selected ? context.accentColor : context.surfaceColor,
-        border: Border.all(color: context.outlineColor, width: DesignTokens.border),
+        border: Border.all(
+          color: context.outlineColor,
+          width: DesignTokens.border,
+        ),
+        borderRadius: BorderRadius.circular(DesignTokens.radiusPill),
       ),
       child: Text(
-        label.toUpperCase(),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: context.inkColor,
-              fontWeight: FontWeight.w800,
-            ),
+        label,
+        style: Theme.of(context).textTheme.labelSmall
+            ?.copyWith(color: context.inkColor, fontWeight: FontWeight.w800),
       ),
     );
     if (onTap == null) return chip;
@@ -272,11 +275,8 @@ class BrutalistChip extends StatelessWidget {
 }
 
 class BrutalistProgressBar extends StatelessWidget {
-  const BrutalistProgressBar({
-    required this.value,
-    this.label,
-    super.key,
-  }) : assert(value >= 0 && value <= 1);
+  const BrutalistProgressBar({required this.value, this.label, super.key})
+    : assert(value >= 0 && value <= 1);
 
   final double value;
   final String? label;
@@ -294,33 +294,33 @@ class BrutalistProgressBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (label != null)
-                Text(
-                  label!,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+                Text(label!, style: Theme.of(context).textTheme.labelMedium),
               Text(
                 '$percentage%',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                style: Theme.of(context).textTheme.labelMedium
+                    ?.copyWith(fontWeight: FontWeight.w800),
               ),
             ],
           ),
           const SizedBox(height: DesignTokens.space2),
           Container(
-            height: 14,
+            height: 8,
             decoration: BoxDecoration(
               color: context.raisedColor,
-              border: Border.all(
-                color: context.outlineColor,
-                width: DesignTokens.border,
-              ),
+              borderRadius: BorderRadius.circular(DesignTokens.radiusPill),
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
                 widthFactor: value,
-                child: ColoredBox(color: context.accentColor),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: context.accentColor,
+                    borderRadius: BorderRadius.circular(
+                      DesignTokens.radiusPill,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -356,25 +356,16 @@ class BrutalistSearchField extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 52),
         contentPadding: const EdgeInsets.all(DesignTokens.space3),
         border: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: context.outlineColor,
-            width: DesignTokens.borderStrong,
-          ),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.outlineColor),
+          borderRadius: BorderRadius.circular(8),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: context.outlineColor,
-            width: DesignTokens.borderStrong,
-          ),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.outlineColor),
+          borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: context.blueAccentColor,
-            width: DesignTokens.borderStrong,
-          ),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.blueAccentColor, width: 1.5),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );
@@ -414,16 +405,16 @@ class BrutalistInput extends StatelessWidget {
         alignLabelWithHint: maxLines > 1,
         contentPadding: const EdgeInsets.all(DesignTokens.space3),
         border: OutlineInputBorder(
-          borderSide: BorderSide(color: context.outlineColor, width: DesignTokens.borderStrong),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.outlineColor),
+          borderRadius: BorderRadius.circular(8),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: context.outlineColor, width: DesignTokens.borderStrong),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.outlineColor),
+          borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: context.blueAccentColor, width: DesignTokens.borderStrong),
-          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: context.blueAccentColor, width: 1.5),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );
@@ -450,11 +441,17 @@ class BrutalistCheckbox extends StatelessWidget {
       child: InkWell(
         onTap: () => onChanged(!value),
         child: Container(
-          constraints: const BoxConstraints(minHeight: DesignTokens.minTapTarget),
+          constraints: const BoxConstraints(
+            minHeight: DesignTokens.minTapTarget,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: DesignTokens.space2),
           decoration: BoxDecoration(
             color: context.surfaceColor,
-            border: Border.all(color: context.outlineColor, width: DesignTokens.border),
+            border: Border.all(
+              color: context.outlineColor,
+              width: DesignTokens.border,
+            ),
+            borderRadius: BorderRadius.circular(DesignTokens.radius),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -487,11 +484,11 @@ class BrutalistEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BrutalistCard(
-      color: context.accentColor,
+      color: context.raisedColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title.toUpperCase(), style: Theme.of(context).textTheme.titleLarge),
+          Text(title, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: DesignTokens.space2),
           Text(message, style: Theme.of(context).textTheme.bodyMedium),
           if (action != null) ...[
@@ -522,7 +519,7 @@ Future<T?> showBrutalistDialog<T>({
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title.toUpperCase(), style: Theme.of(context).textTheme.titleLarge),
+            Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: DesignTokens.space3),
             content,
             const SizedBox(height: DesignTokens.space4),
@@ -547,13 +544,16 @@ Future<T?> showBrutalistBottomSheet<T>({
     context: context,
     isScrollControlled: true,
     backgroundColor: context.pageColor,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
     builder: (context) => SafeArea(
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(DesignTokens.space4),
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: context.outlineColor, width: 3)),
+          border: Border(top: BorderSide(color: context.outlineColor)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: child,
       ),
@@ -630,10 +630,17 @@ class BrutalistListItem extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: context.accentColor,
-              border: Border.all(color: context.outlineColor, width: 2),
+              color: context.isDarkMode
+                  ? DesignTokens.darkBackground
+                  : DesignTokens.romanOlive,
+              borderRadius: BorderRadius.circular(DesignTokens.radiusPill),
             ),
-            child: Icon(icon, color: context.inkColor),
+            child: Icon(
+              icon,
+              color: context.isDarkMode
+                  ? DesignTokens.parchment
+                  : DesignTokens.white,
+            ),
           ),
           const SizedBox(width: DesignTokens.space3),
           Expanded(
@@ -644,9 +651,8 @@ class BrutalistListItem extends StatelessWidget {
                 const SizedBox(height: DesignTokens.space1),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: context.mutedColor,
-                      ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: context.mutedColor),
                 ),
               ],
             ),

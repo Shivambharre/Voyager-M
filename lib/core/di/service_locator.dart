@@ -8,6 +8,9 @@ import '../../features/library/domain/learning_library_repository.dart';
 import '../../features/history/data/in_memory_recent_watch_history_repository.dart';
 import '../../features/history/data/sqlite_recent_watch_history_repository.dart';
 import '../../features/history/domain/recent_watch_history_repository.dart';
+import '../../features/goals/data/in_memory_daily_goal_repository.dart';
+import '../../features/goals/data/sqlite_daily_goal_repository.dart';
+import '../../features/goals/domain/daily_goal_repository.dart';
 import '../../features/notes/data/in_memory_notes_repository.dart';
 import '../../features/notes/data/sqlite_notes_repository.dart';
 import '../../features/notes/domain/notes_repository.dart';
@@ -45,6 +48,7 @@ Future<void> configureDependencies({bool? useMocks}) async {
     _registerIfMissing<RecentWatchHistoryRepository>(
       InMemoryRecentWatchHistoryRepository.new,
     );
+    _registerIfMissing<DailyGoalRepository>(InMemoryDailyGoalRepository.new);
   } else if (!serviceLocator.isRegistered<AppDatabase>()) {
     final database = SqfliteAppDatabase();
     await database.initialize();
@@ -70,6 +74,9 @@ Future<void> configureDependencies({bool? useMocks}) async {
     serviceLocator.registerLazySingleton<RecentWatchHistoryRepository>(
       () => SqliteRecentWatchHistoryRepository(serviceLocator<AppDatabase>()),
     );
+    serviceLocator.registerLazySingleton<DailyGoalRepository>(
+      () => SqliteDailyGoalRepository(serviceLocator<AppDatabase>()),
+    );
   }
   _registerIfMissing<AppConfig>(() => AppConfig.fromEnvironment);
   _registerIfMissing<VideoMetadataCache>(
@@ -85,7 +92,10 @@ Future<void> configureDependencies({bool? useMocks}) async {
           MitOcwAdapter(),
         ]),
         metadataCache: serviceLocator<VideoMetadataCache>(),
-        mediaPlayer: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+        mediaPlayer:
+            !shouldUseMocks &&
+                !kIsWeb &&
+                defaultTargetPlatform == TargetPlatform.android
             ? AndroidMediaPlayer()
             : FlutterMediaPlayer(),
         streamPolicy: const StreamSelectionPolicy(

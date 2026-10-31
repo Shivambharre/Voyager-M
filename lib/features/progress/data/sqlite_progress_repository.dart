@@ -18,14 +18,25 @@ class SqliteProgressRepository implements ProgressRepository {
   }
 
   @override
+  Future<List<LearningProgress>> getAllProgress() async {
+    final rows = await _database.query('progress', orderBy: 'updated_at DESC');
+    return rows.map(_progressFromRow).toList(growable: false);
+  }
+
+  @override
   Future<void> saveProgress(LearningProgress progress) async {
-    await _database.upsert('progress', {
-      'video_id': progress.videoId,
-      'position_seconds': progress.positionSeconds,
-      'duration_seconds': progress.durationSeconds,
-      'is_completed': progress.isCompleted ? 1 : 0,
-      'updated_at': progress.updatedAt.toUtc().toIso8601String(),
-    }, keyWhere: 'video_id = ?', keyArgs: [progress.videoId]);
+    await _database.upsert(
+      'progress',
+      {
+        'video_id': progress.videoId,
+        'position_seconds': progress.positionSeconds,
+        'duration_seconds': progress.durationSeconds,
+        'is_completed': progress.isCompleted ? 1 : 0,
+        'updated_at': progress.updatedAt.toUtc().toIso8601String(),
+      },
+      keyWhere: 'video_id = ?',
+      keyArgs: [progress.videoId],
+    );
   }
 
   @override
@@ -40,14 +51,25 @@ class SqliteProgressRepository implements ProgressRepository {
   }
 
   @override
+  Future<List<LearningBookmark>> getAllBookmarks() async {
+    final rows = await _database.query('bookmarks', orderBy: 'created_at DESC');
+    return rows.map(_bookmarkFromRow).toList(growable: false);
+  }
+
+  @override
   Future<void> saveBookmark(LearningBookmark bookmark) async {
-    await _database.upsert('bookmarks', {
-      'id': bookmark.id,
-      'video_id': bookmark.videoId,
-      'position_seconds': bookmark.positionSeconds,
-      'label': bookmark.label,
-      'created_at': bookmark.createdAt.toUtc().toIso8601String(),
-    }, keyWhere: 'id = ?', keyArgs: [bookmark.id]);
+    await _database.upsert(
+      'bookmarks',
+      {
+        'id': bookmark.id,
+        'video_id': bookmark.videoId,
+        'position_seconds': bookmark.positionSeconds,
+        'label': bookmark.label,
+        'created_at': bookmark.createdAt.toUtc().toIso8601String(),
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [bookmark.id],
+    );
   }
 
   @override

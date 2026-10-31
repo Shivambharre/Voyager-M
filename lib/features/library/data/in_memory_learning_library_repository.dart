@@ -3,11 +3,14 @@ import '../domain/learning_library_repository.dart';
 
 class InMemoryLearningLibraryRepository implements LearningLibraryRepository {
   final Map<String, LearningVideo> _videos = {};
+  final Set<String> _savedVideoIds = {};
   final Map<String, LearningPlaylist> _playlists = {};
   final Map<String, List<PlaylistEntry>> _entries = {};
 
   @override
-  Future<List<LearningVideo>> getVideos() async => List.unmodifiable(_videos.values);
+  Future<List<LearningVideo>> getVideos() async => List.unmodifiable(
+    _videos.values.where((video) => _savedVideoIds.contains(video.id)),
+  );
 
   @override
   Future<LearningVideo?> getVideo(String id) async => _videos[id];
@@ -15,11 +18,18 @@ class InMemoryLearningLibraryRepository implements LearningLibraryRepository {
   @override
   Future<void> saveVideo(LearningVideo video) async {
     _videos[video.id] = video;
+    _savedVideoIds.add(video.id);
+  }
+
+  @override
+  Future<void> saveVideoMetadata(LearningVideo video) async {
+    _videos[video.id] = video;
   }
 
   @override
   Future<void> deleteVideo(String id) async {
     _videos.remove(id);
+    _savedVideoIds.remove(id);
     for (final playlistId in _entries.keys.toList()) {
       _entries[playlistId] = _entries[playlistId]!
           .where((entry) => entry.videoId != id)

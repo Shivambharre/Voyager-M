@@ -1,4 +1,4 @@
-# Voyager Learning
+# VoyagerM
 
 A local-first Android learning app for managing roadmaps, saved learning
 materials, and study notes, with YouTube and MIT OpenCourseWare playback.

@@ -1,5 +1,7 @@
 package com.voyager.voyager_learning
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
@@ -12,6 +14,7 @@ import androidx.media3.ui.PlayerView
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
@@ -29,9 +32,27 @@ class MainActivity : FlutterActivity() {
 	private val extractionExecutor = Executors.newSingleThreadExecutor()
 	private val mainHandler = Handler(Looper.getMainLooper())
 	private lateinit var mediaPlayer: ExoPlayer
+	private var shareEventSink: EventChannel.EventSink? = null
+	private var pendingSharedText: String? = null
 
 	override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 		super.configureFlutterEngine(flutterEngine)
+		EventChannel(flutterEngine.dartExecutor.binaryMessenger, SHARE_CHANNEL)
+			.setStreamHandler(object : EventChannel.StreamHandler {
+				override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+					shareEventSink = events
+					val sharedText = pendingSharedText ?: sharedTextFrom(intent)
+					pendingSharedText = null
+					if (sharedText != null) {
+						events.success(sharedText)
+						clearSharedText(intent)
+					}
+				}
+
+				override fun onCancel(arguments: Any?) {
+					shareEventSink = null
+				}
+			})
 		mediaPlayer = ExoPlayer.Builder(this).build()
 		flutterEngine.platformViewsController.registry.registerViewFactory(
 			PLAYER_VIEW_TYPE,
@@ -83,6 +104,34 @@ class MainActivity : FlutterActivity() {
 					result.error("player_error", error.message, null)
 				}
 			}
+		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SHARE_ACTION_CHANNEL)
+			.setMethodCallHandler { call, result ->
+				if (call.method != "shareUrl") {
+					result.notImplemented()
+					return@setMethodCallHandler
+				}
+				val url = call.argument<String>("url")
+				val title = call.argument<String>("title") ?: "Share learning link"
+				val uri = url?.let(Uri::parse)
+				if (uri == null ||
+					(uri.scheme != "http" && uri.scheme != "https") ||
+					uri.host.isNullOrBlank()
+				) {
+					result.error("invalid_url", "A valid HTTP(S) link is required.", null)
+					return@setMethodCallHandler
+				}
+				val shareIntent = Intent(Intent.ACTION_SEND).apply {
+					type = "text/plain"
+					putExtra(Intent.EXTRA_TEXT, uri.toString())
+					putExtra(Intent.EXTRA_TITLE, title)
+				}
+				try {
+					startActivity(Intent.createChooser(shareIntent, title))
+					result.success(null)
+				} catch (error: Exception) {
+					result.error("share_failed", error.message, null)
+				}
+			}
 		MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
 			.setMethodCallHandler { call, result ->
 				if (call.method != "resolveVideo" &&
@@ -116,6 +165,35 @@ class MainActivity : FlutterActivity() {
 			}
 	}
 
+	override fun onNewIntent(intent: Intent) {
+		super.onNewIntent(intent)
+		setIntent(intent)
+		val sharedText = sharedTextFrom(intent) ?: return
+		val sink = shareEventSink
+		if (sink == null) {
+			pendingSharedText = sharedText
+		} else {
+			sink.success(sharedText)
+		}
+		clearSharedText(intent)
+	}
+
+	private fun sharedTextFrom(intent: Intent?): String? {
+		if (intent?.action != Intent.ACTION_SEND ||
+			intent.type != "text/plain"
+		) {
+			return null
+		}
+		return intent.getCharSequenceExtra(Intent.EXTRA_TEXT)
+			?.toString()
+			?.takeIf { it.isNotBlank() }
+	}
+
+	private fun clearSharedText(intent: Intent?) {
+		if (intent?.action != Intent.ACTION_SEND) return
+		intent.removeExtra(Intent.EXTRA_TEXT)
+	}
+
 	private fun resolveVideo(sourceUrl: String): Map<String, Any?> {
 		NewPipeExtractorRuntime.initialize()
 		val extractor = NewPipe.getServiceByUrl(sourceUrl).getStreamExtractor(sourceUrl)
@@ -140,10 +218,12 @@ class MainActivity : FlutterActivity() {
 	private fun mapVideoStreams(
 		extractor: org.schabi.newpipe.extractor.stream.StreamExtractor,
 	): List<Map<String, Any?>> {
-		val audioUrl = extractor.audioStreams
+		val audioStreams = extractor.audioStreams
 			.filter { it.isUrl && !it.content.isNullOrBlank() }
-			.maxByOrNull { it.bitrate }
-			?.content
+		val selectedAudio = selectOriginalAudioTrackIndex(
+			audioStreams.map { AudioTrackPreference(it.audioTrackType, it.bitrate) },
+		)?.let(audioStreams::get)
+		val audioUrl = selectedAudio?.content
 		return extractor.videoStreams.mapNotNull { mapVideoStream(it, null) } +
 			extractor.videoOnlyStreams.mapNotNull { mapVideoStream(it, audioUrl) }
 	}
@@ -244,7 +324,9 @@ class MainActivity : FlutterActivity() {
 	companion object {
 		private const val CHANNEL = "com.voyager/newpipe"
 		private const val PLAYER_CHANNEL = "com.voyager/player"
+		private const val SHARE_ACTION_CHANNEL = "com.voyager/share_action"
 		private const val PLAYER_VIEW_TYPE = "com.voyager/player_view"
+		private const val SHARE_CHANNEL = "com.voyager/share"
 		private const val MAX_PLAYLIST_ENTRIES = 500
 	}
 }

@@ -2,13 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:voyager_learning/core/design/brutalist_components.dart';
 import 'package:voyager_learning/core/media/playback_controller.dart';
 import 'package:voyager_learning/core/media/playback_state.dart';
 import 'package:voyager_learning/core/media/source_detector.dart';
 import 'package:voyager_learning/core/media/video_models.dart';
 import 'package:voyager_learning/features/history/data/in_memory_recent_watch_history_repository.dart';
+import 'package:voyager_learning/features/goals/data/in_memory_daily_goal_repository.dart';
 import 'package:voyager_learning/features/library/data/in_memory_learning_library_repository.dart';
 import 'package:voyager_learning/features/notes/data/in_memory_notes_repository.dart';
+import 'package:voyager_learning/features/progress/data/in_memory_progress_repository.dart';
+import 'package:voyager_learning/features/progress/domain/learning_progress.dart';
 import 'package:voyager_learning/features/player/presentation/learning_player_screen.dart';
 
 void main() {
@@ -33,6 +37,8 @@ void main() {
             libraryRepository: library,
             notesRepository: notes,
             recentWatchHistoryRepository: history,
+            progressRepository: InMemoryProgressRepository(),
+            dailyGoalRepository: InMemoryDailyGoalRepository(),
           ),
         ),
       );
@@ -150,6 +156,8 @@ void main() {
             libraryRepository: library,
             notesRepository: notes,
             recentWatchHistoryRepository: history,
+            progressRepository: InMemoryProgressRepository(),
+            dailyGoalRepository: InMemoryDailyGoalRepository(),
           ),
         ),
       );
@@ -163,6 +171,14 @@ void main() {
 
       expect(find.text('Sample course'), findsOneWidget);
       expect(find.byKey(const Key('player-seek-slider')), findsOneWidget);
+      expect(
+        tester
+            .widget<BrutalistButton>(
+              find.byKey(const Key('player-share-link-button')),
+            )
+            .onPressed,
+        isNotNull,
+      );
       expect(
         tester.getRect(find.byKey(const Key('player-seek-slider'))).bottom,
         lessThan(tester.getRect(find.text('Sample course')).top),
@@ -207,6 +223,89 @@ void main() {
       expect(find.byTooltip('Enter fullscreen'), findsOneWidget);
     },
   );
+
+  testWidgets('restores saved progress without starting playback', (
+    tester,
+  ) async {
+    final progress = InMemoryProgressRepository();
+    await progress.saveProgress(
+      LearningProgress(
+        videoId: 'dQw4w9WgXcQ',
+        positionSeconds: 47,
+        durationSeconds: 120,
+        updatedAt: DateTime.utc(2026, 9, 27),
+      ),
+    );
+    final playback = _FakePlaybackController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LearningPlayerScreen(
+          playbackController: playback,
+          libraryRepository: InMemoryLearningLibraryRepository(),
+          notesRepository: InMemoryNotesRepository(),
+          recentWatchHistoryRepository: InMemoryRecentWatchHistoryRepository(),
+          progressRepository: progress,
+          dailyGoalRepository: InMemoryDailyGoalRepository(),
+          resumePlayback: true,
+          defaultPlaybackSpeed: 1.5,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byType(TextField).first,
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    );
+    await tester.ensureVisible(find.text('LOAD VIDEO'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('LOAD VIDEO'));
+    await tester.pumpAndSettle();
+
+    expect(playback.snapshot.position, const Duration(seconds: 47));
+    expect(playback.snapshot.status, PlayerStatus.ready);
+    expect(playback.snapshot.playbackSpeed, 1.5);
+  });
+
+  testWidgets('saves moments and manually completed lessons', (tester) async {
+    final progress = InMemoryProgressRepository();
+    final dailyGoals = InMemoryDailyGoalRepository();
+    final library = InMemoryLearningLibraryRepository();
+    final playback = _FakePlaybackController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LearningPlayerScreen(
+          playbackController: playback,
+          libraryRepository: library,
+          notesRepository: InMemoryNotesRepository(),
+          recentWatchHistoryRepository: InMemoryRecentWatchHistoryRepository(),
+          progressRepository: progress,
+          dailyGoalRepository: dailyGoals,
+        ),
+      ),
+    );
+    await tester.enterText(
+      find.byType(TextField).first,
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    );
+    await tester.ensureVisible(find.text('LOAD VIDEO'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('LOAD VIDEO'));
+    await tester.pumpAndSettle();
+    expect(await library.getVideos(), isEmpty);
+
+    final saveMoment = find.text('SAVE MOMENT');
+    await tester.ensureVisible(saveMoment);
+    await tester.tap(saveMoment);
+    await tester.pumpAndSettle();
+    expect(await progress.getAllBookmarks(), hasLength(1));
+
+    final completeLesson = find.text('COMPLETE LESSON');
+    await tester.ensureVisible(completeLesson);
+    await tester.tap(completeLesson);
+    await tester.pumpAndSettle();
+    expect((await progress.getProgress('dQw4w9WgXcQ'))?.isCompleted, isTrue);
+    expect((await dailyGoals.getSummary(DateTime.now())).completedLessons, 1);
+  });
+
 }
 
 class _FakePlaybackController implements PlaybackController {
@@ -311,10 +410,25 @@ class _FakePlaybackController implements PlaybackController {
   void refreshPlayback() => _emit(PlayerStatus.playing);
 
   @override
-  Future<void> seekTo(Duration position) async {}
+  Future<void> seekTo(Duration position) async {
+    _snapshot = PlayerSnapshot(
+      status: _snapshot.status,
+      position: position,
+      duration: _snapshot.duration,
+      playbackSpeed: _snapshot.playbackSpeed,
+    );
+    _snapshots.add(_snapshot);
+  }
 
   @override
-  Future<void> setPlaybackSpeed(double speed) async {}
+  Future<void> setPlaybackSpeed(double speed) async {
+    _snapshot = PlayerSnapshot(
+      status: _snapshot.status,
+      position: _snapshot.position,
+      duration: _snapshot.duration,
+      playbackSpeed: speed,
+    );
+  }
 
   @override
   Future<void> selectStream(MediaStreamInfo stream) async {

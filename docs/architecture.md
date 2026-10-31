@@ -1,84 +1,82 @@
-# Architecture Overview
+# Architecture
 
-## Product intent
+## Product
 
-Voyager Learning is a local-first Android study app built around a strict separation between learning data and media consumption. The product is oriented around roadmap-based study, not content discovery.
+VoyagerM is a local-first learning app. It helps users organize lessons in
+roadmaps, save playlists and videos, and write study notes. It supports YouTube
+and selected MIT OpenCourseWare media.
 
-## Core architectural principles
+The app focuses on study tasks. It does not provide a general video-discovery
+feed or a cloud account.
 
-1. Local-first by default. Structured learning data lives in SQLite on Android; Web uses in-memory repositories.
-2. Small replaceable boundaries where the application currently needs them.
-3. Study-oriented workflow. The app should guide the user from roadmap selection to topic completion with minimal distraction.
-4. Strict module isolation. Feature code depends on interfaces, not concrete implementations.
-5. Testability. Business logic and repository interfaces are unit-testable without wiring to UI or platform APIs.
+## Main rules
 
-## High-level layers
+- Store structured study data in local repositories.
+- Keep screens separate from database and media-provider code.
+- Use repository and media contracts between app layers.
+- Test feature rules without network access or platform code.
 
-- Presentation: screens, widgets, navigation, theming, state handling
-- Domain: entities, use cases, value objects, feature rules
-- Data: repositories and persistence adapters
-- Infrastructure: SQLite and platform-specific media extraction/playback
-- Application shell: dependency injection, app composition root, bootstrapping
+## App layers
 
-## Replaceability map
+| Layer | Responsibility |
+| --- | --- |
+| Presentation | Screens, widgets, navigation, and themes |
+| Domain | App models and repository contracts |
+| Data | SQLite and in-memory repository implementations |
+| Platform | Android media extraction and playback |
+| Composition root | Selects and creates the app implementations |
 
-| Concern | Current implementation | Status |
-| --- | --- | --- |
-| Structured data | `AppDatabase`; SQLite repositories on Android, in-memory repositories on Web/mock | Schema v3; migration and repository tests exist |
-| Active learning data | Roadmap, library, and note repositories | Used by app screens and player save flows |
-| Progress and settings data | SQLite and in-memory repositories | Data adapters exist; screens do not yet read or write these repositories |
-| YouTube extraction | Native NewPipe adapter on Android; lazily created `youtube_explode_dart` fallback elsewhere | Platform-specific extractor paths; no duplicate Android extractor instance |
-| MIT OCW extraction | `MitOcwAdapter` | Supports recognized pages and direct media only |
-| Playback | `PlaybackController` → `AndroidMediaPlayer` (Media3) on Android or `FlutterMediaPlayer` elsewhere | One controller pipeline; Android merges adaptive video-only and audio tracks |
+`lib/main.dart` starts the app. `lib/core/di/service_locator.dart` registers
+repositories and creates the playback controller.
 
-## Current implementation checkpoint
+## Current implementations
 
-The composition root uses SQLite-backed repositories on Android, in-memory
-repositories/cache in mock and Web mode, and creates one disposable playback
-pipeline per player route. Media extraction/playback requires network access.
+| Area | Current implementation |
+| --- | --- |
+| Repository selection | Android uses SQLite. Web uses in-memory repositories by default. Tests can request in-memory repositories. |
+| Roadmaps | Roadmap and topic repositories support create, read, update, and delete flows. |
+| Library and notes | Android stores saved playlists, videos, and notes in SQLite. |
+| Watch history | Android stores up to 50 distinct recent videos. It stores stable metadata, not media streams. |
+| Progress and settings | SQLite and in-memory repositories exist. The app screens do not use them yet. |
+| YouTube | Android uses the NewPipe Extractor bridge. Other platforms use `youtube_explode_dart`. |
+| MIT OpenCourseWare | `MitOcwAdapter` reads supported pages and direct media links. |
+| Playback | Android uses Media3. Other platforms use `video_player`. |
 
-Available domain contracts cover:
+The Web default is selected by `kIsWeb`. The composition function also accepts
+`useMocks` for tests or other explicit app setups. Do not treat every
+non-Android platform as Web mode.
 
-- Roadmaps and topics
-- Videos, playlists, and playlist entries, plus source/stream metadata models
-- Study notes
-- Playback progress and settings data models/repositories
-- Source extraction, stream selection, and player control
+## Media flow
 
-Durable attachment storage, progress/resume wiring, and settings persistence
-remain out of the active app flow. Experimental content filtering and mock
-media/player abstractions were removed. See
-[`implementation-status.md`](implementation-status.md) for completion
-boundaries and validation evidence.
+The player screen uses `PlaybackController`. The controller detects a source,
+selects a `VideoSourceAdapter`, selects a playable stream, and sends the stream
+to a `MediaPlayer`.
 
-## Module boundaries
+On Android, the NewPipe bridge can pair a video-only track with an audio track.
+Media3 plays the paired tracks. The other player implementation does not accept
+separate audio and video tracks.
 
-### App shell
-
-Responsible for dependency registration and composition root setup. This layer wires interfaces to implementations without leaking storage or platform details into feature logic.
-
-### Core module
-
-Holds cross-cutting abstractions:
-
-- database
-- design
-- di
-- media
-
-### Features
-
-Each feature is isolated. Current domain modules include roadmaps, the learning library, notes, progress, and settings. Feature code depends on domain contracts and models, not on SQLite classes or media-provider implementations.
+See [data-flow.md](data-flow.md), [media-provider.md](media-provider.md), and
+[player.md](player.md) for details.
 
 ## Data flow
 
-The current startup and mock-mode flow is documented in
-[`data-flow.md`](data-flow.md).
-Player routing is connected; live provider extraction and physical-device
-playback remain validation gaps.
+Screens use repository contracts. The composition root selects SQLite or
+in-memory implementations. Do not import SQLite APIs into feature domain code.
 
-## Why this matters
+The app caches video and playlist metadata. It does not cache temporary media
+stream URLs. Playback and provider extraction require a network connection.
 
-The architecture keeps the active UI independent from SQLite and provider SDK
-types, without shipping unused abstractions for features that are not wired into
-the app.
+## Current boundaries
+
+- Roadmap topics are not linked to saved videos.
+- The player does not save or restore playback progress.
+- The Settings screen does not save settings. The appearance switch lasts only
+  for the current app session.
+- The save-moment control changes screen state only. It does not save a
+  bookmark.
+- The app does not store attachments or video files.
+- The app does not sync data to a cloud service.
+
+See [implementation-status.md](implementation-status.md) for the full feature
+status.

@@ -10,17 +10,34 @@ class InMemoryProgressRepository implements ProgressRepository {
       _progressByVideo[videoId];
 
   @override
+  Future<List<LearningProgress>> getAllProgress() async {
+    final progress = _progressByVideo.values.toList()
+      ..sort((first, second) => second.updatedAt.compareTo(first.updatedAt));
+    return List.unmodifiable(progress);
+  }
+
+  @override
   Future<void> saveProgress(LearningProgress progress) async {
     _progressByVideo[progress.videoId] = progress;
   }
 
   @override
   Future<List<LearningBookmark>> getBookmarks(String videoId) async {
-    final bookmarks = _bookmarksById.values
-        .where((bookmark) => bookmark.videoId == videoId)
-        .toList()
-      ..sort((first, second) =>
-          first.positionSeconds.compareTo(second.positionSeconds));
+    final bookmarks =
+        _bookmarksById.values
+            .where((bookmark) => bookmark.videoId == videoId)
+            .toList()
+          ..sort(
+            (first, second) =>
+                first.positionSeconds.compareTo(second.positionSeconds),
+          );
+    return List.unmodifiable(bookmarks);
+  }
+
+  @override
+  Future<List<LearningBookmark>> getAllBookmarks() async {
+    final bookmarks = _bookmarksById.values.toList()
+      ..sort((first, second) => second.createdAt.compareTo(first.createdAt));
     return List.unmodifiable(bookmarks);
   }
 

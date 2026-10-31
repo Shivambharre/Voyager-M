@@ -6,9 +6,14 @@ import '../domain/roadmap.dart';
 import '../domain/roadmap_repository.dart';
 
 class RoadmapsPage extends StatefulWidget {
-  const RoadmapsPage({required this.repository, super.key});
+  const RoadmapsPage({
+    required this.repository,
+    this.confirmTopicCompletion = true,
+    super.key,
+  });
 
   final RoadmapRepository repository;
+  final bool confirmTopicCompletion;
 
   @override
   State<RoadmapsPage> createState() => _RoadmapsPageState();
@@ -135,6 +140,7 @@ class _RoadmapsPageState extends State<RoadmapsPage> {
         builder: (_) => _RoadmapDetailPage(
           repository: widget.repository,
           roadmapId: roadmap.id,
+          confirmTopicCompletion: widget.confirmTopicCompletion,
         ),
       ),
     );
@@ -165,9 +171,14 @@ class _RoadmapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final roadmap = summary.roadmap;
+    final textColor = roadmap.isActive
+        ? DesignTokens.parchment
+        : context.inkColor;
+    final textTheme = Theme.of(context).textTheme
+        .apply(bodyColor: textColor, displayColor: textColor);
     return BrutalistCard(
       key: Key('roadmap-${roadmap.id}'),
-      color: roadmap.isActive ? context.accentColor : context.surfaceColor,
+      color: roadmap.isActive ? DesignTokens.romanOlive : context.surfaceColor,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +188,8 @@ class _RoadmapCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   roadmap.title,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(color: textColor),
                 ),
               ),
               if (roadmap.isActive)
@@ -188,25 +200,31 @@ class _RoadmapCard extends StatelessWidget {
             const SizedBox(height: DesignTokens.space2),
             Text(
               roadmap.description,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: textColor.withValues(alpha: 0.9)),
             ),
           ],
           const SizedBox(height: DesignTokens.space3),
           Text(
             '${summary.completedCount} of ${summary.topicCount} topics complete',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: textColor.withValues(alpha: 0.8)),
           ),
           const SizedBox(height: DesignTokens.space2),
-          BrutalistProgressBar(value: summary.progress),
+          Theme(
+            data: Theme.of(context).copyWith(textTheme: textTheme),
+            child: BrutalistProgressBar(value: summary.progress),
+          ),
           const SizedBox(height: DesignTokens.space3),
           Row(
             children: [
               Text(
                 'OPEN ROADMAP',
-                style: Theme.of(context).textTheme.labelSmall,
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(color: textColor),
               ),
               const Spacer(),
-              const Icon(Icons.arrow_forward),
+              Icon(Icons.arrow_forward, color: textColor),
             ],
           ),
         ],
@@ -216,10 +234,15 @@ class _RoadmapCard extends StatelessWidget {
 }
 
 class _RoadmapDetailPage extends StatefulWidget {
-  const _RoadmapDetailPage({required this.repository, required this.roadmapId});
+  const _RoadmapDetailPage({
+    required this.repository,
+    required this.roadmapId,
+    required this.confirmTopicCompletion,
+  });
 
   final RoadmapRepository repository;
   final String roadmapId;
+  final bool confirmTopicCompletion;
 
   @override
   State<_RoadmapDetailPage> createState() => _RoadmapDetailPageState();
@@ -402,6 +425,29 @@ class _RoadmapDetailPageState extends State<_RoadmapDetailPage> {
   }
 
   Future<void> _setTopicStatus(Topic topic, TopicStatus status) async {
+    if (status == TopicStatus.completed &&
+        topic.status != TopicStatus.completed &&
+        widget.confirmTopicCompletion) {
+      final confirmed = await showBrutalistDialog<bool>(
+        context: context,
+        title: 'Complete this topic?',
+        content: const Text('Mark this topic as complete?'),
+        actions: [
+          BrutalistButton(
+            label: 'Cancel',
+            secondary: true,
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          BrutalistButton(
+            key: const Key('confirm-topic-completion'),
+            label: 'Complete',
+            icon: Icons.check,
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      );
+      if (confirmed != true || !mounted) return;
+    }
     await widget.repository.saveTopic(
       Topic(
         id: topic.id,

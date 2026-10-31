@@ -1,37 +1,43 @@
-# AI Development Rules
+# Development Rules
 
-## General rules
+## Before you change code
 
-- Prefer small, composable changes over large rewrites.
-- Keep business logic free from platform-specific details.
-- Never put SQLite, YouTube, or UI classes directly into feature/domain logic.
-- Preserve replaceable boundaries by coding to interfaces and abstractions.
-- Do not create cloud dependencies unless a feature clearly requires them.
+- Read [implementation-status.md](implementation-status.md) and
+  [development-roadmap.md](development-roadmap.md).
+- Check the current source and tests. Do not rely on old notes alone.
+- Work on one active flow at a time.
 
-## Architecture enforcement
+## Architecture
 
-When editing the project:
+- Keep platform code out of domain models and rules.
+- Use repository contracts for stored data.
+- Use media contracts for source extraction and playback.
+- Register implementations in `lib/core/di/service_locator.dart`.
+- Do not add a cloud service or a new architecture layer without a clear need.
+- Do not keep unused prototypes in the active design.
 
-- Add new feature behavior behind domain contracts.
-- Keep repository implementations behind repository interfaces.
-- Keep media and filtering logic behind adapter interfaces.
-- Keep UI logic and state management separate from persistence concerns.
+## Tests
 
-## Refactoring rule
+- Add a test for each new domain rule.
+- Test repository behavior without a network connection.
+- Add widget tests for user-visible behavior.
+- Add migration tests when the database schema changes.
+- Run the smallest relevant test set first. Run the full validation commands
+  in [testing.md](testing.md) when needed.
 
-If a feature starts depending on a concrete implementation instead of an interface, stop and move that dependency behind an abstraction before continuing.
+## Documentation
 
-## Testing rule
+- Update the relevant document when behavior or an architecture decision
+  changes.
+- State whether a feature is active, incomplete, or not connected to the UI.
+- Use short sentences and direct instructions.
+- Keep exact class, method, package, and file names when readers need them.
+- Check every code path, command, and internal link before you publish a change.
 
-Every new domain rule or repository contract should have a direct unit or widget test. App startup and wiring should be smoke-tested.
+## Complete a change
 
-## Progress and phase rule
-
-Before starting planned implementation, read `docs/implementation-status.md`
-and `docs/development-roadmap.md`. Work on the next incomplete checkpoint only;
-update the relevant module documentation and status after tests pass. Keep mock,
-prototype, and production behavior clearly distinguished.
-
-## Documentation rule
-
-Any significant feature, architectural decision, or cross-cutting concern should be documented in the docs folder.
+1. Implement the smallest complete change.
+2. Run the related tests and checks.
+3. Fix failures caused by the change.
+4. Update the relevant documentation.
+5. Report any known limitation that remains.

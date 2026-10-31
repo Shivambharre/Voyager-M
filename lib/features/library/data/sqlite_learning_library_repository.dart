@@ -9,19 +9,46 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
 
   @override
   Future<List<LearningVideo>> getVideos() async {
-    final rows = await _database.query('videos', orderBy: 'title COLLATE NOCASE');
+    final rows = await _database.query(
+      'videos',
+      where: 'is_saved = 1',
+      orderBy: 'title COLLATE NOCASE',
+    );
     return rows.map(_videoFromRow).toList(growable: false);
   }
 
   @override
   Future<LearningVideo?> getVideo(String id) async {
-    final rows = await _database.query('videos', where: 'id = ?', whereArgs: [id]);
+    final rows = await _database.query(
+      'videos',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     return rows.isEmpty ? null : _videoFromRow(rows.first);
   }
 
   @override
   Future<void> saveVideo(LearningVideo video) async {
-    await _database.upsert('videos', {
+    await _database.upsert(
+      'videos',
+      {
+        'id': video.id,
+        'source_id': video.sourceId,
+        'source_url': video.sourceUrl,
+        'title': video.title,
+        'creator': video.creator,
+        'duration_seconds': video.durationSeconds,
+        'thumbnail_url': video.thumbnailUrl,
+        'is_saved': 1,
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [video.id],
+    );
+  }
+
+  @override
+  Future<void> saveVideoMetadata(LearningVideo video) async {
+    final values = {
       'id': video.id,
       'source_id': video.sourceId,
       'source_url': video.sourceUrl,
@@ -29,7 +56,25 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
       'creator': video.creator,
       'duration_seconds': video.durationSeconds,
       'thumbnail_url': video.thumbnailUrl,
-    }, keyWhere: 'id = ?', keyArgs: [video.id]);
+    };
+    await _database.transaction((transaction) async {
+      final existing = await transaction.query(
+        'videos',
+        columns: ['id'],
+        where: 'id = ?',
+        whereArgs: [video.id],
+      );
+      if (existing.isEmpty) {
+        await transaction.insert('videos', {...values, 'is_saved': 0});
+      } else {
+        await transaction.update(
+          'videos',
+          values,
+          where: 'id = ?',
+          whereArgs: [video.id],
+        );
+      }
+    });
   }
 
   @override
@@ -58,14 +103,19 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
 
   @override
   Future<void> savePlaylist(LearningPlaylist playlist) async {
-    await _database.upsert('playlists', {
-      'id': playlist.id,
-      'source_id': playlist.sourceId,
-      'source_url': playlist.sourceUrl,
-      'title': playlist.title,
-      'creator': playlist.creator,
-      'description': playlist.description,
-    }, keyWhere: 'id = ?', keyArgs: [playlist.id]);
+    await _database.upsert(
+      'playlists',
+      {
+        'id': playlist.id,
+        'source_id': playlist.sourceId,
+        'source_url': playlist.sourceUrl,
+        'title': playlist.title,
+        'creator': playlist.creator,
+        'description': playlist.description,
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [playlist.id],
+    );
   }
 
   @override
@@ -132,14 +182,14 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
   }
 
   LearningVideo _videoFromRow(Map<String, Object?> row) => LearningVideo(
-        id: row['id']! as String,
-        sourceId: row['source_id']! as String,
-        sourceUrl: row['source_url']! as String,
-        title: row['title']! as String,
-        creator: row['creator']! as String,
-        durationSeconds: row['duration_seconds']! as int,
-        thumbnailUrl: row['thumbnail_url'] as String?,
-      );
+    id: row['id']! as String,
+    sourceId: row['source_id']! as String,
+    sourceUrl: row['source_url']! as String,
+    title: row['title']! as String,
+    creator: row['creator']! as String,
+    durationSeconds: row['duration_seconds']! as int,
+    thumbnailUrl: row['thumbnail_url'] as String?,
+  );
 
   LearningPlaylist _playlistFromRow(Map<String, Object?> row) =>
       LearningPlaylist(

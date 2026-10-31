@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 
 abstract final class DesignTokens {
-  static const Color ink = Color(0xFF1A1A1A);
-  static const Color paper = Color(0xFFFDFCF8);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color yellow = Color(0xFFF4FF4D);
-  static const Color blue = Color(0xFF4D7BFF);
-  static const Color green = Color(0xFF00873E);
-  static const Color orange = Color(0xFFFF8C00);
-  static const Color red = Color(0xFFD0021B);
+  static const Color parchment = Color(0xFFE8DDC7);
+  static const Color sandstone = Color(0xFFB49B78);
+  static const Color pompeianRed = Color(0xFF6C3028);
+  static const Color romanOlive = Color(0xFF263B35);
+  static const Color antiqueGold = Color(0xFFA8894E);
+  static const Color charcoalUmber = Color(0xFF292724);
+  static const Color marbleGrey = Color(0xFFD6D0C3);
+  static const Color frescoBlue = Color(0xFF8796A0);
+  static const Color lightSurface = Color(0xFFF2EBE0);
+  static const Color darkBackground = Color(0xFF292724);
+  static const Color darkSurface = Color(0xFF36332F);
+  static const Color darkRaised = Color(0xFF1A1917);
+  static const Color darkMuted = Color(0xFFB49B78);
+  static const Color darkOutline = Color(0xFF5C5852);
+  static const Color darkDivider = Color(0xFF3D3A36);
+  static const Color darkError = Color(0xFFFF453A);
 
-  static const Color darkPaper = Color(0xFF121212);
-  static const Color darkSurface = Color(0xFF1A1A1A);
-  static const Color darkRaised = Color(0xFF252525);
-  static const Color darkText = Color(0xFFF7F7F7);
-  static const Color darkMuted = Color(0xFFA1A1A1);
-  static const Color darkYellow = Color(0xFFFACC15);
-  static const Color darkBlue = Color(0xFF3B82F6);
+  static const String editorialFont = 'Cormorant Garamond';
+  static const String bodyFont = 'Inter';
+
+  static const Color ink = charcoalUmber;
+  static const Color paper = parchment;
+  static const Color white = lightSurface;
+  static const Color yellow = antiqueGold;
+  static const Color blue = frescoBlue;
+  static const Color green = romanOlive;
+  static const Color orange = sandstone;
+  static const Color red = pompeianRed;
+
+  static const Color darkPaper = darkBackground;
+  static const Color darkText = parchment;
+  static const Color darkYellow = antiqueGold;
+  static const Color darkBlue = frescoBlue;
 
   static const double space0 = 0;
   static const double space1 = 4;
@@ -28,12 +45,12 @@ abstract final class DesignTokens {
   static const double space7 = 48;
   static const double space8 = 64;
 
-  static const double border = 2;
-  static const double borderStrong = 3;
-  static const double radius = 0;
+  static const double border = 1;
+  static const double borderStrong = 1.5;
+  static const double radius = 12;
   static const double radiusPill = 999;
-  static const double shadowSmall = 4;
-  static const double shadowMedium = 6;
+  static const double shadowSmall = 2;
+  static const double shadowMedium = 8;
   static const double minTapTarget = 48;
 }
 
@@ -46,11 +63,11 @@ extension DesignColors on BuildContext {
 
   Color get surfaceColor => isDarkMode
       ? DesignTokens.darkSurface
-      : DesignTokens.white;
+      : DesignTokens.lightSurface;
 
   Color get raisedColor => isDarkMode
       ? DesignTokens.darkRaised
-      : DesignTokens.white;
+      : DesignTokens.marbleGrey;
 
   Color get inkColor => isDarkMode
       ? DesignTokens.darkText
@@ -58,7 +75,7 @@ extension DesignColors on BuildContext {
 
   Color get mutedColor => isDarkMode
       ? DesignTokens.darkMuted
-      : const Color(0xFF4A4A4A);
+      : const Color(0xFF5C5852);
 
   Color get accentColor => isDarkMode
       ? DesignTokens.darkYellow
@@ -69,12 +86,12 @@ extension DesignColors on BuildContext {
       : DesignTokens.blue;
 
   Color get outlineColor => isDarkMode
-      ? const Color(0xFFF7F7F7)
-      : DesignTokens.ink;
+      ? DesignTokens.darkOutline
+      : DesignTokens.sandstone;
 
   Color get dividerColor => isDarkMode
-      ? const Color(0xFF454545)
-      : DesignTokens.ink;
+      ? DesignTokens.darkDivider
+      : DesignTokens.marbleGrey;
 
   Color get hardShadowColor => isDarkMode
       ? const Color(0xFF000000)

@@ -1,35 +1,67 @@
-# Database Boundary and Status
+# Database
 
-## Scope
+## Purpose
 
-SQLite is the Android store for structured learning data: video and playlist
-metadata, playlist entries, roadmaps/topics, progress, notes, bookmarks, and
-user settings. Large media bytes are not stored in the database.
+Android uses SQLite for learning data. The database stores text, IDs, URLs,
+timestamps, and metadata. It does not store video files.
 
-## Current state
+The database code is in
+[`database.dart`](../lib/core/database/database.dart). The database file is
+`voyager_learning.db`. The current schema version is 5.
 
-- `SqfliteAppDatabase` opens `voyager_learning.db` and creates the core
-  roadmap, library, playlist, note, progress, bookmark, settings, and metadata
-  cache tables.
-- Schema version 2 adds `video_metadata_cache`; schema version 3 adds bounded
-  recent watch history. Upgrades preserve existing study records.
-- SQLite-backed repositories exist for roadmaps, library, notes, progress, and
-  settings. Android DI selects these repositories; mock/Web mode uses
-  in-memory implementations.
-- Recent watch history uses its own SQLite table on Android and an in-memory
-  repository on Web/mock; it stores stable video details and watch timestamps,
-  not temporary stream URLs.
-- Metadata caching stores title, thumbnail, duration, author, and playlist
-  entry order, but intentionally excludes temporary media stream URLs.
+## Tables
 
-## Remaining work
+The database stores:
 
-1. Add migration-from-v1 coverage against an actual version-1 database fixture.
-2. Add missing schema/repository coverage as new learning entities are
-  implemented.
-3. Connect progress and settings screens/lifecycle to their existing
-  repositories.
-4. Continue testing constraints, duplicate handling, and close/reopen behavior.
+- roadmaps and topics
+- videos, playlists, and playlist entries
+- notes
+- learning progress and bookmarks
+- settings and daily-goal activity
+- video metadata cache and recent watch history
 
-Device-file attachment storage is not part of the active app flow. Do not store
-large media bytes in SQLite.
+The `videos.is_saved` field separates saved library items from metadata that
+the player needs for progress and bookmarks. A video can have metadata without
+appearing in the Library. Existing videos remain saved after an upgrade.
+
+Foreign keys and database checks protect related records and valid values.
+Indexes support roadmap order, playlist order, note lookup, bookmark order,
+and recent-history order.
+
+## Migrations
+
+- Version 1 creates the core learning tables.
+- Version 2 adds `video_metadata_cache`.
+- Version 3 adds `recent_watch_history`.
+- Version 4 adds daily-goal targets to `settings` and creates
+  `daily_goal_activity`.
+- Version 5 adds `videos.is_saved`. Existing video records use the saved
+  value.
+
+The migration test checks that records remain when the app opens an older
+database. The test does not use a complete production version-1 database.
+
+## Repositories
+
+Android uses SQLite repositories for roadmaps, library, notes, progress,
+settings, recent watch history, and daily goals. Web and explicit mock mode use
+in-memory repositories.
+
+Player metadata does not add a video to the saved Library. The player saves
+progress and bookmarks separately. Saving a playlist or video adds that item
+to the Library.
+
+## Metadata cache and history
+
+The metadata cache stores stable video and playlist details. It does not store
+temporary media stream URLs. The player requests current streams when it loads
+a lesson.
+
+The Android database keeps up to 50 distinct videos in recent watch history.
+A later watch of the same video updates its entry.
+
+## Tests
+
+`test/database/sqlite_repositories_test.dart` checks repository behavior,
+database reopen behavior, schema version, and migration behavior. Add tests
+when a schema or repository changes.

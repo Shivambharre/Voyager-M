@@ -29,10 +29,9 @@ class _DesignSystemShowcaseState extends State<DesignSystemShowcase> {
           padding: const EdgeInsets.all(DesignTokens.space4),
           children: [
             Text(
-              'NEO-BRUTALIST V1.0',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: context.mutedColor,
-                  ),
+              'THE CLASSICAL ARCHIVE',
+              style: Theme.of(context).textTheme.labelMedium
+                  ?.copyWith(color: context.mutedColor, letterSpacing: 1.4),
             ),
             const SizedBox(height: DesignTokens.space5),
             const BrutalistSectionHeader(title: 'Color palette'),
@@ -41,10 +40,38 @@ class _DesignSystemShowcaseState extends State<DesignSystemShowcase> {
               spacing: DesignTokens.space2,
               runSpacing: DesignTokens.space2,
               children: [
-                _ColorSwatch(name: 'Paper', color: context.pageColor),
-                _ColorSwatch(name: 'Ink', color: context.inkColor),
-                _ColorSwatch(name: 'Electric yellow', color: context.accentColor),
-                _ColorSwatch(name: 'Bright blue', color: context.blueAccentColor),
+                _ColorSwatch(
+                  name: 'Aged parchment',
+                  color: DesignTokens.parchment,
+                ),
+                _ColorSwatch(
+                  name: 'Weathered sandstone',
+                  color: DesignTokens.sandstone,
+                ),
+                _ColorSwatch(
+                  name: 'Pompeian red',
+                  color: DesignTokens.pompeianRed,
+                ),
+                _ColorSwatch(
+                  name: 'Roman olive',
+                  color: DesignTokens.romanOlive,
+                ),
+                _ColorSwatch(
+                  name: 'Antique gold',
+                  color: DesignTokens.antiqueGold,
+                ),
+                _ColorSwatch(
+                  name: 'Charcoal umber',
+                  color: DesignTokens.charcoalUmber,
+                ),
+                _ColorSwatch(
+                  name: 'Marble grey',
+                  color: DesignTokens.marbleGrey,
+                ),
+                _ColorSwatch(
+                  name: 'Fresco blue',
+                  color: DesignTokens.frescoBlue,
+                ),
               ],
             ),
             const SizedBox(height: DesignTokens.space5),
@@ -54,18 +81,25 @@ class _DesignSystemShowcaseState extends State<DesignSystemShowcase> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Headline large', style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(height: DesignTokens.space2),
-                  Text('Title medium bold', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: DesignTokens.space2),
-                  Text('Body medium regular', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    'Headline large',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: DesignTokens.space2),
                   Text(
-                    'METADATA MONOSPACE STYLE',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontFamily: 'monospace',
-                          color: context.mutedColor,
-                        ),
+                    'Title medium bold',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: DesignTokens.space2),
+                  Text(
+                    'Body medium regular',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: DesignTokens.space2),
+                  Text(
+                    'Cormorant Garamond for editorial titles · Inter for interface text',
+                    style: Theme.of(context).textTheme.labelSmall
+                        ?.copyWith(color: context.mutedColor),
                   ),
                 ],
               ),
@@ -80,13 +114,15 @@ class _DesignSystemShowcaseState extends State<DesignSystemShowcase> {
                 BrutalistButton(
                   label: 'Start learning',
                   icon: Icons.play_arrow,
-                  onPressed: () => _showMessage(context, 'Primary action pressed'),
+                  onPressed: () =>
+                      _showMessage(context, 'Primary action pressed'),
                 ),
                 BrutalistButton(
                   label: 'Add material',
                   icon: Icons.add,
                   secondary: true,
-                  onPressed: () => _showMessage(context, 'Secondary action pressed'),
+                  onPressed: () =>
+                      _showMessage(context, 'Secondary action pressed'),
                 ),
                 const BrutalistChip(label: 'In progress', selected: true),
                 const BrutalistChip(label: 'Saved'),
@@ -100,11 +136,20 @@ class _DesignSystemShowcaseState extends State<DesignSystemShowcase> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ACTIVE ROADMAP', style: Theme.of(context).textTheme.labelMedium),
+                  Text(
+                    'ACTIVE ROADMAP',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
                   const SizedBox(height: DesignTokens.space2),
-                  Text('Learning foundations', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    'Learning foundations',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: DesignTokens.space4),
-                  const BrutalistProgressBar(value: 0.68, label: '4 OF 6 TOPICS'),
+                  const BrutalistProgressBar(
+                    value: 0.68,
+                    label: '4 OF 6 TOPICS',
+                  ),
                 ],
               ),
             ),
@@ -200,7 +245,8 @@ class _ColorSwatch extends StatelessWidget {
             height: 26,
             decoration: BoxDecoration(
               color: color,
-              border: Border.all(color: context.outlineColor, width: 2),
+              border: Border.all(color: context.outlineColor),
+              borderRadius: BorderRadius.circular(DesignTokens.radiusPill),
             ),
           ),
           const SizedBox(width: DesignTokens.space2),

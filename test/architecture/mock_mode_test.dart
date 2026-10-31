@@ -3,6 +3,7 @@ import 'package:voyager_learning/core/di/service_locator.dart';
 import 'package:voyager_learning/features/library/domain/learning_content.dart';
 import 'package:voyager_learning/features/library/domain/learning_library_repository.dart';
 import 'package:voyager_learning/features/history/domain/recent_watch_history_repository.dart';
+import 'package:voyager_learning/features/goals/domain/daily_goal_repository.dart';
 import 'package:voyager_learning/features/notes/domain/study_note.dart';
 import 'package:voyager_learning/features/notes/domain/notes_repository.dart';
 import 'package:voyager_learning/features/progress/domain/progress_repository.dart';
@@ -30,6 +31,10 @@ void main() {
     expect(
       serviceLocator.get<RecentWatchHistoryRepository>(),
       isA<RecentWatchHistoryRepository>(),
+    );
+    expect(
+      serviceLocator.get<DailyGoalRepository>(),
+      isA<DailyGoalRepository>(),
     );
     expect(serviceLocator.get<ProgressRepository>(), isA<ProgressRepository>());
     expect(serviceLocator.get<SettingsRepository>(), isA<SettingsRepository>());

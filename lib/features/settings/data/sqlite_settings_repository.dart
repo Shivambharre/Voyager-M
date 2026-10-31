@@ -24,17 +24,26 @@ class SqliteSettingsRepository implements SettingsRepository {
       defaultPlaybackSpeed: (row['playback_speed']! as num).toDouble(),
       resumePlayback: row['resume_playback'] == 1,
       confirmTopicCompletion: row['confirm_topic_completion'] == 1,
+      dailyStudyMinutesTarget: row['daily_study_minutes_target']! as int,
+      dailyLessonsTarget: row['daily_lessons_target']! as int,
     );
   }
 
   @override
   Future<void> saveSettings(LearningSettings settings) async {
-    await _database.upsert('settings', {
-      'id': 1,
-      'appearance': settings.appearance.name,
-      'playback_speed': settings.defaultPlaybackSpeed,
-      'resume_playback': settings.resumePlayback ? 1 : 0,
-      'confirm_topic_completion': settings.confirmTopicCompletion ? 1 : 0,
-    }, keyWhere: 'id = ?', keyArgs: [1]);
+    await _database.upsert(
+      'settings',
+      {
+        'id': 1,
+        'appearance': settings.appearance.name,
+        'playback_speed': settings.defaultPlaybackSpeed,
+        'resume_playback': settings.resumePlayback ? 1 : 0,
+        'confirm_topic_completion': settings.confirmTopicCompletion ? 1 : 0,
+        'daily_study_minutes_target': settings.dailyStudyMinutesTarget,
+        'daily_lessons_target': settings.dailyLessonsTarget,
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [1],
+    );
   }
 }

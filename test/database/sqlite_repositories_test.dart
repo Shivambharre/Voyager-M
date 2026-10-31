@@ -6,6 +6,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:voyager_learning/core/database/database.dart';
 import 'package:voyager_learning/features/library/data/sqlite_learning_library_repository.dart';
 import 'package:voyager_learning/features/library/domain/learning_content.dart';
+import 'package:voyager_learning/features/goals/data/sqlite_daily_goal_repository.dart';
 import 'package:voyager_learning/features/history/data/sqlite_recent_watch_history_repository.dart';
 import 'package:voyager_learning/features/history/domain/recent_watch_entry.dart';
 import 'package:voyager_learning/features/notes/data/sqlite_notes_repository.dart';
@@ -58,6 +59,7 @@ void main() {
         'settings',
         'video_metadata_cache',
         'recent_watch_history',
+        'daily_goal_activity',
       ]),
     );
     final indexes = await database.query(
@@ -199,6 +201,29 @@ void main() {
   });
 
   test(
+    'keeps player metadata out of the saved library until requested',
+    () async {
+      final repository = SqliteLearningLibraryRepository(database);
+      const video = LearningVideo(
+        id: 'metadata-only',
+        sourceId: 'metadata-only',
+        sourceUrl: 'https://example.test/metadata-only',
+        title: 'Watched lesson',
+        creator: 'Teacher',
+        durationSeconds: 120,
+      );
+
+      await repository.saveVideoMetadata(video);
+
+      expect((await repository.getVideo(video.id))?.id, video.id);
+      expect(await repository.getVideos(), isEmpty);
+
+      await repository.saveVideo(video);
+      expect((await repository.getVideos()).map((item) => item.id), [video.id]);
+    },
+  );
+
+  test(
     'persists notes, progress, bookmarks, and settings across reopen',
     () async {
       final library = SqliteLearningLibraryRepository(database);
@@ -257,6 +282,9 @@ void main() {
         appearance: AppearanceMode.dark,
         defaultPlaybackSpeed: 1.5,
         resumePlayback: false,
+        confirmTopicCompletion: false,
+        dailyStudyMinutesTarget: 45,
+        dailyLessonsTarget: 2,
       );
       await settings.saveSettings(learningSettings);
       final loadedSettings = await settings.getSettings();
@@ -266,6 +294,36 @@ void main() {
         learningSettings.defaultPlaybackSpeed,
       );
       expect(loadedSettings.resumePlayback, learningSettings.resumePlayback);
+      expect(
+        loadedSettings.confirmTopicCompletion,
+        learningSettings.confirmTopicCompletion,
+      );
+      expect(
+        loadedSettings.dailyStudyMinutesTarget,
+        learningSettings.dailyStudyMinutesTarget,
+      );
+      expect(
+        loadedSettings.dailyLessonsTarget,
+        learningSettings.dailyLessonsTarget,
+      );
+
+      final goals = SqliteDailyGoalRepository(database);
+      final activityDate = DateTime(2026, 9, 27);
+      await goals.addPlaybackTime(
+        date: activityDate,
+        videoId: video.id,
+        seconds: 125,
+      );
+      await goals.addPlaybackTime(
+        date: activityDate,
+        videoId: video.id,
+        seconds: 40,
+      );
+      await goals.markLessonCompleted(date: activityDate, videoId: video.id);
+      await goals.markLessonCompleted(date: activityDate, videoId: video.id);
+      final dailySummary = await goals.getSummary(activityDate);
+      expect(dailySummary.playedSeconds, 165);
+      expect(dailySummary.completedLessons, 1);
 
       await database.close();
       database = SqfliteAppDatabase(
@@ -282,6 +340,18 @@ void main() {
       final reopenedSettings = await SqliteSettingsRepository(database)
           .getSettings();
       expect(reopenedSettings.appearance, learningSettings.appearance);
+      expect(
+        reopenedSettings.dailyStudyMinutesTarget,
+        learningSettings.dailyStudyMinutesTarget,
+      );
+      expect(
+        reopenedSettings.dailyLessonsTarget,
+        learningSettings.dailyLessonsTarget,
+      );
+      final reopenedGoals = await SqliteDailyGoalRepository(database)
+          .getSummary(activityDate);
+      expect(reopenedGoals.playedSeconds, 165);
+      expect(reopenedGoals.completedLessons, 1);
     },
   );
 
@@ -290,7 +360,7 @@ void main() {
       path.join(directory.path, SqfliteAppDatabase.databaseFileName),
       endsWith('voyager_learning.db'),
     );
-    expect(SqfliteAppDatabase.schemaVersion, 3);
+    expect(SqfliteAppDatabase.schemaVersion, 5);
   });
 
   test(
@@ -311,6 +381,34 @@ void main() {
             await db.execute(
               'CREATE TABLE migration_probe (value TEXT NOT NULL)',
             );
+            await db.execute('''
+              CREATE TABLE videos (
+                id TEXT PRIMARY KEY NOT NULL,
+                source_id TEXT NOT NULL,
+                source_url TEXT NOT NULL,
+                title TEXT NOT NULL,
+                creator TEXT NOT NULL DEFAULT '',
+                duration_seconds INTEGER NOT NULL DEFAULT 0,
+                thumbnail_url TEXT
+              )
+            ''');
+            await db.execute('''
+              CREATE TABLE settings (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                appearance TEXT NOT NULL DEFAULT 'system',
+                playback_speed REAL NOT NULL DEFAULT 1,
+                resume_playback INTEGER NOT NULL DEFAULT 1,
+                confirm_topic_completion INTEGER NOT NULL DEFAULT 1
+              )
+            ''');
+            await db.insert('videos', {
+              'id': 'legacy-video',
+              'source_id': 'legacy-video',
+              'source_url': 'https://example.test/legacy-video',
+              'title': 'Legacy saved lesson',
+              'creator': 'Teacher',
+              'duration_seconds': 120,
+            });
             await db.insert('migration_probe', {'value': 'preserved'});
           },
         ),
@@ -342,6 +440,12 @@ void main() {
         expect(await upgraded.query('migration_probe'), [
           {'value': 'preserved'},
         ]);
+        expect(
+          (await SqliteLearningLibraryRepository(
+            upgraded,
+          ).getVideos()).single.id,
+          'legacy-video',
+        );
       } finally {
         await upgraded.close();
         await legacyDirectory.delete(recursive: true);

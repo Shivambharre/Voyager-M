@@ -1,45 +1,72 @@
-# Testing and Validation
+# Testing
 
-## Commands
+Run commands from the project root.
 
-Run from the project root:
+## Flutter checks
 
 ```powershell
 flutter analyze
 flutter test
 flutter build web
+```
+
+## Android checks
+
+The Android app is configured for ARM64 devices only. Build its profile APK
+with:
+
+```powershell
+flutter build apk --profile --target-platform android-arm64
+```
+
+Use the Kotlin incremental setting shown below when the local Gradle build
+fails while it closes Kotlin incremental caches:
+
+```powershell
 $env:GRADLE_OPTS = '-Dorg.gradle.project.kotlin.incremental=false'
 flutter build apk --debug
 ```
 
-## Existing coverage
+Run Android unit tests with:
+
+```powershell
+.\android\gradlew.bat -p android testDebugUnitTest
+```
+
+The release command is:
+
+```powershell
+flutter build apk --release
+```
+
+The current release build reports missing `java.beans` classes from Rhino
+during R8 processing. The release APK is not verified. Do not silence the
+warning without reviewing the dependency and generated R8 rules.
+
+## Existing tests
 
 - `test/architecture/mock_mode_test.dart` checks repository registration and
-  in-memory repository create/read/delete behavior.
-- `test/widget_test.dart` checks the Home-to-player flow and primary
-  navigation/showcase, plus roadmap create/edit/topic-status/progress/delete
-  flows and opening recent watch history. The Home/player flow constrains the
-  viewport to a 360-by-800 phone-sized display.
-- `test/media/player_features_test.dart` covers playlist saving, note saving,
-  available quality switching, controls fading on compact and fullscreen
-  layouts, and exiting fullscreen via its control or system Back.
+  basic in-memory create, read, and delete behavior.
+- `test/widget_test.dart` checks navigation and user flows, including
+  roadmaps and recent history.
+- `test/media/playback_controller_test.dart` checks playback controller
+  behavior.
+- `test/media/player_features_test.dart` checks playlist saving, note saving,
+  stream selection, player controls, and fullscreen behavior.
+- `test/media/newpipe_youtube_adapter_test.dart` checks the NewPipe adapter.
+- `test/media/mit_ocw_adapter_test.dart` checks MIT page and media parsing.
+- `test/media/source_detector_test.dart` and
+  `test/media/stream_selector_test.dart` check URL detection and stream rules.
+- `test/media/video_metadata_cache_test.dart` checks metadata caching.
+- `test/core/shared_youtube_link_test.dart` checks shared-link parsing.
+- `test/database/sqlite_repositories_test.dart` checks SQLite repositories,
+  reopen behavior, and migration behavior.
+- `android/app/src/test/kotlin/com/voyager/voyager_learning/AudioTrackSelectionTest.kt`
+  checks audio-track selection.
 
-## Platform validation
+## Platform limits
 
-- Chrome: web target has been enabled and `flutter build web` has passed.
-  Browser testing checks presentation and navigation, not Android-specific
-  plugins.
-- Android: a debug APK build passed after YouTube platform integration. On
-  this Windows workspace, set `GRADLE_OPTS` as shown above to work around
-  Kotlin incremental compilation. Repeat after plugin, database, or platform
-  integration changes.
-- No live upstream extraction or physical-device playback tests exist yet.
-
-## Testing rules
-
-- Test domain behavior independently from Flutter widgets.
-- Test adapters against their repository/service contract.
-- Keep repository fakes deterministic and avoid network access in default tests.
-- Add restart/migration tests when SQLite schemas or repositories change.
-- Test error, empty, loading, unavailable, and accessibility states as features
-  become connected.
+A Web build checks Web compilation. It does not test Android plugins,
+SQLite, or native playback. Automated tests do not prove live provider
+availability. Test live extraction and playback on a physical Android device
+before release.

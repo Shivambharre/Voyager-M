@@ -54,7 +54,7 @@ class SqfliteAppDatabase implements AppDatabase {
   final sqlite.DatabaseFactory _databaseFactory;
   sqlite.Database? _database;
 
-  static const int schemaVersion = 3;
+  static const int schemaVersion = 5;
   static const String databaseFileName = 'voyager_learning.db';
 
   Future<sqlite.Database> get _connection async {
@@ -80,6 +80,7 @@ class SqfliteAppDatabase implements AppDatabase {
           await _createSchema(db);
           await _createMetadataCache(db);
           await _createRecentWatchHistory(db);
+          await _createDailyGoalActivity(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
           await _upgradeSchema(db, oldVersion, newVersion);
@@ -114,7 +115,8 @@ class SqfliteAppDatabase implements AppDatabase {
         title TEXT NOT NULL,
         creator TEXT NOT NULL DEFAULT '',
         duration_seconds INTEGER NOT NULL DEFAULT 0 CHECK (duration_seconds >= 0),
-        thumbnail_url TEXT
+        thumbnail_url TEXT,
+        is_saved INTEGER NOT NULL DEFAULT 1 CHECK (is_saved IN (0, 1))
       )
     ''');
     await db.execute('''
@@ -173,7 +175,11 @@ class SqfliteAppDatabase implements AppDatabase {
         resume_playback INTEGER NOT NULL DEFAULT 1
           CHECK (resume_playback IN (0, 1)),
         confirm_topic_completion INTEGER NOT NULL DEFAULT 1
-          CHECK (confirm_topic_completion IN (0, 1))
+          CHECK (confirm_topic_completion IN (0, 1)),
+        daily_study_minutes_target INTEGER NOT NULL DEFAULT 30
+          CHECK (daily_study_minutes_target > 0),
+        daily_lessons_target INTEGER NOT NULL DEFAULT 1
+          CHECK (daily_lessons_target > 0)
       )
     ''');
     await db.execute(
@@ -223,6 +229,18 @@ class SqfliteAppDatabase implements AppDatabase {
     );
   }
 
+  Future<void> _createDailyGoalActivity(sqlite.DatabaseExecutor db) async {
+    await db.execute('''
+      CREATE TABLE daily_goal_activity (
+        activity_date TEXT NOT NULL,
+        video_id TEXT NOT NULL,
+        played_seconds INTEGER NOT NULL DEFAULT 0 CHECK (played_seconds >= 0),
+        completed_at TEXT,
+        PRIMARY KEY (activity_date, video_id)
+      )
+    ''');
+  }
+
   Future<void> _upgradeSchema(
     sqlite.DatabaseExecutor db,
     int oldVersion,
@@ -236,6 +254,20 @@ class SqfliteAppDatabase implements AppDatabase {
     }
     if (oldVersion < 3 && newVersion >= 3) {
       await _createRecentWatchHistory(db);
+    }
+    if (oldVersion < 4 && newVersion >= 4) {
+      await db.execute(
+        'ALTER TABLE settings ADD COLUMN daily_study_minutes_target INTEGER NOT NULL DEFAULT 30 CHECK (daily_study_minutes_target > 0)',
+      );
+      await db.execute(
+        'ALTER TABLE settings ADD COLUMN daily_lessons_target INTEGER NOT NULL DEFAULT 1 CHECK (daily_lessons_target > 0)',
+      );
+      await _createDailyGoalActivity(db);
+    }
+    if (oldVersion < 5 && newVersion >= 5) {
+      await db.execute(
+        'ALTER TABLE videos ADD COLUMN is_saved INTEGER NOT NULL DEFAULT 1 CHECK (is_saved IN (0, 1))',
+      );
     }
   }
 

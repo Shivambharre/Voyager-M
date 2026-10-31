@@ -1,46 +1,50 @@
-# Module Boundaries
+# Modules
 
-## Application shell
+## App setup
 
-`lib/main.dart` bootstraps the Flutter application.
-`lib/core/di/service_locator.dart` selects SQLite repositories on Android and
-in-memory repositories in mock/Web mode.
+| Location | Responsibility |
+| --- | --- |
+| `lib/main.dart` | Starts Flutter and builds `VoyagerApp`. |
+| `lib/core/di/service_locator.dart` | Selects repositories and creates the playback controller. |
 
-## Core
+## Core modules
 
 | Module | Responsibility | Current implementation |
 | --- | --- | --- |
-| `core/design` | Presentation tokens, themes, reusable controls, showcase | Implemented |
-| `core/di` | Repository and playback composition | Platform-specific wiring |
-| `core/database` | Structured local database boundary | SQLite schema v3 and migrations are implemented |
-| `core/media` | Source adapters, stream selection, playback state, platform player | One active player pipeline |
+| `core/design` | Themes, colors, shared controls, and showcase | Active |
+| `core/di` | Dependency registration | Active |
+| `core/database` | SQLite database and schema | Schema version 3 |
+| `core/media` | Source adapters, stream selection, and playback | Active player pipeline |
+| `core/share` | Parse shared YouTube links and receive Android intents | Active on Android |
 
-## Features
+## Feature modules
 
-| Feature | Domain/data boundary | Presentation state |
+| Feature | Data and domain | Screen use |
 | --- | --- | --- |
-| `features/roadmap` | Roadmap/topic models and repository interface/mock | Screen reads the roadmap repository; create/edit/delete flows are active |
-| `features/library` | Video, playlist, playlist-entry models and repository implementations | Home and Library display saved playlists/videos; save and reopen actions are connected |
-| `features/notes` | Study note model and repository implementations | Notes tab and player note actions both persist data |
-| `features/progress` | Progress model and repository implementations | Data adapters exist; player and screens do not use them |
-| `features/settings` | Settings model and repository implementations | Data adapters exist; theme selection is session-local |
-| `features/home` | Main shell and primary navigation | Home reads saved playlists and note totals from repositories |
-| `features/player` | Learning player presentation | Quality selector, fullscreen, save playlist, and save-note flows are active |
+| `features/home` | Main app shell and home data | Reads saved playlists, note counts, and watch history. |
+| `features/roadmap` | Roadmap and topic contracts and repositories | Roadmap and topic flows are active. |
+| `features/library` | Video and playlist models and repositories | Save, display, open, and delete flows are active. |
+| `features/notes` | Note models and repositories | Notes screen and player note flows are active. |
+| `features/history` | Recent-watch models and repositories | Home and player use recent history. |
+| `features/progress` | Progress and bookmark data | Repositories exist, but active screens do not use them. |
+| `features/settings` | Settings data and repository | Repository exists. The Settings screen does not persist settings. |
+| `features/player` | Player screen | Uses the shared playback controller and repositories. |
 
 ## Dependency direction
 
-Presentation may use feature contracts passed through the app composition root.
-Feature domain code must not import SQLite APIs or provider/player SDK classes.
-Infrastructure implementations are selected centrally and should not leak
-concrete types across these boundaries.
+Screens use domain contracts. Data implementations use the database boundary.
+The composition root selects the implementations. Domain code must not import
+SQLite, provider SDK, or platform player classes.
 
-Experimental content-filtering, content-policy, mock media-provider, mock
-player-engine, and in-memory file-storage modules were removed because no
-shipping screen or workflow used them.
+Do not add a module for an unused prototype. Add a module only when a real
+feature needs a clear boundary.
 
-## Future feature layout
+## Main paths
 
-When adding persistence, keep adapters in feature `data/` modules (or a shared
-infrastructure module where appropriate), implement the existing contracts, and
-register them centrally. Avoid a feature-to-feature dependency where a shared
-domain value or use case can express the relationship instead.
+- SQLite database: `lib/core/database/database.dart`
+- Dependency setup: `lib/core/di/service_locator.dart`
+- Android media and NewPipe bridge: `android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt`
+- Main shell: `lib/features/home/presentation/app_shell.dart`
+- Player screen: `lib/features/player/presentation/learning_player_screen.dart`
+
+See [architecture.md](architecture.md) and [data-flow.md](data-flow.md).

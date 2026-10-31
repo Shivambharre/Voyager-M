@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,12 +11,15 @@ import '../../../core/media/playback_controller.dart';
 import '../../../core/media/playback_state.dart';
 import '../../../core/media/video_models.dart';
 import '../../../core/media/video_source_adapter.dart';
+import '../../../features/goals/domain/daily_goal_repository.dart';
 import '../../../features/history/domain/recent_watch_entry.dart';
 import '../../../features/history/domain/recent_watch_history_repository.dart';
 import '../../../features/library/domain/learning_content.dart';
 import '../../../features/library/domain/learning_library_repository.dart';
 import '../../../features/notes/domain/notes_repository.dart';
 import '../../../features/notes/domain/study_note.dart';
+import '../../../features/progress/domain/learning_progress.dart';
+import '../../../features/progress/domain/progress_repository.dart';
 
 class LearningPlayerScreen extends StatefulWidget {
   const LearningPlayerScreen({
@@ -23,7 +27,12 @@ class LearningPlayerScreen extends StatefulWidget {
     this.libraryRepository,
     this.notesRepository,
     this.recentWatchHistoryRepository,
+    this.progressRepository,
+    this.dailyGoalRepository,
     this.initialSourceUrl,
+    this.initialPosition,
+    this.resumePlayback = true,
+    this.defaultPlaybackSpeed = 1,
     super.key,
   });
 
@@ -31,7 +40,12 @@ class LearningPlayerScreen extends StatefulWidget {
   final LearningLibraryRepository? libraryRepository;
   final NotesRepository? notesRepository;
   final RecentWatchHistoryRepository? recentWatchHistoryRepository;
+  final ProgressRepository? progressRepository;
+  final DailyGoalRepository? dailyGoalRepository;
   final String? initialSourceUrl;
+  final Duration? initialPosition;
+  final bool resumePlayback;
+  final double defaultPlaybackSpeed;
 
   @override
   State<LearningPlayerScreen> createState() => _LearningPlayerScreenState();
@@ -44,14 +58,21 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   late final LearningLibraryRepository _libraryRepository;
   late final NotesRepository _notesRepository;
   late final RecentWatchHistoryRepository _recentWatchHistoryRepository;
+  late final ProgressRepository _progressRepository;
+  late final DailyGoalRepository _dailyGoalRepository;
   late final StreamSubscription<PlayerSnapshot> _snapshotSubscription;
   Timer? _controlsHideTimer;
+  Timer? _activityTimer;
+  DateTime? _lastActivityFlush;
+  Future<void>? _activityFlush;
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
   VideoInfo? _video;
   PlaylistInfo? _playlist;
   String? _errorMessage;
   bool _isLoading = false;
   bool _isSaved = false;
+  String? _currentBookmarkId;
+  bool _isLessonComplete = false;
   bool _isPlaylistSaved = false;
   bool _isSavingPlaylist = false;
   bool _isFullscreen = false;
@@ -69,6 +90,10 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
     _recentWatchHistoryRepository =
         widget.recentWatchHistoryRepository ??
         serviceLocator<RecentWatchHistoryRepository>();
+    _progressRepository =
+        widget.progressRepository ?? serviceLocator<ProgressRepository>();
+    _dailyGoalRepository =
+        widget.dailyGoalRepository ?? serviceLocator<DailyGoalRepository>();
     if (widget.initialSourceUrl case final sourceUrl?) {
       _urlController.text = sourceUrl;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -87,9 +112,27 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
     if (_isFullscreen) unawaited(_restoreSystemUi());
     _urlController.dispose();
     _noteController.dispose();
-    unawaited(_snapshotSubscription.cancel());
-    unawaited(_playbackController.dispose());
+    unawaited(_disposePlayback());
     super.dispose();
+  }
+
+  Future<void> _disposePlayback() async {
+    _activityTimer?.cancel();
+    try {
+      await _flushPlaybackData();
+      await _saveCurrentProgress();
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'player cleanup',
+        ),
+      );
+    } finally {
+      await _snapshotSubscription.cancel();
+      await _playbackController.dispose();
+    }
   }
 
   @override
@@ -106,12 +149,10 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
               appBar: AppBar(
                 title: const Text('FOCUSED STUDY'),
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(
-                    DesignTokens.borderStrong,
-                  ),
+                  preferredSize: const Size.fromHeight(DesignTokens.border),
                   child: Container(
-                    height: DesignTokens.borderStrong,
-                    color: context.outlineColor,
+                    height: DesignTokens.border,
+                    color: context.dividerColor,
                   ),
                 ),
               ),
@@ -140,7 +181,27 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                               ? Icons.bookmark
                               : Icons.bookmark_border,
                           secondary: true,
-                          onPressed: () => setState(() => _isSaved = !_isSaved),
+                          onPressed: () => unawaited(_toggleBookmark()),
+                        ),
+                        BrutalistButton(
+                          key: const Key('mark-lesson-complete'),
+                          label: _isLessonComplete
+                              ? 'Lesson complete'
+                              : 'Complete lesson',
+                          icon: _isLessonComplete
+                              ? Icons.check_circle
+                              : Icons.check_circle_outline,
+                          secondary: true,
+                          onPressed: _isLessonComplete
+                              ? null
+                              : () => unawaited(_markLessonComplete()),
+                        ),
+                        BrutalistButton(
+                          key: const Key('player-share-link-button'),
+                          label: 'Share link',
+                          icon: Icons.share_outlined,
+                          secondary: true,
+                          onPressed: () => unawaited(_shareCurrentSource()),
                         ),
                       ],
                     ),
@@ -207,6 +268,12 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                             playlist.title,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
+                        ),
+                        IconButton(
+                          key: const Key('player-share-playlist-button'),
+                          tooltip: 'Share playlist',
+                          onPressed: () => unawaited(_shareCurrentSource()),
+                          icon: const Icon(Icons.share_outlined),
                         ),
                         BrutalistButton(
                           key: const Key('save-playlist-button'),
@@ -286,14 +353,13 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: const Color(0xFF111111),
-          border: Border.all(color: context.outlineColor, width: 3),
+          border: Border.all(color: context.outlineColor),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: context.hardShadowColor,
-              offset: const Offset(
-                DesignTokens.shadowSmall,
-                DesignTokens.shadowSmall,
-              ),
+              color: context.hardShadowColor.withValues(alpha: 0.12),
+              blurRadius: DesignTokens.shadowMedium,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -482,10 +548,12 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 2,
-                    activeTrackColor: const Color(0xFFFF0033),
+                    activeTrackColor: DesignTokens.pompeianRed,
                     inactiveTrackColor: Colors.white38,
-                    thumbColor: const Color(0xFFFF0033),
-                    overlayColor: const Color(0x33FF0033),
+                    thumbColor: DesignTokens.pompeianRed,
+                    overlayColor: DesignTokens.pompeianRed.withValues(
+                      alpha: 0.2,
+                    ),
                     thumbShape: const RoundSliderThumbShape(
                       enabledThumbRadius: 4,
                     ),
@@ -636,6 +704,11 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
     if (!mounted) return;
     final wasPlaying = _snapshot.status == PlayerStatus.playing;
     setState(() => _snapshot = snapshot);
+    if (snapshot.status == PlayerStatus.playing) {
+      _startActivityTracking();
+    } else if (wasPlaying) {
+      unawaited(_stopActivityTracking());
+    }
     if (snapshot.status == PlayerStatus.playing && !wasPlaying) {
       _showControls();
     } else {
@@ -649,6 +722,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   Future<void> _togglePlayback(bool isPlaying) async {
     if (isPlaying) {
       await _playbackController.pause();
+      await _stopActivityTracking();
       _controlsHideTimer?.cancel();
       if (mounted && !_controlsVisible) {
         setState(() => _controlsVisible = true);
@@ -798,12 +872,16 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   }
 
   Future<void> _loadSource() async {
+    await _stopActivityTracking();
     setState(() {
       _isLoading = true;
       _errorMessage = null;
       _video = null;
       _playlist = null;
       _isPlaylistSaved = false;
+      _isSaved = false;
+      _currentBookmarkId = null;
+      _isLessonComplete = false;
     });
     try {
       await _playbackController.load(_urlController.text);
@@ -811,10 +889,10 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       setState(() {
         _video = _playbackController.currentVideo;
         _playlist = _playbackController.currentPlaylist;
-        _isSaved = false;
         _isPlaylistSaved = false;
       });
       if (_playbackController.currentVideo case final video?) {
+        await _prepareCurrentVideo(video);
         await _recordWatchHistory(video);
       }
     } on VideoSourceException catch (error) {
@@ -832,6 +910,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   }
 
   Future<void> _selectLecture(PlaylistEntryInfo entry) async {
+    await _stopActivityTracking();
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -843,8 +922,11 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       setState(() {
         _video = _playbackController.currentVideo;
         _isSaved = false;
+        _currentBookmarkId = null;
+        _isLessonComplete = false;
       });
       if (_playbackController.currentVideo case final video?) {
+        await _prepareCurrentVideo(video);
         await _recordWatchHistory(video);
       }
     } on VideoSourceException catch (error) {
@@ -889,6 +971,231 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         );
       }
     }
+  }
+
+  Future<void> _prepareCurrentVideo(VideoInfo video) async {
+    await _saveVideoMetadata(video);
+    await _playbackController.setPlaybackSpeed(widget.defaultPlaybackSpeed);
+    final progress = await _progressRepository.getProgress(video.id);
+    if (!mounted) return;
+    setState(() => _isLessonComplete = progress?.isCompleted ?? false);
+    final positionToRestore =
+        widget.initialPosition ??
+        (widget.resumePlayback &&
+                progress != null &&
+                !progress.isCompleted &&
+                progress.positionSeconds > 0
+            ? Duration(seconds: progress.positionSeconds)
+            : null);
+    if (positionToRestore != null) {
+      await _playbackController.seekTo(positionToRestore);
+    }
+  }
+
+  Future<void> _saveVideoMetadata(VideoInfo video) async {
+    await _libraryRepository.saveVideoMetadata(
+      LearningVideo(
+        id: video.id,
+        sourceId: video.id,
+        sourceUrl: video.url.toString(),
+        title: video.title,
+        creator: video.author ?? '',
+        durationSeconds: video.duration.inSeconds,
+        thumbnailUrl: video.thumbnailUrl?.toString(),
+      ),
+    );
+  }
+
+  void _startActivityTracking() {
+    if (_activityTimer != null || _video == null) return;
+    _lastActivityFlush = DateTime.now();
+    _activityTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => unawaited(_flushPlaybackData()),
+    );
+  }
+
+  Future<void> _stopActivityTracking() async {
+    _activityTimer?.cancel();
+    _activityTimer = null;
+    await _flushPlaybackData();
+    _lastActivityFlush = null;
+  }
+
+  Future<void> _flushPlaybackData() async {
+    final activeFlush = _activityFlush;
+    if (activeFlush != null) return activeFlush;
+    final flush = _performActivityFlush();
+    _activityFlush = flush;
+    await flush.whenComplete(() {
+      if (identical(_activityFlush, flush)) _activityFlush = null;
+    });
+  }
+
+  Future<void> _performActivityFlush() async {
+    try {
+      final video = _video;
+      final lastFlush = _lastActivityFlush;
+      final now = DateTime.now();
+      if (video != null && lastFlush != null) {
+        var cursor = lastFlush;
+        final end = now;
+        while (cursor.isBefore(end)) {
+          final nextDay = DateTime(cursor.year, cursor.month, cursor.day + 1);
+          final intervalEnd = end.isBefore(nextDay) ? end : nextDay;
+          final seconds = intervalEnd.difference(cursor).inSeconds;
+          if (seconds > 0) {
+            await _dailyGoalRepository.addPlaybackTime(
+              date: cursor,
+              videoId: video.id,
+              seconds: seconds,
+            );
+          }
+          cursor = intervalEnd;
+        }
+        _lastActivityFlush = now;
+      }
+      await _saveCurrentProgress();
+    } on Object catch (error, stackTrace) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save your learning progress.'),
+          ),
+        );
+      } else {
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: error,
+            stack: stackTrace,
+            library: 'player activity tracking',
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _saveCurrentProgress() async {
+    final video = _video;
+    if (video == null) return;
+    final position = await _playbackController.currentPosition;
+    final previous = await _progressRepository.getProgress(video.id);
+    await _progressRepository.saveProgress(
+      LearningProgress(
+        videoId: video.id,
+        positionSeconds: position.inSeconds,
+        durationSeconds: _snapshot.duration.inSeconds > 0
+            ? _snapshot.duration.inSeconds
+            : video.duration.inSeconds,
+        isCompleted: _isLessonComplete || (previous?.isCompleted ?? false),
+        updatedAt: DateTime.now(),
+      ),
+    );
+  }
+
+  Future<void> _markLessonComplete() async {
+    final video = _video;
+    if (video == null || _isLessonComplete) return;
+    try {
+      await _saveVideoMetadata(video);
+      final position = await _playbackController.currentPosition;
+      await _progressRepository.saveProgress(
+        LearningProgress(
+          videoId: video.id,
+          positionSeconds: position.inSeconds,
+          durationSeconds: _snapshot.duration.inSeconds > 0
+              ? _snapshot.duration.inSeconds
+              : video.duration.inSeconds,
+          isCompleted: true,
+          updatedAt: DateTime.now(),
+        ),
+      );
+      await _dailyGoalRepository.markLessonCompleted(
+        date: DateTime.now(),
+        videoId: video.id,
+      );
+      if (mounted) setState(() => _isLessonComplete = true);
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not mark this lesson complete.')),
+      );
+    }
+  }
+
+  Future<void> _toggleBookmark() async {
+    final video = _video;
+    if (video == null) return;
+    try {
+      final bookmarkId = _currentBookmarkId;
+      if (bookmarkId != null) {
+        await _progressRepository.deleteBookmark(bookmarkId);
+        if (mounted) {
+          setState(() {
+            _currentBookmarkId = null;
+            _isSaved = false;
+          });
+        }
+        return;
+      }
+      await _saveVideoMetadata(video);
+      final position = await _playbackController.currentPosition;
+      final bookmark = LearningBookmark(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        videoId: video.id,
+        positionSeconds: position.inSeconds,
+        createdAt: DateTime.now(),
+      );
+      await _progressRepository.saveBookmark(bookmark);
+      if (mounted) {
+        setState(() {
+          _currentBookmarkId = bookmark.id;
+          _isSaved = true;
+        });
+      }
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save this moment.')),
+      );
+    }
+  }
+
+  Future<void> _shareCurrentSource() async {
+    final sourceUrl = _video?.url ?? _playlist?.url;
+    if (sourceUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Load a lesson or playlist first.')),
+      );
+      return;
+    }
+    try {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        await const MethodChannel('com.voyager/share_action')
+            .invokeMethod<void>('shareUrl', {
+              'url': sourceUrl.toString(),
+              'title': _video?.title ?? _playlist?.title ?? 'VoyagerM',
+            });
+      } else {
+        await Clipboard.setData(ClipboardData(text: sourceUrl.toString()));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Link copied to clipboard.')),
+          );
+        }
+      }
+    } on PlatformException {
+      _showShareFailure();
+    } on MissingPluginException {
+      _showShareFailure();
+    }
+  }
+
+  void _showShareFailure() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Could not share this link.')));
   }
 
   Future<void> _cycleSpeed() async {
