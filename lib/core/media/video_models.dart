@@ -20,6 +20,26 @@ class VideoInfo {
   final Uri? thumbnailUrl;
   final String? author;
   final List<MediaStreamInfo> streams;
+
+  VideoInfo copyWith({
+    String? id,
+    VideoSourceKind? source,
+    Uri? url,
+    String? title,
+    Duration? duration,
+    List<MediaStreamInfo>? streams,
+    Uri? thumbnailUrl,
+    String? author,
+  }) => VideoInfo(
+    id: id ?? this.id,
+    source: source ?? this.source,
+    url: url ?? this.url,
+    title: title ?? this.title,
+    duration: duration ?? this.duration,
+    streams: streams ?? this.streams,
+    thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+    author: author ?? this.author,
+  );
 }
 
 class PlaylistInfo {

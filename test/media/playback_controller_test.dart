@@ -16,14 +16,16 @@ import 'package:voyager_learning/core/media/video_source_registry.dart';
 void main() {
   late _FakeAdapter adapter;
   late _FakeMediaPlayer player;
+  late InMemoryVideoMetadataCache metadataCache;
   late DefaultPlaybackController controller;
 
   setUp(() {
     adapter = _FakeAdapter();
     player = _FakeMediaPlayer();
+    metadataCache = InMemoryVideoMetadataCache();
     controller = DefaultPlaybackController(
       sources: VideoSourceRegistry([adapter]),
-      metadataCache: InMemoryVideoMetadataCache(),
+      metadataCache: metadataCache,
       mediaPlayer: player,
       streamPolicy: const StreamSelectionPolicy(
         supportedMimeTypes: {'video/mp4'},
@@ -53,6 +55,26 @@ void main() {
       );
     },
   );
+
+  test('reuses fresh streams when the same video is loaded again', () async {
+    const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    await controller.load(url);
+    await controller.load(url);
+
+    expect(adapter.videoInfoCalls, 1);
+    expect(adapter.streamCalls, 1);
+    expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+  });
+
+  test('preloads streams before a video is opened', () async {
+    const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    await controller.prefetchVideo(url);
+    await controller.load(url);
+
+    expect(adapter.videoInfoCalls, 1);
+    expect(adapter.streamCalls, 1);
+    expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+  });
 
   test(
     'playlist load defers stream extraction until a lecture is selected',

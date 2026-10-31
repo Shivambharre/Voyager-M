@@ -6,11 +6,18 @@ import 'video_models.dart';
 abstract interface class VideoMetadataCache {
   Future<VideoInfo?> getVideo(VideoSourceKind source, String id);
   Future<void> putVideo(VideoInfo video);
+  Future<List<MediaStreamInfo>> getOrLoadStreams(
+    VideoSourceKind source,
+    String id,
+    Future<List<MediaStreamInfo>> Function() load,
+  );
   Future<PlaylistInfo?> getPlaylist(VideoSourceKind source, String id);
   Future<void> putPlaylist(PlaylistInfo playlist);
 }
 
-class InMemoryVideoMetadataCache implements VideoMetadataCache {
+class InMemoryVideoMetadataCache
+    with _EphemeralStreamCache
+    implements VideoMetadataCache {
   final Map<String, VideoInfo> _videos = {};
   final Map<String, PlaylistInfo> _playlists = {};
 
@@ -22,16 +29,7 @@ class InMemoryVideoMetadataCache implements VideoMetadataCache {
 
   @override
   Future<void> putVideo(VideoInfo video) async {
-    _videos[_key(video.source, video.id)] = VideoInfo(
-      id: video.id,
-      source: video.source,
-      url: video.url,
-      title: video.title,
-      duration: video.duration,
-      thumbnailUrl: video.thumbnailUrl,
-      author: video.author,
-      streams: const [],
-    );
+    _videos[_key(video.source, video.id)] = video.copyWith(streams: const []);
   }
 
   @override
@@ -44,8 +42,10 @@ class InMemoryVideoMetadataCache implements VideoMetadataCache {
   }
 }
 
-class SqliteVideoMetadataCache implements VideoMetadataCache {
-  const SqliteVideoMetadataCache(this._database);
+class SqliteVideoMetadataCache
+    with _EphemeralStreamCache
+    implements VideoMetadataCache {
+  SqliteVideoMetadataCache(this._database);
 
   final AppDatabase _database;
 
@@ -174,4 +174,61 @@ class SqliteVideoMetadataCache implements VideoMetadataCache {
 
   Uri? _optionalUri(Object? value) =>
       value is String && value.isNotEmpty ? Uri.tryParse(value) : null;
+}
+
+mixin _EphemeralStreamCache {
+  static const _streamCacheLifetime = Duration(seconds: 60);
+  static const _expirySafetyMargin = Duration(seconds: 30);
+
+  final Map<String, _CachedStreams> _streams = {};
+  final Map<String, Future<List<MediaStreamInfo>>> _pendingLoads = {};
+
+  Future<List<MediaStreamInfo>> getOrLoadStreams(
+    VideoSourceKind source,
+    String id,
+    Future<List<MediaStreamInfo>> Function() load,
+  ) async {
+    final key = '${source.name}:$id';
+    final now = DateTime.now();
+    final cached = _streams[key];
+    if (cached != null && cached.validUntil.isAfter(now)) {
+      return cached.streams;
+    }
+
+    final pending = _pendingLoads[key];
+    if (pending != null) return pending;
+
+    final request = load();
+    _pendingLoads[key] = request;
+    try {
+      final streams = await request;
+      final expiryTimes = streams
+          .map((stream) => stream.expiresAt)
+          .whereType<DateTime>()
+          .toList(growable: false);
+      var validUntil = now.add(_streamCacheLifetime);
+      if (expiryTimes.isNotEmpty) {
+        final earliestExpiry = expiryTimes.reduce(
+          (left, right) => left.isBefore(right) ? left : right,
+        );
+        final safeExpiry = earliestExpiry.subtract(_expirySafetyMargin);
+        if (safeExpiry.isBefore(validUntil)) validUntil = safeExpiry;
+      }
+      if (validUntil.isAfter(DateTime.now())) {
+        _streams[key] = _CachedStreams(streams, validUntil);
+      }
+      return streams;
+    } finally {
+      if (identical(_pendingLoads[key], request)) {
+        _pendingLoads.remove(key);
+      }
+    }
+  }
+}
+
+class _CachedStreams {
+  const _CachedStreams(this.streams, this.validUntil);
+
+  final List<MediaStreamInfo> streams;
+  final DateTime validUntil;
 }

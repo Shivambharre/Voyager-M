@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -54,20 +55,88 @@ void main() {
         ],
       );
       await cache.putVideo(video);
+      await cache.getOrLoadStreams(
+        video.source,
+        video.id,
+        () async => video.streams,
+      );
 
       final restored = await cache.getVideo(video.source, video.id);
       final rows = await database.query(
         'video_metadata_cache',
         columns: ['payload'],
       );
+      final restartedCache = SqliteVideoMetadataCache(database);
+      var reloadCount = 0;
+      await restartedCache.getOrLoadStreams(video.source, video.id, () async {
+        reloadCount++;
+        return const [];
+      });
 
       expect(restored?.title, video.title);
       expect(restored?.thumbnailUrl, video.thumbnailUrl);
       expect(restored?.duration, video.duration);
       expect(restored?.streams, isEmpty);
       expect(rows.single['payload'], isNot(contains('media.example')));
+      expect(reloadCount, 1);
     },
   );
+
+  test('coalesces overlapping stream metadata requests', () async {
+    final memoryCache = InMemoryVideoMetadataCache();
+    final completer = Completer<List<MediaStreamInfo>>();
+    var loadCount = 0;
+    Future<List<MediaStreamInfo>> loadStreams() {
+      loadCount++;
+      return completer.future;
+    }
+
+    final first = memoryCache.getOrLoadStreams(
+      VideoSourceKind.youtubeVideo,
+      'dQw4w9WgXcQ',
+      loadStreams,
+    );
+    final second = memoryCache.getOrLoadStreams(
+      VideoSourceKind.youtubeVideo,
+      'dQw4w9WgXcQ',
+      loadStreams,
+    );
+    completer.complete(const []);
+
+    await Future.wait([first, second]);
+    expect(loadCount, 1);
+  });
+
+  test('does not cache expired stream URLs', () async {
+    final memoryCache = InMemoryVideoMetadataCache();
+    var loadCount = 0;
+    Future<List<MediaStreamInfo>> loadExpiredStream() async {
+      loadCount++;
+      return [
+        MediaStreamInfo(
+          url: Uri.parse('https://media.example/expired.mp4'),
+          mimeType: 'video/mp4',
+          container: 'mp4',
+          hasAudio: true,
+          hasVideo: true,
+          expiresAt: DateTime.now().subtract(const Duration(seconds: 1)),
+        ),
+      ];
+    }
+
+    await memoryCache.getOrLoadStreams(
+      VideoSourceKind.youtubeVideo,
+      'dQw4w9WgXcQ',
+      loadExpiredStream,
+    );
+    await memoryCache.getOrLoadStreams(
+      VideoSourceKind.youtubeVideo,
+      'dQw4w9WgXcQ',
+      loadExpiredStream,
+    );
+
+    expect(loadCount, 2);
+  });
 
   test('preserves playlist ordering in cached metadata', () async {
     final playlist = PlaylistInfo(

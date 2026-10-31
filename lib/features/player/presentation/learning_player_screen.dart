@@ -177,7 +177,8 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                           label: 'Save to playlist',
                           icon: Icons.playlist_add,
                           secondary: true,
-                          onPressed: () => unawaited(_saveVideoToPlaylistPrompt()),
+                          onPressed: () =>
+                              unawaited(_saveVideoToPlaylistPrompt()),
                         ),
                         BrutalistButton(
                           key: const Key('mark-lesson-complete'),
@@ -208,8 +209,12 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                               ),
                             ),
                             IconButton(
-                              tooltip: _isSourceCollapsed ? 'Expand URL box' : 'Collapse URL box',
-                              onPressed: () => setState(() => _isSourceCollapsed = !_isSourceCollapsed),
+                              tooltip: _isSourceCollapsed
+                                  ? 'Expand URL box'
+                                  : 'Collapse URL box',
+                              onPressed: () => setState(
+                                () => _isSourceCollapsed = !_isSourceCollapsed,
+                              ),
                               icon: Icon(
                                 _isSourceCollapsed ? Icons.add : Icons.remove,
                                 size: 18,
@@ -366,20 +371,45 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
             if (hasMedia)
               _playbackController.buildSurface()
             else
-              const Center(
+              Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.ondemand_video, color: Colors.white, size: 48),
-                    SizedBox(height: DesignTokens.space2),
-                    Text(
-                      'YOUTUBE PLAYER',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1,
+                    if (_isLoading ||
+                        _snapshot.status == PlayerStatus.loading) ...[
+                      const SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: DesignTokens.space2),
+                      const Text(
+                        'PREPARING VIDEO',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ] else ...[
+                      const Icon(
+                        Icons.ondemand_video,
+                        color: Colors.white,
+                        size: 48,
+                      ),
+                      const SizedBox(height: DesignTokens.space2),
+                      const Text(
+                        'YOUTUBE PLAYER',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -886,6 +916,13 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         _playlist = _playbackController.currentPlaylist;
         _isPlaylistSaved = false;
       });
+      if (_playlist case final playlist? when playlist.entries.isNotEmpty) {
+        unawaited(
+          _playbackController.prefetchVideo(
+            playlist.entries.first.url.toString(),
+          ),
+        );
+      }
       if (_playbackController.currentVideo case final video?) {
         await _prepareCurrentVideo(video);
         await _recordWatchHistory(video);
@@ -920,6 +957,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       });
       if (_playbackController.currentVideo case final video?) {
         await _prepareCurrentVideo(video);
+        _prefetchNextLecture(video);
         await _recordWatchHistory(video);
       }
     } on VideoSourceException catch (error) {
@@ -964,6 +1002,21 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         );
       }
     }
+  }
+
+  void _prefetchNextLecture(VideoInfo video) {
+    final playlist = _playlist;
+    if (playlist == null) return;
+    final currentIndex = playlist.entries.indexWhere(
+      (entry) => entry.videoId == video.id,
+    );
+    final nextIndex = currentIndex + 1;
+    if (currentIndex < 0 || nextIndex >= playlist.entries.length) return;
+    unawaited(
+      _playbackController.prefetchVideo(
+        playlist.entries[nextIndex].url.toString(),
+      ),
+    );
   }
 
   Future<void> _prepareCurrentVideo(VideoInfo video) async {
@@ -1169,7 +1222,9 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       if (existingEntries.any((entry) => entry.videoId == video.id)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('This video is already in the playlist.')),
+            const SnackBar(
+              content: Text('This video is already in the playlist.'),
+            ),
           );
         }
         return;
@@ -1183,14 +1238,16 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         ),
       ]);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Saved to ${playlist.title}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Saved to ${playlist.title}')));
       }
     } on Object {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save this video to the playlist.')),
+        const SnackBar(
+          content: Text('Could not save this video to the playlist.'),
+        ),
       );
     }
   }

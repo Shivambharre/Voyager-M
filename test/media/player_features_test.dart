@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voyager_learning/core/design/brutalist_components.dart';
 import 'package:voyager_learning/core/media/playback_controller.dart';
 import 'package:voyager_learning/core/media/playback_state.dart';
 import 'package:voyager_learning/core/media/source_detector.dart';
@@ -10,6 +9,7 @@ import 'package:voyager_learning/core/media/video_models.dart';
 import 'package:voyager_learning/features/history/data/in_memory_recent_watch_history_repository.dart';
 import 'package:voyager_learning/features/goals/data/in_memory_daily_goal_repository.dart';
 import 'package:voyager_learning/features/library/data/in_memory_learning_library_repository.dart';
+import 'package:voyager_learning/features/library/domain/learning_content.dart';
 import 'package:voyager_learning/features/notes/data/in_memory_notes_repository.dart';
 import 'package:voyager_learning/features/progress/data/in_memory_progress_repository.dart';
 import 'package:voyager_learning/features/progress/domain/learning_progress.dart';
@@ -172,14 +172,6 @@ void main() {
       expect(find.text('Sample course'), findsOneWidget);
       expect(find.byKey(const Key('player-seek-slider')), findsOneWidget);
       expect(
-        tester
-            .widget<BrutalistButton>(
-              find.byKey(const Key('player-share-link-button')),
-            )
-            .onPressed,
-        isNotNull,
-      );
-      expect(
         tester.getRect(find.byKey(const Key('player-seek-slider'))).bottom,
         lessThan(tester.getRect(find.text('Sample course')).top),
       );
@@ -265,10 +257,21 @@ void main() {
     expect(playback.snapshot.playbackSpeed, 1.5);
   });
 
-  testWidgets('saves moments and manually completed lessons', (tester) async {
+  testWidgets('saves videos to a playlist and marks lessons complete', (
+    tester,
+  ) async {
     final progress = InMemoryProgressRepository();
     final dailyGoals = InMemoryDailyGoalRepository();
     final library = InMemoryLearningLibraryRepository();
+    await library.savePlaylist(
+      const LearningPlaylist(
+        id: 'my-playlist',
+        sourceId: 'my-playlist',
+        sourceUrl: '',
+        title: 'My playlist',
+        creator: 'You',
+      ),
+    );
     final playback = _FakePlaybackController();
     await tester.pumpWidget(
       MaterialApp(
@@ -292,20 +295,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(await library.getVideos(), isEmpty);
 
-    final saveMoment = find.text('SAVE MOMENT');
-    await tester.ensureVisible(saveMoment);
-    await tester.tap(saveMoment);
+    final saveToPlaylist = find.text('SAVE TO PLAYLIST');
+    await tester.ensureVisible(saveToPlaylist);
+    await tester.tap(saveToPlaylist);
     await tester.pumpAndSettle();
-    expect(await progress.getAllBookmarks(), hasLength(1));
+    await tester.tap(find.text('My playlist'));
+    await tester.pumpAndSettle();
+    expect(await library.getPlaylistEntries('my-playlist'), hasLength(1));
 
-    final completeLesson = find.text('COMPLETE LESSON');
+    final completeLesson = find.text('DONE');
     await tester.ensureVisible(completeLesson);
     await tester.tap(completeLesson);
     await tester.pumpAndSettle();
     expect((await progress.getProgress('dQw4w9WgXcQ'))?.isCompleted, isTrue);
     expect((await dailyGoals.getSummary(DateTime.now())).completedLessons, 1);
   });
-
 }
 
 class _FakePlaybackController implements PlaybackController {
@@ -384,6 +388,9 @@ class _FakePlaybackController implements PlaybackController {
       ],
     );
   }
+
+  @override
+  Future<void> prefetchVideo(String sourceUrl) async {}
 
   @override
   Future<void> selectLecture(PlaylistEntryInfo entry) async {}

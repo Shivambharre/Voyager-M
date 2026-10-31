@@ -21,6 +21,7 @@ abstract interface class PlaybackController {
   MediaStreamInfo? get selectedStream;
 
   Future<void> load(String sourceUrl);
+  Future<void> prefetchVideo(String sourceUrl);
   Future<void> selectLecture(PlaylistEntryInfo entry);
   Future<void> selectStream(MediaStreamInfo stream);
   Widget buildSurface();
@@ -51,6 +52,7 @@ class DefaultPlaybackController implements PlaybackController {
   PlaylistInfo? _currentPlaylist;
   List<MediaStreamInfo> _availableStreams = const [];
   MediaStreamInfo? _selectedStream;
+  final Set<Future<void>> _backgroundPrefetches = {};
   bool _disposed = false;
 
   @override
@@ -124,9 +126,60 @@ class DefaultPlaybackController implements PlaybackController {
     final cached = useCache
         ? await metadataCache.getVideo(source.kind, source.contentId)
         : null;
-    final video = cached ?? await _activeAdapter!.getVideoInfo(source);
+    var video = cached ?? await _activeAdapter!.getVideoInfo(source);
+    final adapter = _activeAdapter!;
+    final streams = await metadataCache.getOrLoadStreams(
+      source.kind,
+      source.contentId,
+      () => video.streams.isNotEmpty
+          ? Future<List<MediaStreamInfo>>.value(video.streams)
+          : adapter.getStreams(video),
+    );
+    video = video.copyWith(streams: streams);
     if (cached == null) await metadataCache.putVideo(video);
     await _playVideo(video);
+  }
+
+  @override
+  Future<void> prefetchVideo(String sourceUrl) {
+    _ensureOpen();
+    final source = SourceDetector.detect(sourceUrl);
+    if (source == null || source.kind != VideoSourceKind.youtubeVideo) {
+      return Future<void>.value();
+    }
+
+    late final Future<void> prefetch;
+    prefetch = _prefetchVideo(source)
+        .whenComplete(() => _backgroundPrefetches.remove(prefetch));
+    _backgroundPrefetches.add(prefetch);
+    return prefetch;
+  }
+
+  Future<void> _prefetchVideo(SourceDescriptor source) async {
+    try {
+      final adapter = sources.resolve(source);
+      final cached = await metadataCache.getVideo(
+        source.kind,
+        source.contentId,
+      );
+      final video = cached ?? await adapter.getVideoInfo(source);
+      if (cached == null) await metadataCache.putVideo(video);
+      await metadataCache.getOrLoadStreams(
+        source.kind,
+        source.contentId,
+        () => video.streams.isNotEmpty
+            ? Future<List<MediaStreamInfo>>.value(video.streams)
+            : adapter.getStreams(video),
+      );
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'video stream prefetch',
+        ),
+      );
+    }
   }
 
   @override
@@ -157,7 +210,13 @@ class DefaultPlaybackController implements PlaybackController {
   Future<void> _playVideo(VideoInfo video) async {
     final adapter = _activeAdapter;
     if (adapter == null) throw StateError('No source adapter is active.');
-    final streams = await adapter.getStreams(video);
+    final streams = video.streams.isNotEmpty
+        ? video.streams
+        : await metadataCache.getOrLoadStreams(
+            video.source,
+            video.id,
+            () => adapter.getStreams(video),
+          );
     _availableStreams = StreamSelector.available(streams, streamPolicy);
     final selection = StreamSelector.select(streams, streamPolicy);
     final stream = selection.stream;
@@ -232,6 +291,7 @@ class DefaultPlaybackController implements PlaybackController {
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
+    await Future.wait(_backgroundPrefetches.toList(growable: false));
     await mediaPlayer.dispose();
     await sources.dispose();
   }

@@ -45,8 +45,10 @@ full media library.
 Adapters report invalid sources and extraction or network failures through
 `VideoSourceException`. YouTube extraction can stop working when the service
 changes. Private, age-restricted, or region-restricted videos may not work.
-Temporary stream URLs can expire. The app requests current streams when it
-loads a lesson and does not cache those URLs.
+Temporary stream URLs can expire. The app keeps stream details in memory for
+up to 60 seconds (less when the provider gives an earlier expiry time) so a
+preloaded lesson can reuse them. These temporary URLs are never written to
+disk, and the app fetches them again after the short cache expires.
 
 In plain English: media links can break, expire, or become blocked, so the app
 checks fresh stream data each time instead of trusting old URLs.
