@@ -48,7 +48,10 @@ void main() {
       expect(controller.currentVideo?.id, 'dQw4w9WgXcQ');
       expect(adapter.videoInfoCalls, 1);
       expect(adapter.streamCalls, 1);
-      expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+      expect(
+        player.loadedUri,
+        Uri.parse('https://media.example/combined-360.mp4'),
+      );
       expect(
         player.loadedUri,
         isNot(Uri.parse('https://www.youtube.com/watch?v=dQw4w9WgXcQ')),
@@ -63,17 +66,61 @@ void main() {
 
     expect(adapter.videoInfoCalls, 1);
     expect(adapter.streamCalls, 1);
-    expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+    expect(
+      player.loadedUri,
+      Uri.parse('https://media.example/combined-360.mp4'),
+    );
   });
 
   test('preloads streams before a video is opened', () async {
     const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    adapter.provideFastStream = true;
+    adapter.fullResolutionStarted = Completer<void>();
     await controller.prefetchVideo(url);
     await controller.load(url);
+    await adapter.fullResolutionStarted!.future;
 
     expect(adapter.videoInfoCalls, 1);
     expect(adapter.streamCalls, 1);
+    expect(
+      player.loadedUri,
+      Uri.parse('https://media.example/combined-360.mp4'),
+    );
+  });
+
+  test('starts with the fast stream before resolving better quality', () async {
+    adapter.provideFastStream = true;
+    adapter.blockFullStreamResolution = true;
+    final fullResolutionStarted = Completer<void>();
+    adapter.fullResolutionStarted = fullResolutionStarted;
+
+    await controller.load('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+    await fullResolutionStarted.future;
+
+    expect(
+      player.loadedUri,
+      Uri.parse('https://media.example/combined-360.mp4'),
+    );
+    expect(adapter.streamCalls, 1);
+
+    await controller.play();
+    player.position = const Duration(seconds: 48);
+    adapter.fullStreams.complete([
+      MediaStreamInfo(
+        url: Uri.parse('https://media.example/combined.mp4'),
+        mimeType: 'video/mp4',
+        container: 'mp4',
+        resolutionHeight: 720,
+        bitrateBitsPerSecond: 1500000,
+        hasAudio: true,
+        hasVideo: true,
+      ),
+    ]);
+    await player.replacementStarted.future;
+
     expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+    expect(player.replacementPosition, const Duration(seconds: 48));
+    expect(player.replacementResumed, isTrue);
   });
 
   test(
@@ -92,7 +139,10 @@ void main() {
       );
 
       expect(adapter.streamCalls, 1);
-      expect(player.loadedUri, Uri.parse('https://media.example/combined.mp4'));
+      expect(
+        player.loadedUri,
+        Uri.parse('https://media.example/combined-360.mp4'),
+      );
     },
   );
 
@@ -110,7 +160,7 @@ void main() {
   });
 
   test(
-    'selects and loads a video-only HD stream with its paired audio',
+    'starts progressively and can manually select HD with paired audio',
     () async {
       adapter.hasAdaptiveStream = true;
 
@@ -120,6 +170,11 @@ void main() {
         controller.availableStreams.map((stream) => stream.resolutionHeight),
         contains(1080),
       );
+      expect(controller.selectedStream?.resolutionHeight, 360);
+      final hdStream = controller.availableStreams.firstWhere(
+        (stream) => stream.resolutionHeight == 1080,
+      );
+      await controller.selectStream(hdStream);
       expect(controller.selectedStream?.resolutionHeight, 1080);
       expect(
         controller.selectedStream?.audioUrl,
@@ -142,6 +197,30 @@ class _FakeAdapter implements VideoSourceAdapter {
   int playlistCalls = 0;
   int streamCalls = 0;
   bool hasAdaptiveStream = false;
+  bool provideFastStream = false;
+  bool blockFullStreamResolution = false;
+  Completer<void>? fullResolutionStarted;
+  final Completer<List<MediaStreamInfo>> fullStreams = Completer();
+
+  @override
+  Future<VideoInfo> getFastVideoInfo(SourceDescriptor source) async {
+    final video = await getVideoInfo(source);
+    if (!provideFastStream) return video;
+    return video.copyWith(
+      streams: [
+        MediaStreamInfo(
+          url: Uri.parse('https://media.example/combined-360.mp4'),
+          mimeType: 'video/mp4',
+          container: 'mp4',
+          resolutionHeight: 360,
+          bitrateBitsPerSecond: 500000,
+          hasAudio: true,
+          hasVideo: true,
+        ),
+      ],
+      streamsComplete: false,
+    );
+  }
 
   @override
   bool canHandle(Uri url) => url.host.endsWith('youtube.com');
@@ -181,6 +260,13 @@ class _FakeAdapter implements VideoSourceAdapter {
   @override
   Future<List<MediaStreamInfo>> getStreams(VideoInfo video) async {
     streamCalls++;
+    if (fullResolutionStarted case final started?
+        when !started.isCompleted) {
+      started.complete();
+    }
+    if (blockFullStreamResolution) {
+      return fullStreams.future;
+    }
     return [
       if (hasAdaptiveStream)
         MediaStreamInfo(
@@ -223,6 +309,10 @@ class _FakeMediaPlayer implements MediaPlayer {
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
   Uri? loadedUri;
   Uri? loadedAudioUri;
+  Duration position = Duration.zero;
+  Duration? replacementPosition;
+  bool replacementResumed = false;
+  final Completer<void> replacementStarted = Completer();
 
   @override
   PlayerSnapshot get snapshot => _snapshot;
@@ -243,7 +333,23 @@ class _FakeMediaPlayer implements MediaPlayer {
   }
 
   @override
-  Future<void> play() async {}
+  Future<void> replaceStream(Uri mediaUri, {Uri? audioUri}) async {
+    loadedUri = mediaUri;
+    loadedAudioUri = audioUri;
+    replacementPosition = position;
+    replacementResumed = _snapshot.status == PlayerStatus.playing;
+    if (!replacementStarted.isCompleted) replacementStarted.complete();
+  }
+
+  @override
+  Future<void> play() async {
+    _snapshot = PlayerSnapshot(
+      status: PlayerStatus.playing,
+      position: position,
+      duration: _snapshot.duration,
+      playbackSpeed: _snapshot.playbackSpeed,
+    );
+  }
 
   @override
   Future<void> pause() async {}
@@ -258,7 +364,7 @@ class _FakeMediaPlayer implements MediaPlayer {
   Widget buildSurface() => const SizedBox.shrink();
 
   @override
-  Future<Duration> get currentPosition async => Duration.zero;
+  Future<Duration> get currentPosition async => position;
 
   @override
   Future<void> dispose() async => _snapshots.close();

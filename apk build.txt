@@ -1,3 +1,2 @@
 run this comman first
-$env:GRADLE_OPTS = '-Dorg.gradle.project.kotlin.incremental=false'; flutter build apk --debug
 The APK will be at build\app\outputs\flutter-apk\app-debug.apk.

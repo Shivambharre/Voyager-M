@@ -65,6 +65,17 @@ class AndroidMediaPlayer implements MediaPlayer {
   }
 
   @override
+  Future<void> replaceStream(Uri mediaUri, {Uri? audioUri}) async {
+    _ensureOpen();
+    _requireHttpUri(mediaUri, 'video');
+    if (audioUri != null) _requireHttpUri(audioUri, 'audio');
+    await _channel.invokeMethod<void>('replaceStream', {
+      'videoUrl': mediaUri.toString(),
+      if (audioUri != null) 'audioUrl': audioUri.toString(),
+    });
+  }
+
+  @override
   Future<void> play() => _channel.invokeMethod<void>('play');
 
   @override

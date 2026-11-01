@@ -47,6 +47,13 @@ class YoutubeAdapter implements VideoSourceAdapter {
   }
 
   @override
+  Future<VideoInfo> getFastVideoInfo(SourceDescriptor source) async {
+    final video = await getVideoInfo(source);
+    final streams = await getStreams(video);
+    return video.copyWith(streams: streams);
+  }
+
+  @override
   Future<PlaylistInfo> getPlaylistInfo(SourceDescriptor source) async {
     _ensureOpen();
     if (source.kind != VideoSourceKind.youtubePlaylist) {

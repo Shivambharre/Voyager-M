@@ -71,6 +71,53 @@ class NewPipeYoutubeAdapter implements VideoSourceAdapter {
   }
 
   @override
+  Future<VideoInfo> getFastVideoInfo(SourceDescriptor source) async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return _fallbackAdapter.getFastVideoInfo(source);
+    }
+    if (source.kind != VideoSourceKind.youtubeVideo) {
+      throw const VideoSourceException(
+        VideoSourceFailure.unsupportedSource,
+        'This URL is not a YouTube video.',
+      );
+    }
+
+    try {
+      final info = await _channel.invokeMapMethod<String, Object?>(
+        'resolveFastVideo',
+        {'url': source.url.toString()},
+      );
+      if (info == null || info['title'] is! String || info['id'] is! String) {
+        throw const VideoSourceException(
+          VideoSourceFailure.extractionFailure,
+          'NewPipe did not return video metadata.',
+        );
+      }
+      final durationSeconds = info['durationSeconds'];
+      final thumbnail = info['thumbnailUrl'];
+      final author = info['author'];
+      return VideoInfo(
+        id: info['id']! as String,
+        source: VideoSourceKind.youtubeVideo,
+        url: source.url,
+        title: info['title']! as String,
+        duration: Duration(
+          seconds: durationSeconds is num ? durationSeconds.toInt() : 0,
+        ),
+        thumbnailUrl: thumbnail is String ? Uri.tryParse(thumbnail) : null,
+        author: author is String ? author : null,
+        streams: _parseStreams(info['streams']),
+        streamsComplete: false,
+      );
+    } on PlatformException catch (error) {
+      throw VideoSourceException(
+        VideoSourceFailure.extractionFailure,
+        error.message ?? 'NewPipe could not resolve a fast video stream.',
+      );
+    }
+  }
+
+  @override
   Future<PlaylistInfo> getPlaylistInfo(SourceDescriptor source) async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
       return _fallbackAdapter.getPlaylistInfo(source);
@@ -153,7 +200,6 @@ class NewPipeYoutubeAdapter implements VideoSourceAdapter {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
       return _fallbackAdapter.getStreams(video);
     }
-    if (video.streams.isNotEmpty) return video.streams;
 
     try {
       final streams = await _channel.invokeListMethod<Object?>(

@@ -29,6 +29,9 @@ abstract interface class VideoSourceAdapter {
 
   Future<VideoInfo> getVideoInfo(SourceDescriptor source);
 
+  Future<VideoInfo> getFastVideoInfo(SourceDescriptor source) =>
+      getVideoInfo(source);
+
   Future<PlaylistInfo> getPlaylistInfo(SourceDescriptor source);
 
   Future<List<MediaStreamInfo>> getStreams(VideoInfo video);

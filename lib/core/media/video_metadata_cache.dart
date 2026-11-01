@@ -11,6 +11,16 @@ abstract interface class VideoMetadataCache {
     String id,
     Future<List<MediaStreamInfo>> Function() load,
   );
+  Future<List<MediaStreamInfo>?> getCachedStreams(
+    VideoSourceKind source,
+    String id,
+  );
+  Future<bool> hasCompleteStreams(VideoSourceKind source, String id);
+  Future<void> putFastStreams(
+    VideoSourceKind source,
+    String id,
+    List<MediaStreamInfo> streams,
+  );
   Future<PlaylistInfo?> getPlaylist(VideoSourceKind source, String id);
   Future<void> putPlaylist(PlaylistInfo playlist);
 }
@@ -189,15 +199,13 @@ mixin _EphemeralStreamCache {
     Future<List<MediaStreamInfo>> Function() load,
   ) async {
     final key = '${source.name}:$id';
-    final now = DateTime.now();
-    final cached = _streams[key];
-    if (cached != null && cached.validUntil.isAfter(now)) {
-      return cached.streams;
-    }
+    final cached = _getValidEntry(key);
+    if (cached?.isComplete == true) return cached!.streams;
 
     final pending = _pendingLoads[key];
     if (pending != null) return pending;
 
+    final now = DateTime.now();
     final request = load();
     _pendingLoads[key] = request;
     try {
@@ -215,7 +223,7 @@ mixin _EphemeralStreamCache {
         if (safeExpiry.isBefore(validUntil)) validUntil = safeExpiry;
       }
       if (validUntil.isAfter(DateTime.now())) {
-        _streams[key] = _CachedStreams(streams, validUntil);
+        _streams[key] = _CachedStreams(streams, validUntil, isComplete: true);
       }
       return streams;
     } finally {
@@ -224,11 +232,61 @@ mixin _EphemeralStreamCache {
       }
     }
   }
+
+  Future<List<MediaStreamInfo>?> getCachedStreams(
+    VideoSourceKind source,
+    String id,
+  ) async {
+    return _getValidEntry('${source.name}:$id')?.streams;
+  }
+
+  Future<bool> hasCompleteStreams(VideoSourceKind source, String id) async =>
+      _getValidEntry('${source.name}:$id')?.isComplete ?? false;
+
+  Future<void> putFastStreams(
+    VideoSourceKind source,
+    String id,
+    List<MediaStreamInfo> streams,
+  ) async {
+    final key = '${source.name}:$id';
+    final existing = _getValidEntry(key);
+    if (existing?.isComplete == true) return;
+    final now = DateTime.now();
+    var validUntil = now.add(_streamCacheLifetime);
+    final expiryTimes = streams
+        .map((stream) => stream.expiresAt)
+        .whereType<DateTime>()
+        .toList(growable: false);
+    if (expiryTimes.isNotEmpty) {
+      final safeExpiry = expiryTimes
+          .reduce((left, right) => left.isBefore(right) ? left : right)
+          .subtract(_expirySafetyMargin);
+      if (safeExpiry.isBefore(validUntil)) validUntil = safeExpiry;
+    }
+    if (validUntil.isAfter(now)) {
+      _streams[key] = _CachedStreams(streams, validUntil, isComplete: false);
+    }
+  }
+
+  _CachedStreams? _getValidEntry(String key) {
+    final cached = _streams[key];
+    if (cached == null) return null;
+    if (!cached.validUntil.isAfter(DateTime.now())) {
+      _streams.remove(key);
+      return null;
+    }
+    return cached;
+  }
 }
 
 class _CachedStreams {
-  const _CachedStreams(this.streams, this.validUntil);
+  const _CachedStreams(
+    this.streams,
+    this.validUntil, {
+    required this.isComplete,
+  });
 
   final List<MediaStreamInfo> streams;
   final DateTime validUntil;
+  final bool isComplete;
 }

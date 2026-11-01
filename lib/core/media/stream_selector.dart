@@ -65,6 +65,47 @@ abstract final class StreamSelector {
     );
   }
 
+  static StreamSelection selectFast(
+    Iterable<MediaStreamInfo> streams,
+    StreamSelectionPolicy policy,
+  ) {
+    final candidates = streams
+        .where((stream) {
+          final mimeType = _normalizedMimeType(stream.mimeType);
+          return stream.hasAudio &&
+              stream.hasVideo &&
+              policy.supportedMimeTypes.contains(mimeType) &&
+              (stream.resolutionHeight ?? 0) <= policy.maxResolutionHeight &&
+              (stream.expiresAt == null ||
+                  stream.expiresAt!.isAfter(DateTime.now()));
+        })
+        .toList(growable: false);
+    if (candidates.isEmpty) {
+      return select(streams, policy);
+    }
+
+    final progressive = candidates
+        .where((stream) => stream.audioUrl == null)
+        .toList(growable: false);
+    final fastCandidates = progressive.isEmpty ? candidates : progressive;
+    final around360 = fastCandidates
+        .where((stream) => (stream.resolutionHeight ?? 0) <= 480)
+        .toList(growable: false);
+    final ranked = [...(around360.isEmpty ? fastCandidates : around360)]
+      ..sort((left, right) {
+        final leftHeight = left.resolutionHeight ?? 0;
+        final rightHeight = right.resolutionHeight ?? 0;
+        final leftDistance = (leftHeight - 360).abs();
+        final rightDistance = (rightHeight - 360).abs();
+        final heightOrder = leftDistance.compareTo(rightDistance);
+        if (heightOrder != 0) return heightOrder;
+        return (left.bitrateBitsPerSecond ?? 0).compareTo(
+          right.bitrateBitsPerSecond ?? 0,
+        );
+      });
+    return StreamSelection.selected(ranked.first);
+  }
+
   static StreamSelection select(
     Iterable<MediaStreamInfo> streams,
     StreamSelectionPolicy policy,

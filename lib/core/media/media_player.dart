@@ -11,6 +11,7 @@ abstract interface class MediaPlayer {
   Stream<PlayerSnapshot> get snapshots;
 
   Future<void> load(Uri mediaUri, {Uri? audioUri});
+  Future<void> replaceStream(Uri mediaUri, {Uri? audioUri});
   Future<void> play();
   Future<void> pause();
   Future<void> seekTo(Duration position);
@@ -25,6 +26,7 @@ class FlutterMediaPlayer implements MediaPlayer {
       StreamController<PlayerSnapshot>.broadcast();
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
   video_player.VideoPlayerController? _controller;
+  bool _shouldPlay = false;
   bool _disposed = false;
 
   @override
@@ -49,6 +51,7 @@ class FlutterMediaPlayer implements MediaPlayer {
     }
     final previous = _controller;
     _controller = null;
+    _shouldPlay = false;
     if (previous != null) {
       previous.removeListener(_onValueChanged);
       await previous.dispose();
@@ -93,13 +96,57 @@ class FlutterMediaPlayer implements MediaPlayer {
   }
 
   @override
+  Future<void> replaceStream(Uri mediaUri, {Uri? audioUri}) async {
+    _ensureOpen();
+    if (audioUri != null) {
+      throw UnsupportedError(
+        'Separate audio and video tracks require the Android media player.',
+      );
+    }
+    if (mediaUri.scheme != 'https' && mediaUri.scheme != 'http') {
+      throw const VideoSourceException(
+        VideoSourceFailure.unsupportedFormat,
+        'The selected media URL is not an HTTP stream.',
+      );
+    }
+
+    final replacement = video_player.VideoPlayerController.networkUrl(mediaUri);
+    final previous = _controller;
+    try {
+      await replacement.initialize().timeout(const Duration(seconds: 5));
+      final duration = replacement.value.duration;
+      final currentPosition = previous?.value.position ?? Duration.zero;
+      final target = currentPosition < Duration.zero
+          ? Duration.zero
+          : currentPosition > duration
+          ? duration
+          : currentPosition;
+      if (target > Duration.zero) await replacement.seekTo(target);
+      await replacement.setPlaybackSpeed(previous?.value.playbackSpeed ?? 1);
+      if (_shouldPlay) await replacement.play();
+      _ensureOpen();
+    } on Object {
+      await replacement.dispose();
+      rethrow;
+    }
+
+    previous?.removeListener(_onValueChanged);
+    _controller = replacement;
+    replacement.addListener(_onValueChanged);
+    _onValueChanged();
+    if (previous != null) await previous.dispose();
+  }
+
+  @override
   Future<void> play() async {
     final controller = _requireController();
+    _shouldPlay = true;
     await controller.play();
   }
 
   @override
   Future<void> pause() async {
+    _shouldPlay = false;
     await _controller?.pause();
   }
 
@@ -187,6 +234,7 @@ class FlutterMediaPlayer implements MediaPlayer {
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
+    _shouldPlay = false;
     final controller = _controller;
     _controller = null;
     if (controller != null) {

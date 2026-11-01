@@ -52,7 +52,12 @@ class DefaultPlaybackController implements PlaybackController {
   PlaylistInfo? _currentPlaylist;
   List<MediaStreamInfo> _availableStreams = const [];
   MediaStreamInfo? _selectedStream;
-  final Set<Future<void>> _backgroundPrefetches = {};
+  final Set<Future<void>> _backgroundTasks = {};
+  int _loadGeneration = 0;
+  bool _manualQualitySelection = false;
+  bool _upgradeInProgress = false;
+  Future<void>? _upgradeTask;
+  MediaStreamInfo? _pendingUpgrade;
   bool _disposed = false;
 
   @override
@@ -76,6 +81,11 @@ class DefaultPlaybackController implements PlaybackController {
   @override
   Future<void> load(String sourceUrl) async {
     _ensureOpen();
+    _loadGeneration++;
+    _manualQualitySelection = false;
+    _pendingUpgrade = null;
+    final activeUpgrade = _upgradeTask;
+    if (activeUpgrade != null) await activeUpgrade;
     await mediaPlayer.pause();
     final source = SourceDetector.detect(sourceUrl);
     if (source == null) {
@@ -123,21 +133,50 @@ class DefaultPlaybackController implements PlaybackController {
     SourceDescriptor source, {
     required bool useCache,
   }) async {
+    final generation = _loadGeneration;
     final cached = useCache
         ? await metadataCache.getVideo(source.kind, source.contentId)
         : null;
-    var video = cached ?? await _activeAdapter!.getVideoInfo(source);
     final adapter = _activeAdapter!;
-    final streams = await metadataCache.getOrLoadStreams(
-      source.kind,
-      source.contentId,
-      () => video.streams.isNotEmpty
-          ? Future<List<MediaStreamInfo>>.value(video.streams)
-          : adapter.getStreams(video),
-    );
+    final cachedStreams = useCache
+        ? await metadataCache.getCachedStreams(source.kind, source.contentId)
+        : null;
+    late VideoInfo video;
+    if (cached == null) {
+      video = source.kind == VideoSourceKind.youtubeVideo
+          ? await adapter.getFastVideoInfo(source)
+          : await adapter.getVideoInfo(source);
+    } else if (source.kind == VideoSourceKind.youtubeVideo &&
+        cachedStreams == null) {
+      final fastVideo = await adapter.getFastVideoInfo(source);
+      video = cached.copyWith(streams: fastVideo.streams);
+    } else {
+      video = cached;
+    }
+    var streams = cachedStreams ?? video.streams;
+    var hasFullStreamList = cachedStreams != null
+        ? await metadataCache.hasCompleteStreams(source.kind, source.contentId)
+        : video.streams.isNotEmpty && video.streamsComplete;
+    if (streams.isEmpty) {
+      streams = await metadataCache.getOrLoadStreams(
+        source.kind,
+        source.contentId,
+        () => adapter.getStreams(video),
+      );
+      hasFullStreamList = true;
+    }
     video = video.copyWith(streams: streams);
-    if (cached == null) await metadataCache.putVideo(video);
-    await _playVideo(video);
+    if (cached == null) {
+      await metadataCache.putVideo(video.copyWith(streams: const []));
+    }
+    if (generation != _loadGeneration) return;
+    await _playVideo(
+      video,
+      streams,
+      generation: generation,
+      resolveQualityInBackground:
+          source.kind == VideoSourceKind.youtubeVideo && !hasFullStreamList,
+    );
   }
 
   @override
@@ -150,8 +189,8 @@ class DefaultPlaybackController implements PlaybackController {
 
     late final Future<void> prefetch;
     prefetch = _prefetchVideo(source)
-        .whenComplete(() => _backgroundPrefetches.remove(prefetch));
-    _backgroundPrefetches.add(prefetch);
+        .whenComplete(() => _backgroundTasks.remove(prefetch));
+    _backgroundTasks.add(prefetch);
     return prefetch;
   }
 
@@ -162,15 +201,23 @@ class DefaultPlaybackController implements PlaybackController {
         source.kind,
         source.contentId,
       );
-      final video = cached ?? await adapter.getVideoInfo(source);
+      final video = await adapter.getFastVideoInfo(source);
       if (cached == null) await metadataCache.putVideo(video);
-      await metadataCache.getOrLoadStreams(
-        source.kind,
-        source.contentId,
-        () => video.streams.isNotEmpty
-            ? Future<List<MediaStreamInfo>>.value(video.streams)
-            : adapter.getStreams(video),
-      );
+      if (video.streams.isNotEmpty) {
+        if (video.streamsComplete) {
+          await metadataCache.getOrLoadStreams(
+            source.kind,
+            source.contentId,
+            () => Future<List<MediaStreamInfo>>.value(video.streams),
+          );
+        } else {
+          await metadataCache.putFastStreams(
+            source.kind,
+            source.contentId,
+            video.streams,
+          );
+        }
+      }
     } on Object catch (error, stackTrace) {
       FlutterError.reportError(
         FlutterErrorDetails(
@@ -185,6 +232,11 @@ class DefaultPlaybackController implements PlaybackController {
   @override
   Future<void> selectLecture(PlaylistEntryInfo entry) async {
     _ensureOpen();
+    _loadGeneration++;
+    _manualQualitySelection = false;
+    _pendingUpgrade = null;
+    final activeUpgrade = _upgradeTask;
+    if (activeUpgrade != null) await activeUpgrade;
     await mediaPlayer.pause();
     final playlist = _currentPlaylist;
     if (playlist == null) {
@@ -207,18 +259,16 @@ class DefaultPlaybackController implements PlaybackController {
     await _loadVideo(source, useCache: true);
   }
 
-  Future<void> _playVideo(VideoInfo video) async {
-    final adapter = _activeAdapter;
-    if (adapter == null) throw StateError('No source adapter is active.');
-    final streams = video.streams.isNotEmpty
-        ? video.streams
-        : await metadataCache.getOrLoadStreams(
-            video.source,
-            video.id,
-            () => adapter.getStreams(video),
-          );
+  Future<void> _playVideo(
+    VideoInfo video,
+    List<MediaStreamInfo> streams, {
+    required int generation,
+    required bool resolveQualityInBackground,
+  }) async {
     _availableStreams = StreamSelector.available(streams, streamPolicy);
-    final selection = StreamSelector.select(streams, streamPolicy);
+    final selection = video.source == VideoSourceKind.youtubeVideo
+        ? StreamSelector.selectFast(streams, streamPolicy)
+        : StreamSelector.select(streams, streamPolicy);
     final stream = selection.stream;
     if (stream == null) {
       throw VideoSourceException(
@@ -232,7 +282,70 @@ class DefaultPlaybackController implements PlaybackController {
     }
     _currentVideo = video;
     await mediaPlayer.load(stream.url, audioUri: stream.audioUrl);
+    if (generation != _loadGeneration) return;
     _selectedStream = stream;
+    if (resolveQualityInBackground) {
+      final adapter = _activeAdapter;
+      if (adapter != null) {
+        late final Future<void> resolution;
+        resolution = _resolveQualityInBackground(video, adapter, generation)
+            .whenComplete(() => _backgroundTasks.remove(resolution));
+        _backgroundTasks.add(resolution);
+      }
+    } else {
+      _considerQualityUpgrade(streams);
+    }
+  }
+
+  Future<void> _resolveQualityInBackground(
+    VideoInfo video,
+    VideoSourceAdapter adapter,
+    int generation,
+  ) async {
+    try {
+      final streams = await metadataCache.getOrLoadStreams(
+        video.source,
+        video.id,
+        () => adapter.getStreams(video),
+      );
+      if (_disposed ||
+          generation != _loadGeneration ||
+          _currentVideo?.id != video.id) {
+        return;
+      }
+      _availableStreams = StreamSelector.available(streams, streamPolicy);
+      _considerQualityUpgrade(streams);
+      if (_pendingUpgrade != null && snapshot.status == PlayerStatus.playing) {
+        unawaited(_upgradeTo(_pendingUpgrade!, generation));
+      }
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'background video quality resolution',
+        ),
+      );
+    }
+  }
+
+  void _considerQualityUpgrade(List<MediaStreamInfo> streams) {
+    if (_manualQualitySelection) return;
+    final current = _selectedStream;
+    if (current == null) return;
+    final best = StreamSelector.select(streams, streamPolicy).stream;
+    if (best == null || !_isBetterQuality(best, current)) return;
+    _pendingUpgrade = best;
+  }
+
+  bool _isBetterQuality(MediaStreamInfo candidate, MediaStreamInfo current) {
+    final candidateHeight = candidate.resolutionHeight ?? 0;
+    final currentHeight = current.resolutionHeight ?? 0;
+    if (candidateHeight != currentHeight) {
+      return candidateHeight > currentHeight;
+    }
+    return (candidate.bitrateBitsPerSecond ?? 0) >
+        (current.bitrateBitsPerSecond ?? 0);
   }
 
   @override
@@ -241,15 +354,60 @@ class DefaultPlaybackController implements PlaybackController {
     if (!_availableStreams.contains(stream)) {
       throw ArgumentError.value(stream, 'stream', 'Stream is not available.');
     }
+    _manualQualitySelection = true;
+    _pendingUpgrade = null;
+    final activeUpgrade = _upgradeTask;
+    if (activeUpgrade != null) await activeUpgrade;
     if (stream == _selectedStream) return;
+    await _replaceStream(stream);
+  }
 
-    final position = await mediaPlayer.currentPosition;
-    final wasPlaying = snapshot.status == PlayerStatus.playing;
-    await mediaPlayer.pause();
-    await mediaPlayer.load(stream.url, audioUri: stream.audioUrl);
-    if (position > Duration.zero) await mediaPlayer.seekTo(position);
-    if (wasPlaying) await mediaPlayer.play();
+  Future<void> _replaceStream(MediaStreamInfo stream) async {
+    await mediaPlayer.replaceStream(stream.url, audioUri: stream.audioUrl);
     _selectedStream = stream;
+  }
+
+  Future<void> _upgradeTo(MediaStreamInfo stream, int generation) async {
+    if (_disposed ||
+        _upgradeInProgress ||
+        _manualQualitySelection ||
+        generation != _loadGeneration ||
+        _currentVideo == null ||
+        !_isBetterQuality(stream, _selectedStream ?? stream) ||
+        (stream.expiresAt != null &&
+            !stream.expiresAt!.isAfter(DateTime.now()))) {
+      return;
+    }
+    _upgradeInProgress = true;
+    late final Future<void> task;
+    task = _performUpgrade(stream, generation).whenComplete(() {
+      if (identical(_upgradeTask, task)) _upgradeTask = null;
+      _upgradeInProgress = false;
+    });
+    _upgradeTask = task;
+    await task;
+  }
+
+  Future<void> _performUpgrade(MediaStreamInfo stream, int generation) async {
+    try {
+      final position = await mediaPlayer.currentPosition;
+      final duration = snapshot.duration;
+      if (duration > Duration.zero &&
+          duration - position < const Duration(seconds: 3)) {
+        _pendingUpgrade = null;
+        return;
+      }
+      await _replaceStream(stream);
+      if (generation == _loadGeneration) _pendingUpgrade = null;
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'background video quality upgrade',
+        ),
+      );
+    }
   }
 
   String _streamSelectionMessage(StreamSelectionFailure? failure) =>
@@ -268,7 +426,11 @@ class DefaultPlaybackController implements PlaybackController {
   Widget buildSurface() => mediaPlayer.buildSurface();
 
   @override
-  Future<void> play() => mediaPlayer.play();
+  Future<void> play() async {
+    await mediaPlayer.play();
+    final pending = _pendingUpgrade;
+    if (pending != null) unawaited(_upgradeTo(pending, _loadGeneration));
+  }
 
   @override
   Future<void> pause() => mediaPlayer.pause();
@@ -291,7 +453,9 @@ class DefaultPlaybackController implements PlaybackController {
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
-    await Future.wait(_backgroundPrefetches.toList(growable: false));
+    await Future.wait(_backgroundTasks.toList(growable: false));
+    final activeUpgrade = _upgradeTask;
+    if (activeUpgrade != null) await activeUpgrade;
     await mediaPlayer.dispose();
     await sources.dispose();
   }

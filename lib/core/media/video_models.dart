@@ -10,6 +10,7 @@ class VideoInfo {
     required this.streams,
     this.thumbnailUrl,
     this.author,
+    this.streamsComplete = true,
   });
 
   final String id;
@@ -20,6 +21,7 @@ class VideoInfo {
   final Uri? thumbnailUrl;
   final String? author;
   final List<MediaStreamInfo> streams;
+  final bool streamsComplete;
 
   VideoInfo copyWith({
     String? id,
@@ -30,6 +32,7 @@ class VideoInfo {
     List<MediaStreamInfo>? streams,
     Uri? thumbnailUrl,
     String? author,
+    bool? streamsComplete,
   }) => VideoInfo(
     id: id ?? this.id,
     source: source ?? this.source,
@@ -39,6 +42,7 @@ class VideoInfo {
     streams: streams ?? this.streams,
     thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
     author: author ?? this.author,
+    streamsComplete: streamsComplete ?? this.streamsComplete,
   );
 }
 

@@ -38,6 +38,39 @@ void main() {
     expect(selection.stream?.url.path, '/720');
   });
 
+  test('fast selection prefers a progressive stream near 360p', () {
+    final streams = [
+      stream(path: '360', height: 360, bitrate: 600000),
+      MediaStreamInfo(
+        url: Uri.parse('https://media.example/1080'),
+        audioUrl: Uri.parse('https://media.example/audio'),
+        mimeType: 'video/mp4',
+        container: 'mp4',
+        resolutionHeight: 1080,
+        bitrateBitsPerSecond: 5000000,
+        hasAudio: true,
+        hasVideo: true,
+      ),
+      stream(path: '720', height: 720, bitrate: 2500000),
+    ];
+
+    expect(StreamSelector.selectFast(streams, policy).stream?.url.path, '/360');
+  });
+
+  test('fast selection rejects streams without audio or expired URLs', () {
+    final selection = StreamSelector.selectFast([
+      stream(path: 'silent', height: 360, bitrate: 500000, hasAudio: false),
+      stream(
+        path: 'expired',
+        height: 360,
+        bitrate: 500000,
+        expiresAt: DateTime.now().subtract(const Duration(seconds: 1)),
+      ),
+    ], policy);
+
+    expect(selection.failure, StreamSelectionFailure.expiredStream);
+  });
+
   test('keeps 3360p streams out of the available quality list', () {
     final streams = [
       stream(path: '1080', height: 1080, bitrate: 5000000),

@@ -58,6 +58,10 @@ class MitOcwAdapter implements VideoSourceAdapter {
   }
 
   @override
+  Future<VideoInfo> getFastVideoInfo(SourceDescriptor source) =>
+      getVideoInfo(source);
+
+  @override
   Future<PlaylistInfo> getPlaylistInfo(SourceDescriptor source) async {
     throw const VideoSourceException(
       VideoSourceFailure.unsupportedSource,
