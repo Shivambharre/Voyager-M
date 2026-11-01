@@ -19,6 +19,9 @@ import '../../../features/notes/domain/notes_repository.dart';
 import '../../../features/notes/domain/study_note.dart';
 import '../../../features/progress/domain/learning_progress.dart';
 import '../../../features/progress/domain/progress_repository.dart';
+import '../../../features/watch_activity/data/in_memory_watch_activity_repository.dart';
+import '../../../features/watch_activity/domain/watch_activity_repository.dart';
+import '../../../features/watch_activity/domain/watch_activity_tracker.dart';
 
 class LearningPlayerScreen extends StatefulWidget {
   const LearningPlayerScreen({
@@ -28,6 +31,7 @@ class LearningPlayerScreen extends StatefulWidget {
     this.recentWatchHistoryRepository,
     this.progressRepository,
     this.dailyGoalRepository,
+    this.watchActivityRepository,
     this.initialSourceUrl,
     this.initialPosition,
     this.resumePlayback = true,
@@ -41,6 +45,7 @@ class LearningPlayerScreen extends StatefulWidget {
   final RecentWatchHistoryRepository? recentWatchHistoryRepository;
   final ProgressRepository? progressRepository;
   final DailyGoalRepository? dailyGoalRepository;
+  final WatchActivityRepository? watchActivityRepository;
   final String? initialSourceUrl;
   final Duration? initialPosition;
   final bool resumePlayback;
@@ -50,7 +55,8 @@ class LearningPlayerScreen extends StatefulWidget {
   State<LearningPlayerScreen> createState() => _LearningPlayerScreenState();
 }
 
-class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
+class _LearningPlayerScreenState extends State<LearningPlayerScreen>
+    with WidgetsBindingObserver {
   final _urlController = TextEditingController();
   final _noteController = TextEditingController();
   late final PlaybackController _playbackController;
@@ -59,9 +65,11 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   late final RecentWatchHistoryRepository _recentWatchHistoryRepository;
   late final ProgressRepository _progressRepository;
   late final DailyGoalRepository _dailyGoalRepository;
+  late final WatchActivityTracker _watchActivityTracker;
   late final StreamSubscription<PlayerSnapshot> _snapshotSubscription;
   Timer? _controlsHideTimer;
   Timer? _activityTimer;
+  Timer? _watchActivityFlushTimer;
   DateTime? _lastActivityFlush;
   Future<void>? _activityFlush;
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
@@ -79,6 +87,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _playbackController =
         widget.playbackController ?? serviceLocator<PlaybackController>();
     _libraryRepository =
@@ -92,6 +101,14 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
         widget.progressRepository ?? serviceLocator<ProgressRepository>();
     _dailyGoalRepository =
         widget.dailyGoalRepository ?? serviceLocator<DailyGoalRepository>();
+    final watchActivityRepository =
+        widget.watchActivityRepository ??
+        (serviceLocator.isRegistered<WatchActivityRepository>()
+            ? serviceLocator<WatchActivityRepository>()
+            : InMemoryWatchActivityRepository());
+    _watchActivityTracker = WatchActivityTracker(
+      repository: watchActivityRepository,
+    );
     if (widget.initialSourceUrl case final sourceUrl?) {
       _urlController.text = sourceUrl;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -106,7 +123,9 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controlsHideTimer?.cancel();
+    _watchActivityFlushTimer?.cancel();
     if (_isFullscreen) unawaited(_restoreSystemUi());
     _urlController.dispose();
     _noteController.dispose();
@@ -118,6 +137,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
     _activityTimer?.cancel();
     try {
       await _flushPlaybackData();
+      await _watchActivityTracker.flush();
       await _saveCurrentProgress();
     } on Object catch (error, stackTrace) {
       FlutterError.reportError(
@@ -594,7 +614,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
                       onChanged: maxSeconds == 0
                           ? null
                           : (seconds) => unawaited(
-                              _playbackController.seekTo(
+                              _seekPlaybackTo(
                                 Duration(seconds: seconds.round()),
                               ),
                             ),
@@ -729,12 +749,18 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
 
   void _handleSnapshot(PlayerSnapshot snapshot) {
     if (!mounted) return;
+    _watchActivityTracker.observe(
+      snapshot,
+      sourceId: _playbackController.currentVideo?.id ?? _video?.id,
+    );
     final wasPlaying = _snapshot.status == PlayerStatus.playing;
     setState(() => _snapshot = snapshot);
     if (snapshot.status == PlayerStatus.playing) {
       _startActivityTracking();
+      _startWatchActivityFlushTimer();
     } else if (wasPlaying) {
       unawaited(_stopActivityTracking());
+      _stopWatchActivityFlushTimer();
     }
     if (snapshot.status == PlayerStatus.playing && !wasPlaying) {
       _showControls();
@@ -900,6 +926,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
 
   Future<void> _loadSource() async {
     await _stopActivityTracking();
+    _watchActivityTracker.resetPositionBaseline();
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -943,6 +970,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
 
   Future<void> _selectLecture(PlaylistEntryInfo entry) async {
     await _stopActivityTracking();
+    _watchActivityTracker.resetPositionBaseline();
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -979,7 +1007,12 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
       0,
       _snapshot.duration.inSeconds,
     );
-    await _playbackController.seekTo(Duration(seconds: target));
+    await _seekPlaybackTo(Duration(seconds: target));
+  }
+
+  Future<void> _seekPlaybackTo(Duration position) async {
+    _watchActivityTracker.resetPositionBaseline();
+    await _playbackController.seekTo(position);
   }
 
   Future<void> _recordWatchHistory(VideoInfo video) async {
@@ -1034,8 +1067,43 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen> {
             ? Duration(seconds: progress.positionSeconds)
             : null);
     if (positionToRestore != null) {
-      await _playbackController.seekTo(positionToRestore);
+      await _seekPlaybackTo(positionToRestore);
     }
+  }
+
+  void _startWatchActivityFlushTimer() {
+    if (_watchActivityFlushTimer != null) return;
+    _watchActivityFlushTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => unawaited(_flushWatchActivity()),
+    );
+  }
+
+  void _stopWatchActivityFlushTimer() {
+    _watchActivityFlushTimer?.cancel();
+    _watchActivityFlushTimer = null;
+    unawaited(_flushWatchActivity());
+  }
+
+  Future<void> _flushWatchActivity() async {
+    try {
+      await _watchActivityTracker.flush();
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'watch activity persistence',
+        ),
+      );
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) return;
+    _watchActivityTracker.resetPositionBaseline();
+    unawaited(_flushWatchActivity());
   }
 
   Future<void> _saveVideoMetadata(VideoInfo video) async {

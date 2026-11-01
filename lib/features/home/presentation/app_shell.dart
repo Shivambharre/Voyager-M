@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/design/brutalist_components.dart';
@@ -19,7 +20,10 @@ import '../../../features/goals/domain/daily_goal_summary.dart';
 import '../../../features/progress/domain/learning_progress.dart';
 import '../../../features/progress/domain/progress_repository.dart';
 import '../../../features/settings/domain/learning_settings.dart';
+import '../../../features/profile/domain/local_profile_repository.dart';
+import '../../../features/profile/presentation/profile_page.dart';
 import '../../../features/roadmap/domain/roadmap_repository.dart';
+import '../../../features/watch_activity/domain/watch_activity_repository.dart';
 import '../../player/presentation/learning_player_screen.dart';
 import '../../roadmap/presentation/roadmaps_page.dart';
 
@@ -103,11 +107,12 @@ class _AppShellState extends State<AppShell> {
         onOpenPlayer: _openPlayer,
       ),
       _NotesPage(
-    repository: serviceLocator<NotesRepository>(),
-    libraryRepository: serviceLocator<LearningLibraryRepository>(),
-    onOpenPlayer: _openPlayer,
+        repository: serviceLocator<NotesRepository>(),
+        libraryRepository: serviceLocator<LearningLibraryRepository>(),
+        onOpenPlayer: _openPlayer,
       ),
-      _SettingsPage(        settings: widget.settings,
+      _SettingsPage(
+        settings: widget.settings,
         onSettingsChanged: widget.onSettingsChanged,
       ),
     ];
@@ -123,23 +128,51 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         actions: [
-          IconButton(
-            tooltip: 'Open design system showcase',
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const DesignSystemShowcase(),
+          if (kDebugMode)
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: IconButton(
+                tooltip: 'Open design system showcase',
+                constraints: const BoxConstraints.tightFor(
+                  width: 40,
+                  height: 40,
+                ),
+                padding: EdgeInsets.zero,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const DesignSystemShowcase(),
+                  ),
+                ),
+                icon: const Icon(Icons.palette_outlined),
               ),
             ),
-            icon: const Icon(Icons.palette_outlined),
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: IconButton(
+              tooltip: isDarkMode
+                  ? 'Use light appearance'
+                  : 'Use dark appearance',
+              constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+              padding: EdgeInsets.zero,
+              onPressed: () => unawaited(_toggleAppearance(isDarkMode)),
+              icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            ),
           ),
-          IconButton(
-            tooltip: isDarkMode
-                ? 'Use light appearance'
-                : 'Use dark appearance',
-            onPressed: () => unawaited(_toggleAppearance(isDarkMode)),
-            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: IconButton(
+              key: const Key('open-profile-button'),
+              tooltip: 'Profile',
+              constraints: const BoxConstraints.tightFor(width: 40, height: 40),
+              padding: EdgeInsets.zero,
+              onPressed: () => unawaited(_openProfile()),
+              icon: const Icon(Icons.account_circle_outlined),
+            ),
           ),
-          const SizedBox(width: DesignTokens.space2),
+          const SizedBox(width: DesignTokens.space1),
         ],
       ),
       body: SafeArea(
@@ -224,6 +257,34 @@ class _AppShellState extends State<AppShell> {
         builder: (_) => _DailyGoalsPage(
           repository: serviceLocator<DailyGoalRepository>(),
           settings: widget.settings,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openProfile() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => ProfilePage(
+          profileRepository: serviceLocator<LocalProfileRepository>(),
+          watchActivityRepository: serviceLocator<WatchActivityRepository>(),
+          onOpenHistory: _openProfileWatchHistory,
+          onOpenBookmarks: _openBookmarks,
+          onOpenSettings: () {
+            Navigator.of(context).pop();
+            setState(() => _selectedIndex = 4);
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openProfileWatchHistory() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => _WatchHistoryPage(
+          repository: serviceLocator<RecentWatchHistoryRepository>(),
+          onOpenVideo: _openPlayer,
         ),
       ),
     );
@@ -1376,12 +1437,16 @@ class _NotesPageState extends State<_NotesPage> {
       final video = note.videoId == null
           ? null
           : await widget.libraryRepository.getVideo(note.videoId!);
-      final title = video?.title ??
+      final title =
+          video?.title ??
           (note.videoId == null ? 'General notes' : 'Video note');
-      groups.putIfAbsent(
-        key,
-        () => _NoteGroup(title: title, notes: <StudyNote>[]),
-      ).notes.add(note);
+      groups
+          .putIfAbsent(
+            key,
+            () => _NoteGroup(title: title, notes: <StudyNote>[]),
+          )
+          .notes
+          .add(note);
     }
     return groups.values.toList(growable: false);
   }
@@ -1466,7 +1531,8 @@ class _NotesPageState extends State<_NotesPage> {
                   const SizedBox(height: DesignTokens.space2),
                   for (final note in group.notes) ...[
                     GestureDetector(
-                      onTap: note.timestampSeconds == null || note.videoId == null
+                      onTap:
+                          note.timestampSeconds == null || note.videoId == null
                           ? null
                           : () => unawaited(_openNoteTimestamp(note)),
                       child: BrutalistCard(

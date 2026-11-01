@@ -134,6 +134,7 @@ class AndroidMediaPlayer implements MediaPlayer {
           milliseconds: duration is num ? duration.toInt() : 0,
         ),
         playbackSpeed: speed is num ? speed.toDouble() : 1,
+        isBuffering: state['isBuffering'] == true,
         errorMessage: state['errorMessage'] as String?,
       ),
     );
@@ -144,6 +145,7 @@ class AndroidMediaPlayer implements MediaPlayer {
         _snapshot.position == snapshot.position &&
         _snapshot.duration == snapshot.duration &&
         _snapshot.playbackSpeed == snapshot.playbackSpeed &&
+        _snapshot.isBuffering == snapshot.isBuffering &&
         _snapshot.errorMessage == snapshot.errorMessage) {
       return;
     }

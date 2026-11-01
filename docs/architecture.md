@@ -3,8 +3,8 @@
 ## Product
 
 VoyagerM is a local-first learning app. It helps users organize lessons in
-roadmaps, save playlists and videos, and write study notes. It supports YouTube
-and selected MIT OpenCourseWare media.
+roadmaps, save playlists and videos, write study notes, and review strict daily
+watch streaks. It supports YouTube and selected MIT OpenCourseWare media.
 
 The app focuses on study tasks. It does not provide a general video-discovery
 feed or a cloud account.
@@ -37,7 +37,8 @@ repositories and creates the playback controller.
 | Roadmaps | Roadmap and topic repositories support create, read, update, and delete flows. |
 | Library and notes | Android stores saved playlists, videos, and notes in SQLite. |
 | Watch history | Android stores up to 50 distinct recent videos. It stores stable metadata, not media streams. |
-| Progress and settings | SQLite and in-memory repositories exist. The app screens do not use them yet. |
+| Watch activity and profile | Android stores daily eligible playback totals and an editable local profile in SQLite. Web/mock mode uses in-memory repositories. |
+| Progress and settings | SQLite and in-memory repositories are used by the app screens. |
 | YouTube | Android uses the NewPipe Extractor bridge. Other platforms use `youtube_explode_dart`. |
 | MIT OpenCourseWare | `MitOcwAdapter` reads supported pages and direct media links. |
 | Playback | Android uses Media3. Other platforms use `video_player`. |
@@ -48,7 +49,13 @@ non-Android platform as Web mode.
 
 ## Media flow
 
-The player screen uses `PlaybackController`. The controller detects a source,
+The player screen uses `PlaybackController`. A single snapshot subscription
+tracks eligible watch time across the supported source adapters. It credits
+only short intervals with advancing position and no buffering, and batches
+daily totals through `WatchActivityRepository`. Seeking and app interruptions
+reset the position baseline without resetting the daily total.
+
+The controller detects a source,
 selects a `VideoSourceAdapter`, selects a playable stream, and sends the stream
 to a `MediaPlayer`.
 
@@ -70,11 +77,8 @@ stream URLs. Playback and provider extraction require a network connection.
 ## Current boundaries
 
 - Roadmap topics are not linked to saved videos.
-- The player does not save or restore playback progress.
-- The Settings screen does not save settings. The appearance switch lasts only
-  for the current app session.
-- The save-moment control changes screen state only. It does not save a
-  bookmark.
+- Profile identity and watch data are local-only; there is no signed-in
+  account or cloud synchronization.
 - The app does not store attachments or video files.
 - The app does not sync data to a cloud service.
 

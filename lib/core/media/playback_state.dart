@@ -6,6 +6,7 @@ class PlayerSnapshot {
     required this.position,
     required this.duration,
     required this.playbackSpeed,
+    this.isBuffering = false,
     this.errorMessage,
   });
 
@@ -14,11 +15,13 @@ class PlayerSnapshot {
       position = Duration.zero,
       duration = Duration.zero,
       playbackSpeed = 1,
+      isBuffering = false,
       errorMessage = null;
 
   final PlayerStatus status;
   final Duration position;
   final Duration duration;
   final double playbackSpeed;
+  final bool isBuffering;
   final String? errorMessage;
 }

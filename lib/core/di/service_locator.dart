@@ -23,6 +23,12 @@ import '../../features/roadmap/domain/roadmap_repository.dart';
 import '../../features/settings/data/in_memory_settings_repository.dart';
 import '../../features/settings/data/sqlite_settings_repository.dart';
 import '../../features/settings/domain/settings_repository.dart';
+import '../../features/watch_activity/data/in_memory_watch_activity_repository.dart';
+import '../../features/watch_activity/data/sqlite_watch_activity_repository.dart';
+import '../../features/watch_activity/domain/watch_activity_repository.dart';
+import '../../features/profile/data/in_memory_local_profile_repository.dart';
+import '../../features/profile/data/sqlite_local_profile_repository.dart';
+import '../../features/profile/domain/local_profile_repository.dart';
 import '../config/app_config.dart';
 import '../media/media_player.dart';
 import '../media/android_media_player.dart';
@@ -53,6 +59,12 @@ Future<void> configureDependencies({bool? useMocks}) async {
       InMemoryRecentWatchHistoryRepository.new,
     );
     _registerIfMissing<DailyGoalRepository>(InMemoryDailyGoalRepository.new);
+    _registerIfMissing<WatchActivityRepository>(
+      InMemoryWatchActivityRepository.new,
+    );
+    _registerIfMissing<LocalProfileRepository>(
+      InMemoryLocalProfileRepository.new,
+    );
   } else if (!serviceLocator.isRegistered<AppDatabase>()) {
     final database = SqfliteAppDatabase();
     await database.initialize();
@@ -80,6 +92,12 @@ Future<void> configureDependencies({bool? useMocks}) async {
     );
     serviceLocator.registerLazySingleton<DailyGoalRepository>(
       () => SqliteDailyGoalRepository(serviceLocator<AppDatabase>()),
+    );
+    serviceLocator.registerLazySingleton<WatchActivityRepository>(
+      () => SqliteWatchActivityRepository(serviceLocator<AppDatabase>()),
+    );
+    serviceLocator.registerLazySingleton<LocalProfileRepository>(
+      () => SqliteLocalProfileRepository(serviceLocator<AppDatabase>()),
     );
   }
   // Keep app-wide settings and video metadata ready for the rest of the app.

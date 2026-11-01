@@ -17,6 +17,10 @@ import 'package:voyager_learning/features/roadmap/data/sqlite_roadmap_repository
 import 'package:voyager_learning/features/roadmap/domain/roadmap.dart';
 import 'package:voyager_learning/features/settings/data/sqlite_settings_repository.dart';
 import 'package:voyager_learning/features/settings/domain/learning_settings.dart';
+import 'package:voyager_learning/features/watch_activity/data/sqlite_watch_activity_repository.dart';
+import 'package:voyager_learning/features/profile/data/sqlite_local_profile_repository.dart';
+import 'package:voyager_learning/features/profile/domain/local_profile.dart';
+import 'package:voyager_learning/features/watch_activity/domain/watch_activity.dart';
 
 void main() {
   late Directory directory;
@@ -60,6 +64,8 @@ void main() {
         'video_metadata_cache',
         'recent_watch_history',
         'daily_goal_activity',
+        'watch_activity',
+        'local_profile',
       ]),
     );
     final indexes = await database.query(
@@ -71,6 +77,48 @@ void main() {
       indexes.map((row) => row['name']),
       contains('topics_roadmap_position'),
     );
+  });
+
+  test(
+    'persists one cumulative watch activity record per local date',
+    () async {
+      final repository = SqliteWatchActivityRepository(database);
+      final timestamp = DateTime.utc(2026, 10, 31, 12);
+      await repository.addEligibleSeconds(
+        dateKey: '2026-10-31',
+        seconds: 14 * 60,
+        updatedAtUtc: timestamp,
+      );
+      expect((await repository.getActivities()).single.isQualified, isFalse);
+      await repository.addEligibleSeconds(
+        dateKey: '2026-10-31',
+        seconds: 60,
+        updatedAtUtc: timestamp.add(const Duration(minutes: 1)),
+      );
+
+      final activities = await repository.getActivities();
+      expect(activities, hasLength(1));
+      expect(
+        activities.single.watchedSeconds,
+        WatchActivity.dailyTargetSeconds,
+      );
+      expect(activities.single.isQualified, isTrue);
+      expect(
+        activities.single.updatedAtUtc,
+        timestamp.add(const Duration(minutes: 1)),
+      );
+    },
+  );
+
+  test('persists editable local profile values', () async {
+    final repository = SqliteLocalProfileRepository(database);
+    expect((await repository.getProfile()).displayName, 'Voyager Learner');
+    const updated = LocalProfile(displayName: 'Ada Lovelace', username: 'ada');
+    await repository.saveProfile(updated);
+    expect(await repository.getProfile(), isNotNull);
+    final profile = await repository.getProfile();
+    expect(profile.displayName, updated.displayName);
+    expect(profile.username, updated.username);
   });
 
   test(
@@ -360,7 +408,7 @@ void main() {
       path.join(directory.path, SqfliteAppDatabase.databaseFileName),
       endsWith('voyager_learning.db'),
     );
-    expect(SqfliteAppDatabase.schemaVersion, 5);
+    expect(SqfliteAppDatabase.schemaVersion, 6);
   });
 
   test(
@@ -433,9 +481,9 @@ void main() {
           await upgraded.query(
             'sqlite_master',
             columns: ['name'],
-            where: "type = 'table' AND name = 'recent_watch_history'",
+            where: "type = 'table' AND name IN ('recent_watch_history', 'watch_activity', 'local_profile')",
           ),
-          hasLength(1),
+          hasLength(3),
         );
         expect(await upgraded.query('migration_probe'), [
           {'value': 'preserved'},

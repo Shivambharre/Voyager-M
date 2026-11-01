@@ -10,6 +10,8 @@ import 'package:voyager_learning/features/progress/domain/progress_repository.da
 import 'package:voyager_learning/features/roadmap/domain/roadmap_repository.dart';
 import 'package:voyager_learning/features/settings/domain/learning_settings.dart';
 import 'package:voyager_learning/features/settings/domain/settings_repository.dart';
+import 'package:voyager_learning/features/watch_activity/domain/watch_activity_repository.dart';
+import 'package:voyager_learning/features/profile/domain/local_profile_repository.dart';
 
 void main() {
   setUp(() async {
@@ -38,6 +40,14 @@ void main() {
     );
     expect(serviceLocator.get<ProgressRepository>(), isA<ProgressRepository>());
     expect(serviceLocator.get<SettingsRepository>(), isA<SettingsRepository>());
+    expect(
+      serviceLocator.get<WatchActivityRepository>(),
+      isA<WatchActivityRepository>(),
+    );
+    expect(
+      serviceLocator.get<LocalProfileRepository>(),
+      isA<LocalProfileRepository>(),
+    );
   });
 
   test(

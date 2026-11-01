@@ -77,6 +77,7 @@ class FlutterMediaPlayer implements MediaPlayer {
           position: controller.value.position,
           duration: controller.value.duration,
           playbackSpeed: controller.value.playbackSpeed,
+          isBuffering: controller.value.isBuffering,
         ),
       );
     } on Object catch (error) {
@@ -207,6 +208,7 @@ class FlutterMediaPlayer implements MediaPlayer {
         position: value.position,
         duration: value.duration,
         playbackSpeed: value.playbackSpeed,
+        isBuffering: value.isBuffering,
         errorMessage: value.hasError ? value.errorDescription : null,
       ),
     );

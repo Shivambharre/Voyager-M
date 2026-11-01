@@ -375,6 +375,7 @@ class MainActivity : FlutterActivity() {
 			"positionMs" to mediaPlayer.currentPosition,
 			"durationMs" to (mediaPlayer.duration.takeIf { it >= 0 } ?: 0L),
 			"playbackSpeed" to mediaPlayer.playbackParameters.speed,
+			"isBuffering" to (mediaPlayer.playbackState == ExoPlayer.STATE_BUFFERING),
 			"errorMessage" to mediaPlayer.playerError?.message,
 		)
 	}

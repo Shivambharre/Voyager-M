@@ -56,7 +56,7 @@ class SqfliteAppDatabase implements AppDatabase {
   final sqlite.DatabaseFactory _databaseFactory;
   sqlite.Database? _database;
 
-  static const int schemaVersion = 5;
+  static const int schemaVersion = 6;
   static const String databaseFileName = 'voyager_learning.db';
 
   Future<sqlite.Database> get _connection async {
@@ -84,6 +84,8 @@ class SqfliteAppDatabase implements AppDatabase {
           await _createMetadataCache(db);
           await _createRecentWatchHistory(db);
           await _createDailyGoalActivity(db);
+          await _createWatchActivity(db);
+          await _createLocalProfile(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
           await _upgradeSchema(db, oldVersion, newVersion);
@@ -247,6 +249,28 @@ class SqfliteAppDatabase implements AppDatabase {
     ''');
   }
 
+  Future<void> _createWatchActivity(sqlite.DatabaseExecutor db) async {
+    await db.execute('''
+      CREATE TABLE watch_activity (
+        date_key TEXT PRIMARY KEY NOT NULL,
+        watched_seconds INTEGER NOT NULL DEFAULT 0 CHECK (watched_seconds >= 0),
+        is_qualified INTEGER NOT NULL DEFAULT 0 CHECK (is_qualified IN (0, 1)),
+        updated_at_utc TEXT NOT NULL
+      )
+    ''');
+  }
+
+  Future<void> _createLocalProfile(sqlite.DatabaseExecutor db) async {
+    await db.execute('''
+      CREATE TABLE local_profile (
+        id TEXT PRIMARY KEY NOT NULL,
+        display_name TEXT NOT NULL,
+        username TEXT NOT NULL,
+        updated_at_utc TEXT NOT NULL
+      )
+    ''');
+  }
+
   Future<void> _upgradeSchema(
     sqlite.DatabaseExecutor db,
     int oldVersion,
@@ -274,6 +298,10 @@ class SqfliteAppDatabase implements AppDatabase {
       await db.execute(
         'ALTER TABLE videos ADD COLUMN is_saved INTEGER NOT NULL DEFAULT 1 CHECK (is_saved IN (0, 1))',
       );
+    }
+    if (oldVersion < 6 && newVersion >= 6) {
+      await _createWatchActivity(db);
+      await _createLocalProfile(db);
     }
   }
 

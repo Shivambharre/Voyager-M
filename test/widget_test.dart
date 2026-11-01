@@ -70,6 +70,38 @@ void main() {
     expect(find.text('Color palette'), findsOneWidget);
   });
 
+  testWidgets(
+    'profile follows appearance in the header and edits local identity',
+    (tester) async {
+      await tester.pumpWidget(
+        VoyagerApp(repository: InMemoryRoadmapRepository()),
+      );
+      await tester.pumpAndSettle();
+
+      final appearance = find.byTooltip('Use dark appearance');
+      final profileButton = find.byKey(const Key('open-profile-button'));
+      expect(
+        tester.getCenter(profileButton).dx,
+        greaterThan(tester.getCenter(appearance).dx),
+      );
+      await tester.tap(profileButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('WATCH ACTIVITY'), findsOneWidget);
+      expect(find.text('CURRENT STREAK'), findsOneWidget);
+      await tester.tap(find.byTooltip('Edit profile'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), 'Ada Lovelace');
+      await tester.enterText(find.byType(TextField).at(1), 'ada');
+      await tester.tap(find.text('SAVE'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ada Lovelace'), findsOneWidget);
+      expect(find.text('@ada'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Primary navigation retains Library, Notes, and Settings', (
     tester,
   ) async {

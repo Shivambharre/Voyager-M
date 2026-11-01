@@ -62,6 +62,18 @@ The player writes stable video metadata to the metadata cache. It records
 recent watch history after a video loads. It does not save temporary stream
 URLs.
 
+Playback snapshots also feed the watch-activity tracker. It checks playback
+status, buffering, and position advancement, then periodically persists
+eligible seconds by the user's local calendar date. The profile reads these
+daily records to calculate current/best streaks, milestones, and heatmap levels.
+Daily watch activity does not replace the separate configurable daily-goal
+records.
+
+The profile screen reads and edits a local display name and username, and opens
+the existing watch-history, bookmarks, and settings flows. This app has no
+account authentication, so its sign-out row explains that profile data remains
+on this device.
+
 ## Android share flow
 
 Android sends shared text to the Flutter app through an EventChannel.
@@ -70,7 +82,5 @@ The app opens the player with that link. Other shared text shows an error.
 
 ## Data that is not connected
 
-Progress and settings repositories exist, but the active screens do not use
-them. The appearance switch uses in-memory app state. The save-moment control
-does not write a bookmark. See
-[implementation-status.md](implementation-status.md).
+See [implementation-status.md](implementation-status.md) for the full feature
+status.
