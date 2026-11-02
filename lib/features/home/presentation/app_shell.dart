@@ -13,6 +13,7 @@ import '../../../features/history/domain/recent_watch_entry.dart';
 import '../../../features/history/domain/recent_watch_history_repository.dart';
 import '../../../features/library/domain/learning_content.dart';
 import '../../../features/library/domain/learning_library_repository.dart';
+import '../../../features/library/presentation/playlist_detail_page.dart';
 import '../../../features/notes/domain/notes_repository.dart';
 import '../../../features/notes/domain/study_note.dart';
 import '../../../features/goals/domain/daily_goal_repository.dart';
@@ -104,6 +105,7 @@ class _AppShellState extends State<AppShell> {
       ),
       _LibraryPage(
         repository: serviceLocator<LearningLibraryRepository>(),
+        progressRepository: serviceLocator<ProgressRepository>(),
         onOpenPlayer: _openPlayer,
       ),
       _NotesPage(
@@ -1194,9 +1196,14 @@ String _formatPlaybackTime(int seconds) {
 }
 
 class _LibraryPage extends StatefulWidget {
-  const _LibraryPage({required this.repository, required this.onOpenPlayer});
+  const _LibraryPage({
+    required this.repository,
+    required this.progressRepository,
+    required this.onOpenPlayer,
+  });
 
   final LearningLibraryRepository repository;
+  final ProgressRepository progressRepository;
   final _PlayerLauncher onOpenPlayer;
 
   @override
@@ -1204,8 +1211,6 @@ class _LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<_LibraryPage> {
-  final _playlistNameController = TextEditingController();
-  final _playlistDescriptionController = TextEditingController();
   late Future<_LibraryContents> _contents;
 
   @override
@@ -1214,17 +1219,27 @@ class _LibraryPageState extends State<_LibraryPage> {
     _contents = _loadContents();
   }
 
-  @override
-  void dispose() {
-    _playlistNameController.dispose();
-    _playlistDescriptionController.dispose();
-    super.dispose();
-  }
-
   Future<_LibraryContents> _loadContents() async {
     final videos = await widget.repository.getVideos();
     final playlists = await widget.repository.getPlaylists();
-    return _LibraryContents(videos, playlists);
+    final progress = await widget.progressRepository.getAllProgress();
+    final completedVideoIds = {
+      for (final item in progress)
+        if (item.isCompleted) item.videoId,
+    };
+    final summaries = await Future.wait(
+      playlists.map((playlist) async {
+        final entries = await widget.repository.getPlaylistEntries(playlist.id);
+        return _LibraryPlaylistSummary(
+          playlist: playlist,
+          videoCount: entries.length,
+          completedCount: entries
+              .where((entry) => completedVideoIds.contains(entry.videoId))
+              .length,
+        );
+      }),
+    );
+    return _LibraryContents(videos, summaries);
   }
 
   void _reload() {
@@ -1234,9 +1249,46 @@ class _LibraryPageState extends State<_LibraryPage> {
     });
   }
 
-  Future<void> _openSource(String sourceUrl) async {
-    await widget.onOpenPlayer(sourceUrl: sourceUrl);
+  Future<void> _openPlaylist(LearningPlaylist playlist) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => PlaylistDetailPage(
+          playlist: playlist,
+          libraryRepository: widget.repository,
+          progressRepository: widget.progressRepository,
+          onOpenVideo: widget.onOpenPlayer,
+        ),
+      ),
+    );
     if (mounted) _reload();
+  }
+
+  Future<void> _showCreatePlaylistDialog() async {
+    final details = await showDialog<(String, String)>(
+      context: context,
+      builder: (_) => const _CreatePlaylistDialog(),
+    );
+    if (details == null || !mounted) return;
+
+    final id = DateTime.now().microsecondsSinceEpoch.toString();
+    try {
+      await widget.repository.savePlaylist(
+        LearningPlaylist(
+          id: id,
+          sourceId: id,
+          sourceUrl: '',
+          title: details.$1,
+          creator: 'You',
+          description: details.$2,
+        ),
+      );
+      if (mounted) _reload();
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not create this library.')),
+      );
+    }
   }
 
   @override
@@ -1259,48 +1311,24 @@ class _LibraryPageState extends State<_LibraryPage> {
         return ListView(
           padding: const EdgeInsets.all(DesignTokens.space4),
           children: [
-            const BrutalistSectionHeader(title: 'Your study library'),
+            Row(
+              children: [
+                const Expanded(
+                  child: BrutalistSectionHeader(title: 'Your study library'),
+                ),
+                IconButton(
+                  key: const Key('create-playlist-button'),
+                  tooltip: 'Create library',
+                  onPressed: () => unawaited(_showCreatePlaylistDialog()),
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
             const SizedBox(height: DesignTokens.space2),
             Text(
               'Only material you chose to keep.',
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(color: context.mutedColor),
-            ),
-            const SizedBox(height: DesignTokens.space4),
-            BrutalistCard(
-              color: context.raisedColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'CREATE PLAYLIST',
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: DesignTokens.space2),
-                  BrutalistInput(
-                    controller: _playlistNameController,
-                    hint: 'Playlist name',
-                    minLines: 1,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(height: DesignTokens.space2),
-                  BrutalistInput(
-                    controller: _playlistDescriptionController,
-                    hint: 'Description (optional)',
-                    minLines: 2,
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: DesignTokens.space3),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: BrutalistButton(
-                      label: 'Create playlist',
-                      icon: Icons.playlist_add,
-                      onPressed: () => unawaited(_createPlaylist()),
-                    ),
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: DesignTokens.space4),
             if (empty)
@@ -1314,19 +1342,82 @@ class _LibraryPageState extends State<_LibraryPage> {
                 ),
               ),
             if (contents.playlists.isNotEmpty) ...[
-              const BrutalistSectionHeader(title: 'Playlists'),
+              const BrutalistSectionHeader(title: 'Libraries'),
               const SizedBox(height: DesignTokens.space3),
-              for (final playlist in contents.playlists) ...[
-                BrutalistListItem(
-                  title: playlist.title,
-                  subtitle: playlist.creator,
-                  icon: Icons.queue_music,
-                  trailing: IconButton(
-                    tooltip: 'Remove playlist',
-                    onPressed: () => unawaited(_deletePlaylist(playlist)),
-                    icon: const Icon(Icons.delete_outline),
+              for (final summary in contents.playlists) ...[
+                BrutalistCard(
+                  padding: const EdgeInsets.all(DesignTokens.space3),
+                  onTap: () => unawaited(_openPlaylist(summary.playlist)),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: context.pageColor,
+                          borderRadius: BorderRadius.circular(
+                            DesignTokens.radius,
+                          ),
+                        ),
+                        child: Icon(
+                          _playlistLibraryIcon(summary.playlist.id),
+                          color: DesignTokens.romanOlive,
+                        ),
+                      ),
+                      const SizedBox(width: DesignTokens.space3),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              summary.playlist.title,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w800),
+                            ),
+                            if (summary.playlist.description.isNotEmpty) ...[
+                              const SizedBox(height: DesignTokens.space1),
+                              Text(
+                                summary.playlist.description,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: context.mutedColor),
+                              ),
+                            ],
+                            const SizedBox(height: DesignTokens.space2),
+                            Text(
+                              '${summary.videoCount} videos · '
+                              '${summary.completedCount} completed',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(color: context.mutedColor),
+                            ),
+                            const SizedBox(height: DesignTokens.space2),
+                            LinearProgressIndicator(
+                              value: summary.progress,
+                              minHeight: 4,
+                              color: DesignTokens.romanOlive,
+                              backgroundColor: context.raisedColor,
+                            ),
+                            const SizedBox(height: DesignTokens.space1),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                '${(summary.progress * 100).round()}%',
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Remove library',
+                        onPressed: () =>
+                            unawaited(_deletePlaylist(summary.playlist)),
+                        icon: const Icon(Icons.delete_outline),
+                      ),
+                    ],
                   ),
-                  onTap: () => unawaited(_openSource(playlist.sourceUrl)),
                 ),
                 const SizedBox(height: DesignTokens.space2),
               ],
@@ -1345,7 +1436,9 @@ class _LibraryPageState extends State<_LibraryPage> {
                     onPressed: () => unawaited(_deleteVideo(video)),
                     icon: const Icon(Icons.delete_outline),
                   ),
-                  onTap: () => unawaited(_openSource(video.sourceUrl)),
+                  onTap: () => unawaited(
+                    widget.onOpenPlayer(sourceUrl: video.sourceUrl),
+                  ),
                 ),
                 const SizedBox(height: DesignTokens.space2),
               ],
@@ -1354,30 +1447,6 @@ class _LibraryPageState extends State<_LibraryPage> {
         );
       },
     );
-  }
-
-  Future<void> _createPlaylist() async {
-    final title = _playlistNameController.text.trim();
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Give your playlist a name first.')),
-      );
-      return;
-    }
-
-    final playlist = LearningPlaylist(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      sourceId: DateTime.now().microsecondsSinceEpoch.toString(),
-      sourceUrl: '',
-      title: title,
-      creator: 'You',
-      description: _playlistDescriptionController.text.trim(),
-    );
-    await widget.repository.savePlaylist(playlist);
-    if (!mounted) return;
-    _playlistNameController.clear();
-    _playlistDescriptionController.clear();
-    _reload();
   }
 
   Future<void> _deletePlaylist(LearningPlaylist playlist) async {
@@ -1395,7 +1464,98 @@ class _LibraryContents {
   const _LibraryContents(this.videos, this.playlists);
 
   final List<LearningVideo> videos;
-  final List<LearningPlaylist> playlists;
+  final List<_LibraryPlaylistSummary> playlists;
+}
+
+class _LibraryPlaylistSummary {
+  const _LibraryPlaylistSummary({
+    required this.playlist,
+    required this.videoCount,
+    required this.completedCount,
+  });
+
+  final LearningPlaylist playlist;
+  final int videoCount;
+  final int completedCount;
+
+  double get progress => videoCount == 0 ? 0 : completedCount / videoCount;
+}
+
+class _CreatePlaylistDialog extends StatefulWidget {
+  const _CreatePlaylistDialog();
+
+  @override
+  State<_CreatePlaylistDialog> createState() => _CreatePlaylistDialogState();
+}
+
+class _CreatePlaylistDialogState extends State<_CreatePlaylistDialog> {
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  String? _nameError;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _create() {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() => _nameError = 'Enter a name.');
+      return;
+    }
+    Navigator.pop(context, (name, _descriptionController.text.trim()));
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Create a Library'),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          key: const Key('playlist-name-field'),
+          controller: _nameController,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: 'Library name',
+            errorText: _nameError,
+          ),
+        ),
+        const SizedBox(height: DesignTokens.space3),
+        TextField(
+          key: const Key('playlist-description-field'),
+          controller: _descriptionController,
+          maxLines: 3,
+          decoration: const InputDecoration(labelText: 'Description (optional)'),
+        ),
+      ],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Cancel'),
+      ),
+      TextButton(onPressed: _create, child: const Text('Create')),
+    ],
+  );
+}
+
+IconData _playlistLibraryIcon(String playlistId) {
+  const icons = [
+    Icons.account_balance,
+    Icons.auto_stories,
+    Icons.architecture,
+    Icons.museum,
+    Icons.history_edu,
+  ];
+  final stableIndex = playlistId.codeUnits.fold<int>(
+    0,
+    (sum, unit) => sum + unit,
+  );
+  return icons[stableIndex % icons.length];
 }
 
 class _NotesPage extends StatefulWidget {
