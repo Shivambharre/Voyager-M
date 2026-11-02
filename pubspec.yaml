@@ -42,6 +42,9 @@ dependencies:
   http: ^1.6.0
   video_player: ^2.14.0
   youtube_explode_dart: ^3.1.0
+  flutter_quill: ^11.6.0
+  flutter_quill_extensions: ^11.0.0
+  flutter_highlight: ^0.7.0
 
 dev_dependencies:
   flutter_test:

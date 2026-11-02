@@ -79,7 +79,26 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
 
   @override
   Future<void> deleteVideo(String id) async {
-    await _database.delete('videos', where: 'id = ?', whereArgs: [id]);
+    await _database.transaction((transaction) async {
+      final videos = await transaction.query(
+        'videos',
+        columns: ['title'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      if (videos.isNotEmpty) {
+        await transaction.update(
+          'notes',
+          {
+            'resource_name': videos.first['title'],
+            'resource_archived': 1,
+          },
+          where: "resource_type = 'video' AND resource_id = ?",
+          whereArgs: [id],
+        );
+      }
+      await transaction.delete('videos', where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   @override
@@ -120,7 +139,26 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
 
   @override
   Future<void> deletePlaylist(String id) async {
-    await _database.delete('playlists', where: 'id = ?', whereArgs: [id]);
+    await _database.transaction((transaction) async {
+      final playlists = await transaction.query(
+        'playlists',
+        columns: ['title'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      if (playlists.isNotEmpty) {
+        await transaction.update(
+          'notes',
+          {
+            'resource_name': playlists.first['title'],
+            'resource_archived': 1,
+          },
+          where: "resource_type = 'library' AND resource_id = ?",
+          whereArgs: [id],
+        );
+      }
+      await transaction.delete('playlists', where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   @override

@@ -1,0 +1,38 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Read image and spec cleanup",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Content 'C:\\Users\\LENOVO\\.copilot\\skills\\graphify\\references\\extraction-spec.md'"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Write graphify chunk 13 JSON and clean task config",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$out='D:\\project 2\\Voyager M\\Build\\graphify-out\\.graphify_chunk_13.json'; $json=@'\n{\"nodes\":[{\"id\":\"assets_branding_voyagerm_icon_source_icon_artwork\",\"label\":\"Voyager M Icon Artwork\",\"file_type\":\"image\",\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null},{\"id\":\"assets_branding_voyagerm_icon_source_hands_around_a_bowl\",\"label\":\"Hands Positioned Around a Bowl\",\"file_type\":\"concept\",\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null},{\"id\":\"assets_branding_voyagerm_icon_source_red_bowl\",\"label\":\"Red Bowl\",\"file_type\":\"concept\",\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null},{\"id\":\"assets_branding_voyagerm_icon_source_two_human_hands\",\"label\":\"Two Human Hands\",\"file_type\":\"concept\",\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"source_location\":null,\"source_url\":null,\"captured_at\":null,\"author\":null,\"contributor\":null}],\"edges\":[{\"source\":\"assets_branding_voyagerm_icon_source_icon_artwork\",\"target\":\"assets_branding_voyagerm_icon_source_hands_around_a_bowl\",\"relation\":\"conceptually_related_to\",\"confidence\":\"INFERRED\",\"confidence_score\":0.95,\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"weight\":1.0},{\"source\":\"assets_branding_voyagerm_icon_source_hands_around_a_bowl\",\"target\":\"assets_branding_voyagerm_icon_source_red_bowl\",\"relation\":\"conceptually_related_to\",\"confidence\":\"INFERRED\",\"confidence_score\":0.95,\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"weight\":1.0},{\"source\":\"assets_branding_voyagerm_icon_source_hands_around_a_bowl\",\"target\":\"assets_branding_voyagerm_icon_source_two_human_hands\",\"relation\":\"conceptually_related_to\",\"confidence\":\"INFERRED\",\"confidence_score\":0.95,\"source_file\":\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\",\"weight\":1.0}],\"hyperedges\":[],\"input_tokens\":0,\"output_tokens\":0,\"coverage\":{\"D:\\\\project 2\\\\Voyager M\\\\Build\\\\assets\\\\branding\\\\voyagerm_icon_source.png\":530}}\n'@; [System.IO.File]::WriteAllText($out,$json,[System.Text.UTF8Encoding]::new($false)); $data=Get-Content -LiteralPath $out -Raw | ConvertFrom-Json; $expected='D:\\project 2\\Voyager M\\Build\\assets\\branding\\voyagerm_icon_source.png'; if ($data.coverage.$expected -ne 530) { throw 'Coverage verification failed' }; if ($data.nodes.Count -ne 4 -or $data.edges.Count -ne 3) { throw 'Schema verification failed' }; Write-Output \"Validated JSON: $($data.nodes.Count) nodes, $($data.edges.Count) edges; coverage $expected = $($data.coverage.$expected) lines.\"; $taskFile='D:\\project 2\\Voyager M\\Build\\.vscode\\tasks.json'; Remove-Item -LiteralPath $taskFile -Force -ErrorAction SilentlyContinue; $taskDir='D:\\project 2\\Voyager M\\Build\\.vscode'; if ((Test-Path -LiteralPath $taskDir) -and -not (Get-ChildItem -LiteralPath $taskDir -Force | Select-Object -First 1)) { Remove-Item -LiteralPath $taskDir -Force }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Graphify chunk13 final extraction writer",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$s=\"D:\\project 2\\Voyager M\\Build\\assets\\branding\\voyagerm_icon_source.png\"; $out=\"D:\\project 2\\Voyager M\\Build\\graphify-out\\.graphify_chunk_13.json\"; function MakeNode($id,$label,$type) { [ordered]@{ id=$id; label=$label; file_type=$type; source_file=$s; source_location=$null; source_url=$null; captured_at=$null; author=$null; contributor=$null } }; function MakeEdge($source,$target) { [ordered]@{ source=$source; target=$target; relation=\"conceptually_related_to\"; confidence=\"INFERRED\"; confidence_score=0.95; source_file=$s; weight=1.0 } }; $scene=\"assets_branding_voyagerm_icon_source_hands_around_a_bowl\"; $nodes=@((MakeNode \"assets_branding_voyagerm_icon_source_icon_artwork\" \"Voyager M Icon Artwork\" \"image\"),(MakeNode $scene \"Hands Positioned Around a Bowl\" \"concept\"),(MakeNode \"assets_branding_voyagerm_icon_source_red_bowl\" \"Red Bowl\" \"concept\"),(MakeNode \"assets_branding_voyagerm_icon_source_two_human_hands\" \"Two Human Hands\" \"concept\")); $edges=@((MakeEdge \"assets_branding_voyagerm_icon_source_icon_artwork\" $scene),(MakeEdge $scene \"assets_branding_voyagerm_icon_source_red_bowl\"),(MakeEdge $scene \"assets_branding_voyagerm_icon_source_two_human_hands\")); $coverage=[ordered]@{}; $coverage[$s]=530; $data=[ordered]@{ nodes=$nodes; edges=$edges; hyperedges=@(); input_tokens=0; output_tokens=0; coverage=$coverage }; $json=ConvertTo-Json -InputObject $data -Depth 10; [System.IO.File]::WriteAllText($out,$json,[System.Text.UTF8Encoding]::new($false)); $check=Get-Content -LiteralPath $out -Raw | ConvertFrom-Json; if ($check.nodes.Count -ne 4 -or $check.edges.Count -ne 3 -or $check.coverage.PSObject.Properties[$s].Value -ne 530) { throw \"JSON validation failed\" }; Write-Output \"Validated JSON: $($check.nodes.Count) nodes, $($check.edges.Count) edges; coverage $s = $($check.coverage.PSObject.Properties[$s].Value) lines.\"; $taskFile=\"D:\\project 2\\Voyager M\\Build\\.vscode\\tasks.json\"; Remove-Item -LiteralPath $taskFile -Force -ErrorAction SilentlyContinue; $taskDir=\"D:\\project 2\\Voyager M\\Build\\.vscode\"; if ((Test-Path -LiteralPath $taskDir) -and -not (Get-ChildItem -LiteralPath $taskDir -Force | Select-Object -First 1)) { Remove-Item -LiteralPath $taskDir -Force }"
+			],
+			"isBackground": false
+		}
+	]
+}

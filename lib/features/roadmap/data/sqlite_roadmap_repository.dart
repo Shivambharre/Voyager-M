@@ -35,11 +35,30 @@ class SqliteRoadmapRepository implements RoadmapRepository {
 
   @override
   Future<void> deleteRoadmap(String roadmapId) async {
-    await _database.delete(
-      'roadmaps',
-      where: 'id = ?',
-      whereArgs: [roadmapId],
-    );
+    await _database.transaction((transaction) async {
+      final topics = await transaction.query(
+        'topics',
+        columns: ['id', 'title'],
+        where: 'roadmap_id = ?',
+        whereArgs: [roadmapId],
+      );
+      for (final topic in topics) {
+        await transaction.update(
+          'notes',
+          {
+            'resource_name': topic['title'],
+            'resource_archived': 1,
+          },
+          where: "resource_type = 'lesson' AND resource_id = ?",
+          whereArgs: [topic['id']],
+        );
+      }
+      await transaction.delete(
+        'roadmaps',
+        where: 'id = ?',
+        whereArgs: [roadmapId],
+      );
+    });
   }
 
   @override
@@ -66,11 +85,30 @@ class SqliteRoadmapRepository implements RoadmapRepository {
 
   @override
   Future<void> deleteTopic(String topicId) async {
-    await _database.delete(
-      'topics',
-      where: 'id = ?',
-      whereArgs: [topicId],
-    );
+    await _database.transaction((transaction) async {
+      final topics = await transaction.query(
+        'topics',
+        columns: ['title'],
+        where: 'id = ?',
+        whereArgs: [topicId],
+      );
+      if (topics.isNotEmpty) {
+        await transaction.update(
+          'notes',
+          {
+            'resource_name': topics.first['title'],
+            'resource_archived': 1,
+          },
+          where: "resource_type = 'lesson' AND resource_id = ?",
+          whereArgs: [topicId],
+        );
+      }
+      await transaction.delete(
+        'topics',
+        where: 'id = ?',
+        whereArgs: [topicId],
+      );
+    });
   }
 
   Roadmap _roadmapFromRow(Map<String, Object?> row) => Roadmap(
