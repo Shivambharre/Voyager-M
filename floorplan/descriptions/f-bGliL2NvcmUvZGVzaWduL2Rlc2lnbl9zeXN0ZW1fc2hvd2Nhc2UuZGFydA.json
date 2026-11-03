@@ -1,0 +1,429 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/design/design_system_showcase.dart",
+  "name": "DesignSystemShowcase",
+  "simple": "Presents the design experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in shared visual system; detected screen/widget types: DesignSystemShowcase.",
+  "responsibility": "Defines shared colors, typography, themes, reusable controls, and a debug showcase.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "DesignSystemShowcase",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "DesignSystemShowcase",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 9
+    },
+    {
+      "kind": "class",
+      "name": "_DesignSystemShowcaseState",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 66
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 92
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 97
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 109
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 113
+    },
+    {
+      "kind": "callable",
+      "name": "_showMessage",
+      "line": 117
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "_showMessage",
+      "line": 124
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistChip",
+      "line": 126
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistChip",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 130
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 132
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 133
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 138
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 142
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 143
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistProgressBar",
+      "line": 148
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 155
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 156
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 157
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSearchField",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 162
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 171
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 181
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCheckbox",
+      "line": 182
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 187
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 188
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 189
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 194
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 199
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 200
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 201
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 202
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 210
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistErrorState",
+      "line": 211
+    },
+    {
+      "kind": "callable",
+      "name": "_showMessage",
+      "line": 220
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 223
+    },
+    {
+      "kind": "class",
+      "name": "_ColorSwatch",
+      "line": 227
+    },
+    {
+      "kind": "callable",
+      "name": "_ColorSwatch",
+      "line": 229
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 235
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 236
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 242
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 251
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 252
+    }
+  ],
+  "screens": [
+    {
+      "name": "DesignSystemShowcase",
+      "line": 4
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "c46f3925bb99e345acb213336ce2f1b7ade6e77e4c00c2a57625e0e34a11c28f"
+}

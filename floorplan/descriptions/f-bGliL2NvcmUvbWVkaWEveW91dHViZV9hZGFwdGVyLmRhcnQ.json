@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/youtube_adapter.dart",
+  "name": "YoutubeAdapter",
+  "simple": "Supports the media pipeline by defining YoutubeAdapter.",
+  "developer": "Dart file classified as media; detected declarations: YoutubeAdapter.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:youtube_explode_dart"
+  ],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "YoutubeAdapter",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "YoutubeAdapter",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "canHandle",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 21
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "_mapFailure",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "getFastVideoInfo",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistInfo",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 57
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistInfo",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "_mapFailure",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "getStreams",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 99
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "_mapFailure",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "_mapStream",
+      "line": 113
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 125
+    },
+    {
+      "kind": "callable",
+      "name": "_mapFailure",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 151
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 157
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 169
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 179
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 184
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 189
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 195
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "f7f4c66ce219c353b70f408055dad8cc47d6ea4f5feb52ab9f064b0a89a9de0e"
+}

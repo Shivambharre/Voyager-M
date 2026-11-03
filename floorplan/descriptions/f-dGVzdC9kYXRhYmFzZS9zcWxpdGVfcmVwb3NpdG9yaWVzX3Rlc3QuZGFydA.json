@@ -1,0 +1,558 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/database/sqlite_repositories_test.dart",
+  "name": "sqlite repositories test test",
+  "simple": "Checks selected behavior around database using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 100 detected test/helper declarations and 23 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "package:path",
+    "package:sqflite_common_ffi",
+    "lib/core/database/database.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "setUpAll",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "containsAll",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "contains",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 92
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 100
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 105
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 121
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 123
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 144
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 145
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 146
+    },
+    {
+      "kind": "callable",
+      "name": "Roadmap",
+      "line": 149
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 156
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 157
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 164
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 167
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 192
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 193
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 194
+    },
+    {
+      "kind": "callable",
+      "name": "expectLater",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 198
+    },
+    {
+      "kind": "callable",
+      "name": "throwsA",
+      "line": 200
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 203
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 204
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 207
+    },
+    {
+      "kind": "callable",
+      "name": "RecentWatchEntry",
+      "line": 213
+    },
+    {
+      "kind": "callable",
+      "name": "RecentWatchEntry",
+      "line": 223
+    },
+    {
+      "kind": "callable",
+      "name": "RecentWatchEntry",
+      "line": 233
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 244
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 245
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 248
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 250
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 265
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 267
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 270
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 273
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 299
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 313
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 314
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 325
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 326
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 339
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 340
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 344
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 345
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 349
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 353
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 373
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 374
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 384
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 387
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 390
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 391
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 395
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 401
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 402
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 405
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 429
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 438
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 453
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 473
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 485
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 487
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 491
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 501
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 502
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 506
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 510
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 511
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 521
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 525
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 526
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 527
+    },
+    {
+      "kind": "callable",
+      "name": "contains",
+      "line": 528
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 533
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 535
+    },
+    {
+      "kind": "callable",
+      "name": "endsWith",
+      "line": 537
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 539
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 541
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 600
+    },
+    {
+      "kind": "callable",
+      "name": "hasLength",
+      "line": 606
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 608
+    },
+    {
+      "kind": "callable",
+      "name": "hasLength",
+      "line": 614
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 616
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 619
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "978b0d997255393b9e8550de17e83b6d4ea6e5db4ea7a5088574c294f33c5ae6"
+}

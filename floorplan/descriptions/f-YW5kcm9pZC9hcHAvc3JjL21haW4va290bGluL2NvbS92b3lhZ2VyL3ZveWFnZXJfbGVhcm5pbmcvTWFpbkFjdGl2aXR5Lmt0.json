@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt",
+  "name": "MainActivity platform configuration",
+  "simple": "Configures the Android build or runtime integration used by VoyagerM.",
+  "developer": "Kotlin platform/configuration file associated with Android platform integration.",
+  "responsibility": "Implements native Media3 playback, NewPipe extraction, platform channels, and incoming share intents.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "e72bb72191abebdf98335a436d304ff9abab8e2d0622671c1bf5e2bf3a5ecb89"
+}

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/goals/domain/daily_goal_repository.dart",
+  "name": "DailyGoalRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the DailyGoalRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Tracks today’s eligible playback time and manually completed lessons against local goals.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "DailyGoalRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getSummary",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "addPlaybackTime",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "markLessonCompleted",
+      "line": 10
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "3f1f84bbc9e5cc25613a455abcfd8a7ddae7fd6c3000b127c62627d597b36365"
+}

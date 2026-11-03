@@ -52,7 +52,11 @@ Future<void> configureDependencies({bool? useMocks}) async {
     _registerIfMissing<LearningLibraryRepository>(
       InMemoryLearningLibraryRepository.new,
     );
-    _registerIfMissing<NotesRepository>(InMemoryNotesRepository.new);
+    _registerIfMissing<NotesRepository>(
+      kIsWeb
+          ? InMemoryNotesRepository.forBrowserStorage
+          : InMemoryNotesRepository.new,
+    );
     _registerIfMissing<ProgressRepository>(InMemoryProgressRepository.new);
     _registerIfMissing<SettingsRepository>(InMemorySettingsRepository.new);
     _registerIfMissing<RecentWatchHistoryRepository>(

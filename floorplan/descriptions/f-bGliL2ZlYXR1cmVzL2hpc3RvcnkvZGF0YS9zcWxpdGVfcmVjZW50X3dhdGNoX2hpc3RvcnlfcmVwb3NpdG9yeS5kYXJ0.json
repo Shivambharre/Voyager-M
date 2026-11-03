@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+  "name": "SqliteRecentWatchHistoryRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for recent_watch_history.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: recent_watch_history.",
+  "responsibility": "Records recently loaded lessons and presents the recent list from Home.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteRecentWatchHistoryRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteRecentWatchHistoryRepository",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "getRecent",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "record",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "clear",
+      "line": 67
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "d723869ee9fc46eb10ba1cb9f1ea75a392420dc26fe3d5abde5d79fb39672b5c"
+}

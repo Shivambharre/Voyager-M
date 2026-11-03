@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/roadmap/presentation/roadmaps_page.dart",
+  "name": "RoadmapsPage",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: RoadmapsPage, _RoadmapDetailPage.",
+  "responsibility": "Creates and edits roadmaps and their learning topics through a repository contract.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "RoadmapsPage",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "RoadmapsPage",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 18
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapsPageState",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "_loadRoadmaps",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapSummary",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 71
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 91
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 92
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapCard",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "_createRoadmap",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "Roadmap",
+      "line": 126
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 133
+    },
+    {
+      "kind": "callable",
+      "name": "_openRoadmap",
+      "line": 135
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 138
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapSummary",
+      "line": 149
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapSummary",
+      "line": 151
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapCard",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapCard",
+      "line": 165
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 171
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 178
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 185
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 187
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistChip",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 199
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 200
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 207
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 212
+    },
+    {
+      "kind": "callable",
+      "name": "Theme",
+      "line": 213
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 217
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 218
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 220
+    },
+    {
+      "kind": "callable",
+      "name": "Spacer",
+      "line": 225
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 226
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapDetailPage",
+      "line": 234
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapDetailPage",
+      "line": 236
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 247
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapDetailPageState",
+      "line": 249
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 254
+    },
+    {
+      "kind": "callable",
+      "name": "_load",
+      "line": 258
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapDetailData",
+      "line": 263
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 265
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 268
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 274
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 275
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 279
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 284
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 295
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 306
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 309
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 314
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 315
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 320
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 321
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 334
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 335
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 343
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 345
+    },
+    {
+      "kind": "callable",
+      "name": "_TopicRow",
+      "line": 356
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 361
+    },
+    {
+      "kind": "callable",
+      "name": "_editRoadmap",
+      "line": 369
+    },
+    {
+      "kind": "callable",
+      "name": "Roadmap",
+      "line": 376
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 383
+    },
+    {
+      "kind": "callable",
+      "name": "_setActive",
+      "line": 385
+    },
+    {
+      "kind": "callable",
+      "name": "Roadmap",
+      "line": 392
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 401
+    },
+    {
+      "kind": "callable",
+      "name": "_addTopic",
+      "line": 403
+    },
+    {
+      "kind": "callable",
+      "name": "Topic",
+      "line": 415
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 423
+    },
+    {
+      "kind": "callable",
+      "name": "_setTopicStatus",
+      "line": 425
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 435
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 440
+    },
+    {
+      "kind": "callable",
+      "name": "Topic",
+      "line": 451
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 459
+    },
+    {
+      "kind": "callable",
+      "name": "_deleteTopic",
+      "line": 461
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 464
+    },
+    {
+      "kind": "callable",
+      "name": "_deleteRoadmap",
+      "line": 466
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 475
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 480
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapDetailData",
+      "line": 493
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapDetailData",
+      "line": 495
+    },
+    {
+      "kind": "class",
+      "name": "_TopicRow",
+      "line": 500
+    },
+    {
+      "kind": "callable",
+      "name": "_TopicRow",
+      "line": 502
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 513
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 514
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 518
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownButton",
+      "line": 519
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 526
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 532
+    },
+    {
+      "kind": "callable",
+      "name": "_statusLabel",
+      "line": 541
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapFormValues",
+      "line": 548
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapFormValues",
+      "line": 550
+    },
+    {
+      "kind": "callable",
+      "name": "_showRoadmapForm",
+      "line": 555
+    },
+    {
+      "kind": "callable",
+      "name": "_showTopicForm",
+      "line": 563
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapFormDialog",
+      "line": 568
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapFormDialog",
+      "line": 570
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 575
+    },
+    {
+      "kind": "class",
+      "name": "_RoadmapFormDialogState",
+      "line": 577
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 583
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 592
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 599
+    },
+    {
+      "kind": "callable",
+      "name": "_FormDialogFrame",
+      "line": 600
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 603
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 608
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 609
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 616
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 617
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 622
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 627
+    },
+    {
+      "kind": "callable",
+      "name": "_RoadmapFormValues",
+      "line": 635
+    },
+    {
+      "kind": "class",
+      "name": "_TopicFormDialog",
+      "line": 646
+    },
+    {
+      "kind": "callable",
+      "name": "_TopicFormDialog",
+      "line": 648
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 651
+    },
+    {
+      "kind": "class",
+      "name": "_TopicFormDialogState",
+      "line": 653
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 658
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 664
+    },
+    {
+      "kind": "callable",
+      "name": "_FormDialogFrame",
+      "line": 665
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 668
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 673
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 674
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 679
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 684
+    },
+    {
+      "kind": "class",
+      "name": "_FormDialogFrame",
+      "line": 699
+    },
+    {
+      "kind": "callable",
+      "name": "_FormDialogFrame",
+      "line": 701
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 707
+    },
+    {
+      "kind": "callable",
+      "name": "Dialog",
+      "line": 708
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 722
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 726
+    }
+  ],
+  "screens": [
+    {
+      "name": "RoadmapsPage",
+      "line": 6
+    },
+    {
+      "name": "_RoadmapDetailPage",
+      "line": 234
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "9d684fdec96430087ab04a2331b5cfc7eb465484718b5b8404d818aabb7122df"
+}

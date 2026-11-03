@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+  "name": "InMemoryRoadmapRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Creates and edits roadmaps and their learning topics through a repository contract.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/features/library/library_playlist_test.dart",
+    "test/features/notes/notes_home_page_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryRoadmapRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmaps",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmap",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "saveRoadmap",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "deleteRoadmap",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "getTopicsForRoadmap",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "saveTopic",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 51
+    },
+    {
+      "kind": "callable",
+      "name": "deleteTopic",
+      "line": 57
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a3411f20916795d04ee2fc634e7f7fc8612683a3e562cb0a339c5ff19ee0609d"
+}

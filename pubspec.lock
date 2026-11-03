@@ -326,7 +326,7 @@ packages:
     source: hosted
     version: "2.2.0"
   highlight:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: highlight
       sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
@@ -366,7 +366,7 @@ packages:
     source: hosted
     version: "4.1.2"
   image_picker:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image_picker
       sha256: e71b1bd9e40124041128d60fc3034c7b1598e1bba4e570bba0c70301c817013a
@@ -1027,7 +1027,7 @@ packages:
     source: hosted
     version: "15.3.0"
   web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web
       sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"

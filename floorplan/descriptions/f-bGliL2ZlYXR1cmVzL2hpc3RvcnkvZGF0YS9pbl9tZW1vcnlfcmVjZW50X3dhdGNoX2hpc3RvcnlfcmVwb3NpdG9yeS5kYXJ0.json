@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+  "name": "InMemoryRecentWatchHistoryRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Records recently loaded lessons and presents the recent list from Home.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryRecentWatchHistoryRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getRecent",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "record",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "clear",
+      "line": 20
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "8264c6787f5c72d0cbd3699d62bbe360435d9f888029f174020a0e5fd1db43c4"
+}

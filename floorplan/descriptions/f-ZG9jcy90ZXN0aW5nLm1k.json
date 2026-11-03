@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "docs/testing.md",
+  "name": "testing documentation",
+  "simple": "Explains project behavior and development guidance for testing; statements should be checked against current code.",
+  "developer": "Markdown documentation file. It is context, not execution evidence; the map cross-checks claims against scanned source and tests.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "d1bd44b0efaa242cab75471ae3fe551f311e7380a39c760e4a0bd4b77f22f9e8"
+}

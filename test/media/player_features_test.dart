@@ -11,6 +11,7 @@ import 'package:voyager_learning/features/goals/data/in_memory_daily_goal_reposi
 import 'package:voyager_learning/features/library/data/in_memory_learning_library_repository.dart';
 import 'package:voyager_learning/features/library/domain/learning_content.dart';
 import 'package:voyager_learning/features/notes/data/in_memory_notes_repository.dart';
+import 'package:voyager_learning/features/notes/domain/study_note.dart';
 import 'package:voyager_learning/features/progress/data/in_memory_progress_repository.dart';
 import 'package:voyager_learning/features/progress/domain/learning_progress.dart';
 import 'package:voyager_learning/features/player/presentation/learning_player_screen.dart';
@@ -215,6 +216,65 @@ void main() {
       expect(find.byTooltip('Enter fullscreen'), findsOneWidget);
     },
   );
+
+  testWidgets('a timestamped player note seeks before opening its editor', (
+    tester,
+  ) async {
+    final library = InMemoryLearningLibraryRepository();
+    final notes = InMemoryNotesRepository();
+    final playback = _FakePlaybackController();
+    const video = LearningVideo(
+      id: 'dQw4w9WgXcQ',
+      sourceId: 'dQw4w9WgXcQ',
+      sourceUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      title: 'Sample lesson',
+      creator: 'Teacher',
+      durationSeconds: 120,
+    );
+    await library.saveVideo(video);
+    final now = DateTime.utc(2026, 11, 2);
+    await notes.saveNote(
+      StudyNote(
+        id: 'timestamp-note',
+        title: 'Key moment',
+        content: 'Review this explanation.',
+        videoId: video.id,
+        resourceType: NoteResourceType.video,
+        resourceId: video.id,
+        resourceName: video.title,
+        timestampSeconds: 42,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LearningPlayerScreen(
+          playbackController: playback,
+          libraryRepository: library,
+          notesRepository: notes,
+          recentWatchHistoryRepository: InMemoryRecentWatchHistoryRepository(),
+          progressRepository: InMemoryProgressRepository(),
+          dailyGoalRepository: InMemoryDailyGoalRepository(),
+          initialSourceUrl: video.sourceUrl,
+          resumePlayback: false,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final seekButton = find.byTooltip('Seek to note timestamp');
+    await tester.dragUntilVisible(
+      seekButton,
+      find.byType(ListView),
+      const Offset(0, -300),
+    );
+    await tester.tap(seekButton);
+    await tester.pumpAndSettle();
+
+    expect(await playback.currentPosition, const Duration(seconds: 42));
+    expect(find.byKey(const Key('note-title-field')), findsOneWidget);
+  });
 
   testWidgets('restores saved progress without starting playback', (
     tester,

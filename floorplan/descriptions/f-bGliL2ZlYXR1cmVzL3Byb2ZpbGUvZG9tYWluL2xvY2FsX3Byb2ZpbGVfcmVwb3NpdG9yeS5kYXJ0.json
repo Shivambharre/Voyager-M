@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/profile/domain/local_profile_repository.dart",
+  "name": "LocalProfileRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the LocalProfileRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/profile/data/in_memory_local_profile_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "test/architecture/mock_mode_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LocalProfileRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getProfile",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "saveProfile",
+      "line": 4
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "adc2c8c33e0215f8dcd8515ebbdd6c8a5b3ceb68b1f89b5c81ad16c422e60694"
+}

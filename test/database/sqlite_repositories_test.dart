@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -403,12 +404,140 @@ void main() {
     },
   );
 
+  test(
+    'keeps multiple searchable notes when video or library is deleted',
+    () async {
+      final library = SqliteLearningLibraryRepository(database);
+      final notes = SqliteNotesRepository(database);
+      const video = LearningVideo(
+        id: 'notes-video',
+        sourceId: 'notes-video',
+        sourceUrl: 'https://example.test/notes-video',
+        title: 'Algorithms lesson',
+        creator: 'Teacher',
+        durationSeconds: 300,
+      );
+      const playlist = LearningPlaylist(
+        id: 'notes-library',
+        sourceId: 'notes-library',
+        sourceUrl: 'https://example.test/notes-library',
+        title: 'Study library',
+        creator: 'Teacher',
+      );
+      await library.saveVideo(video);
+      await library.savePlaylist(playlist);
+      await library.savePlaylistEntries(playlist.id, const [
+        PlaylistEntry(
+          playlistId: 'notes-library',
+          videoId: 'notes-video',
+          position: 0,
+        ),
+      ]);
+
+      final now = DateTime.utc(2026, 11, 2);
+      await notes.saveNote(
+        StudyNote(
+          id: 'lesson-note-1',
+          title: 'Binary search',
+          content: 'Keep the interval sorted.',
+          contentJson: '[{"insert":"Keep the interval sorted.\\n"}]',
+          videoId: video.id,
+          resourceType: NoteResourceType.video,
+          resourceId: video.id,
+          resourceName: video.title,
+          timestampSeconds: 42,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+      await notes.saveNote(
+        StudyNote(
+          id: 'lesson-note-2',
+          title: 'Complexity',
+          content: 'Logarithmic time.',
+          contentJson: jsonEncode([
+            {'insert': 'Logarithmic time.\n'},
+            {
+              'insert': {'image': 'C:/notes/images/lesson.png'},
+            },
+            {'insert': '\n'},
+          ]),
+          videoId: video.id,
+          resourceType: NoteResourceType.video,
+          resourceId: video.id,
+          resourceName: video.title,
+          createdAt: now,
+          updatedAt: now.add(const Duration(minutes: 1)),
+        ),
+      );
+      await notes.saveNote(
+        StudyNote(
+          id: 'library-note',
+          title: 'Course plan',
+          content: 'Review the second section.',
+          libraryId: playlist.id,
+          resourceType: NoteResourceType.library,
+          resourceId: playlist.id,
+          resourceName: playlist.title,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+
+      expect(await notes.getNotes(videoId: video.id), hasLength(2));
+      expect(
+        (await notes.getNotes(searchQuery: 'binary')).single.title,
+        'Binary search',
+      );
+      expect(
+        (await notes.getNotes(searchQuery: 'second section')).single.id,
+        'library-note',
+      );
+
+      await library.deleteVideo(video.id);
+      final preservedLessonNotes = await notes.getNotes(
+        resourceType: NoteResourceType.video,
+        resourceId: video.id,
+      );
+      expect(preservedLessonNotes, hasLength(2));
+      expect(
+        preservedLessonNotes.every((note) => note.isResourceArchived),
+        isTrue,
+      );
+      expect(preservedLessonNotes.first.resourceName, video.title);
+
+      await library.deletePlaylist(playlist.id);
+      final preservedLibraryNote = await notes.getNotes(libraryId: playlist.id);
+      expect(preservedLibraryNote.single.isResourceArchived, isTrue);
+      expect(preservedLibraryNote.single.resourceName, playlist.title);
+
+      await database.close();
+      database = SqfliteAppDatabase(
+        databasePathProvider: () async => directory.path,
+        databaseFactory: databaseFactoryFfi,
+      );
+      await database.initialize();
+      final reopenedNotes = SqliteNotesRepository(database);
+      final reopened = await reopenedNotes.getNotes(resourceId: video.id);
+      expect(reopened, hasLength(2));
+      final timestampedNote = reopened.singleWhere(
+        (note) => note.id == 'lesson-note-1',
+      );
+      expect(timestampedNote.contentJson, isNotEmpty);
+      expect(timestampedNote.timestampSeconds, 42);
+      expect(
+        reopened.first.contentJson,
+        contains('C:/notes/images/lesson.png'),
+      );
+    },
+  );
+
   test('database uses its configured application file name', () {
     expect(
       path.join(directory.path, SqfliteAppDatabase.databaseFileName),
       endsWith('voyager_learning.db'),
     );
-    expect(SqfliteAppDatabase.schemaVersion, 6);
+    expect(SqfliteAppDatabase.schemaVersion, 7);
   });
 
   test(

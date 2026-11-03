@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/watch_activity/watch_activity_test.dart",
+  "name": "watch activity test test",
+  "simple": "Checks selected behavior around watch activity using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 40 detected test/helper declarations and 3 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_streak_calculator.dart"
+  ],
+  "dependencies": [
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_streak_calculator.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 45
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 51
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 57
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "activity",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 66
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 71
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 73
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 86
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "2cde91ea3f130cd03e10c9876fe5fd2380e143951200198316bd2ddd23b90fb8"
+}

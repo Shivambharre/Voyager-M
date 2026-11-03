@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/settings/data/in_memory_settings_repository.dart",
+  "name": "InMemorySettingsRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Persists appearance, playback, resume, completion-confirmation, and daily-goal preferences locally.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemorySettingsRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getSettings",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "saveSettings",
+      "line": 10
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "fb92255f287530b96751d5d063c4ad5cc6f2711bd390ef15a0dd46062d7e7911"
+}

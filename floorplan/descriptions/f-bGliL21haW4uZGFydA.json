@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/main.dart",
+  "name": "Application entry point",
+  "simple": "Starts Flutter, prepares app services and saved preferences, then shows the main VoyagerM interface.",
+  "developer": "Initializes Flutter bindings, calls configureDependencies(), loads SettingsRepository, and constructs VoyagerApp.",
+  "responsibility": "Initializes Flutter, registers app services, loads settings, and creates the root app shell.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_quill"
+  ],
+  "dependencies": [],
+  "dependents": [
+    "test/features/library/library_playlist_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "configureDependencies",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "runApp",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "AndroidSharedVideoIntentSource",
+      "line": 24
+    },
+    {
+      "kind": "class",
+      "name": "VoyagerApp",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 45
+    },
+    {
+      "kind": "class",
+      "name": "_VoyagerAppState",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "_saveSettings",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 61
+    }
+  ],
+  "screens": [
+    {
+      "name": "VoyagerApp",
+      "line": 29
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "029f6fc7312d18a54abaff01018d33e2b4f82de1dbb5b13b1b740288beab3a2d"
+}

@@ -1,0 +1,642 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/presentation/notes_home_page.dart",
+  "name": "NotesHomePage",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: NotesHomePage, _NotesCategoryPage, _NotesResourcePage.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "test/features/notes/notes_home_page_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "typedef",
+      "name": "NotePlayerLauncher",
+      "line": 12
+    },
+    {
+      "kind": "class",
+      "name": "NotesHomePage",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "NotesHomePage",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 33
+    },
+    {
+      "kind": "class",
+      "name": "_NotesHomePageState",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "_loadSnapshot",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteResource",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteResource",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteResource",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "_NotesSnapshot",
+      "line": 89
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 91
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "_searchChanged",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "_openResource",
+      "line": 102
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "_createNote",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 124
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 139
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 148
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 172
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 182
+    },
+    {
+      "kind": "callable",
+      "name": "_editNote",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "_editNote",
+      "line": 197
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 203
+    },
+    {
+      "kind": "callable",
+      "name": "_openTimestamp",
+      "line": 218
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 226
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 237
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistErrorState",
+      "line": 241
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistErrorState",
+      "line": 256
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 274
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 277
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 279
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistIconButton",
+      "line": 280
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 287
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 288
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 293
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSearchField",
+      "line": 294
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 299
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 300
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 302
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 310
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 311
+    },
+    {
+      "kind": "callable",
+      "name": "_openCategory",
+      "line": 317
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 322
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 323
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 326
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 328
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteCard",
+      "line": 336
+    },
+    {
+      "kind": "callable",
+      "name": "_editNote",
+      "line": 340
+    },
+    {
+      "kind": "callable",
+      "name": "_openTimestamp",
+      "line": 344
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 345
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 351
+    },
+    {
+      "kind": "callable",
+      "name": "_openCategory",
+      "line": 361
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteResource",
+      "line": 390
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 404
+    },
+    {
+      "kind": "callable",
+      "name": "_resourceForNote",
+      "line": 417
+    },
+    {
+      "kind": "callable",
+      "name": "_isVideoLesson",
+      "line": 429
+    },
+    {
+      "kind": "class",
+      "name": "_NotesCategoryPage",
+      "line": 433
+    },
+    {
+      "kind": "callable",
+      "name": "_NotesCategoryPage",
+      "line": 435
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 445
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 452
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 455
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 466
+    },
+    {
+      "kind": "callable",
+      "name": "onOpenResource",
+      "line": 468
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 477
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 484
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 485
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 489
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 493
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 502
+    },
+    {
+      "kind": "class",
+      "name": "_NotesResourcePage",
+      "line": 510
+    },
+    {
+      "kind": "callable",
+      "name": "_NotesResourcePage",
+      "line": 512
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 527
+    },
+    {
+      "kind": "class",
+      "name": "_NotesResourcePageState",
+      "line": 529
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 534
+    },
+    {
+      "kind": "callable",
+      "name": "_loadNotes",
+      "line": 538
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 545
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 548
+    },
+    {
+      "kind": "callable",
+      "name": "_editNote",
+      "line": 551
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 554
+    },
+    {
+      "kind": "callable",
+      "name": "_openTimestamp",
+      "line": 572
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 580
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 591
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 602
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 610
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 614
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 621
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteCard",
+      "line": 625
+    },
+    {
+      "kind": "callable",
+      "name": "_openTimestamp",
+      "line": 632
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 633
+    },
+    {
+      "kind": "class",
+      "name": "_CategoryCard",
+      "line": 644
+    },
+    {
+      "kind": "callable",
+      "name": "_CategoryCard",
+      "line": 646
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 659
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 664
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 665
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 666
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 667
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 668
+    },
+    {
+      "kind": "class",
+      "name": "_NoteCard",
+      "line": 673
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteCard",
+      "line": 675
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 688
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 694
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 695
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 696
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 700
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 706
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 713
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 714
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 722
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 729
+    },
+    {
+      "kind": "callable",
+      "name": "_formatTime",
+      "line": 734
+    },
+    {
+      "kind": "class",
+      "name": "_NotesSnapshot",
+      "line": 740
+    },
+    {
+      "kind": "callable",
+      "name": "_NotesSnapshot",
+      "line": 742
+    },
+    {
+      "kind": "class",
+      "name": "_NoteResource",
+      "line": 747
+    },
+    {
+      "kind": "callable",
+      "name": "_NoteResource",
+      "line": 749
+    }
+  ],
+  "screens": [
+    {
+      "name": "NotesHomePage",
+      "line": 17
+    },
+    {
+      "name": "_NotesCategoryPage",
+      "line": 433
+    },
+    {
+      "name": "_NotesResourcePage",
+      "line": 510
+    }
+  ],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "de6df468fdf5d50fbb7efc9c9bb18c36d741e24a485577cefede9da17aee7460"
+}

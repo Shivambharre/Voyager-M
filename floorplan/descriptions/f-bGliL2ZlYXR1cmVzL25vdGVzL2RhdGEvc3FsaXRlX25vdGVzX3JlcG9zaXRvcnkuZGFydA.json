@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/data/sqlite_notes_repository.dart",
+  "name": "SqliteNotesRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for notes.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: notes.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteNotesRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteNotesRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getNotes",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "saveNote",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "deleteNote",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "_noteFromRow",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "_resourceTypeFromName",
+      "line": 112
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "04ea92cc1e2caa078132f75a50441987f1ef790a779065d7370eb720b270db8b"
+}

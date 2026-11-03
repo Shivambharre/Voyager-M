@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/player_features_test.dart",
+  "name": " FakePlaybackController test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 68 detected test/helper declarations and 16 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/player/presentation/learning_player_screen.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/player/presentation/learning_player_screen.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "containsAll",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 102
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 117
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 129
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 135
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 138
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 144
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 145
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 153
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 171
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 173
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 174
+    },
+    {
+      "kind": "callable",
+      "name": "lessThan",
+      "line": 176
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 180
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 181
+    },
+    {
+      "kind": "callable",
+      "name": "hasLength",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "Offset",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 198
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 205
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 212
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 215
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 218
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 236
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 251
+    },
+    {
+      "kind": "callable",
+      "name": "Offset",
+      "line": 269
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 273
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 275
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 277
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 283
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 292
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 313
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 315
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 316
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 318
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlaylist",
+      "line": 326
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 336
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 355
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 363
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 369
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 370
+    },
+    {
+      "kind": "class",
+      "name": "_FakePlaybackController",
+      "line": 373
+    },
+    {
+      "kind": "callable",
+      "name": "_FakePlaybackController",
+      "line": 375
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 381
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 389
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 431
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 440
+    },
+    {
+      "kind": "callable",
+      "name": "prefetchVideo",
+      "line": 452
+    },
+    {
+      "kind": "callable",
+      "name": "selectLecture",
+      "line": 455
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 458
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 461
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 464
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 465
+    },
+    {
+      "kind": "callable",
+      "name": "refreshPlayback",
+      "line": 475
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 479
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 490
+    },
+    {
+      "kind": "callable",
+      "name": "selectStream",
+      "line": 500
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 508
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "74bd80734cc738f4d0a6e38fc9bfd7b6a148e9603e84bdff67465bb97fe4bc1a"
+}

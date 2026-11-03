@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/profile/data/sqlite_local_profile_repository.dart",
+  "name": "SqliteLocalProfileRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for local_profile.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: local_profile.",
+  "responsibility": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteLocalProfileRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteLocalProfileRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getProfile",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "LocalProfile",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "saveProfile",
+      "line": 24
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "6b9a7f3070044771207668342a8049fce51ce170414298f888e58dd8be8a7cf2"
+}

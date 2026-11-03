@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+  "name": "WatchActivityTracker",
+  "simple": "Supports the domain feature by defining WatchActivityTracker.",
+  "developer": "Dart file classified as feature:features:watch_activity; detected declarations: WatchActivityTracker.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/media/playback_state.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/playback_state.dart"
+  ],
+  "dependents": [
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/features/watch_activity/watch_activity_tracker_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "WatchActivityTracker",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "WatchActivityTracker",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "observe",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "resetPositionBaseline",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "resetPositionBaseline",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "_creditInterval",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "resetPositionBaseline",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "_creditInterval",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "flush",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "_persistPending",
+      "line": 113
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "5ae16bfdd4e0321540d2832f6ff88a6d2140a5322b5f2fcb0098bb6c188323d2"
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+  "name": "SqliteDailyGoalRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for daily_goal_activity.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: daily_goal_activity.",
+  "responsibility": "Tracks today’s eligible playback time and manually completed lessons against local goals.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteDailyGoalRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteDailyGoalRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getSummary",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "DailyGoalSummary",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "addPlaybackTime",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "markLessonCompleted",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "_dateKey",
+      "line": 86
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "4e6f0f831ea2b2f59f2341a54c12ddeac296d2c80066c883e6cb9b3e62d06a7c"
+}

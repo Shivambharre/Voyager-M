@@ -1,0 +1,1202 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/player/presentation/learning_player_screen.dart",
+  "name": "LearningPlayerScreen",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: LearningPlayerScreen.",
+  "responsibility": "Connects lesson loading, playback controls, note saving, history, progress, and eligible watch-time tracking.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/core/di/service_locator.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/video_models.dart",
+    "lib/core/media/video_source_adapter.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/note_editor_page.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/core/di/service_locator.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/video_models.dart",
+    "lib/core/media/video_source_adapter.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/note_editor_page.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LearningPlayerScreen",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlayerScreen",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 56
+    },
+    {
+      "kind": "class",
+      "name": "_LearningPlayerScreenState",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 94
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 96
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 100
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 103
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 105
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 109
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 130
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 137
+    },
+    {
+      "kind": "callable",
+      "name": "_disposePlayback",
+      "line": 140
+    },
+    {
+      "kind": "callable",
+      "name": "_flushPlaybackData",
+      "line": 144
+    },
+    {
+      "kind": "callable",
+      "name": "_saveCurrentProgress",
+      "line": 146
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 149
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 162
+    },
+    {
+      "kind": "callable",
+      "name": "PopScope",
+      "line": 164
+    },
+    {
+      "kind": "callable",
+      "name": "_buildFullscreenScaffold",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoWindow",
+      "line": 185
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 187
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoDetails",
+      "line": 188
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 189
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 201
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 208
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 222
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 223
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 228
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 230
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 236
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 251
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 252
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 258
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 259
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 272
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 273
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 282
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 283
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 296
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 297
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 299
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 305
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 324
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 328
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 330
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 350
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 351
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 352
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 353
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 359
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 360
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 371
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoNotes",
+      "line": 372
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoWindow",
+      "line": 378
+    },
+    {
+      "kind": "callable",
+      "name": "AspectRatio",
+      "line": 380
+    },
+    {
+      "kind": "callable",
+      "name": "BoxShadow",
+      "line": 390
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 402
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 409
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 417
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 418
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 427
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 432
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 433
+    },
+    {
+      "kind": "callable",
+      "name": "_buildFullscreenScaffold",
+      "line": 454
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 456
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 464
+    },
+    {
+      "kind": "callable",
+      "name": "SafeArea",
+      "line": 467
+    },
+    {
+      "kind": "callable",
+      "name": "_buildInteractiveControls",
+      "line": 472
+    },
+    {
+      "kind": "callable",
+      "name": "GestureDetector",
+      "line": 474
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoControls",
+      "line": 491
+    },
+    {
+      "kind": "callable",
+      "name": "DecoratedBox",
+      "line": 502
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 514
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 517
+    },
+    {
+      "kind": "callable",
+      "name": "Spacer",
+      "line": 543
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 544
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 547
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 562
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 578
+    },
+    {
+      "kind": "callable",
+      "name": "Spacer",
+      "line": 595
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 596
+    },
+    {
+      "kind": "callable",
+      "name": "SliderTheme",
+      "line": 604
+    },
+    {
+      "kind": "callable",
+      "name": "_seekPlaybackTo",
+      "line": 626
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 627
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 634
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 636
+    },
+    {
+      "kind": "callable",
+      "name": "Spacer",
+      "line": 644
+    },
+    {
+      "kind": "callable",
+      "name": "_buildSpeedButton",
+      "line": 645
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 648
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 652
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 655
+    },
+    {
+      "kind": "callable",
+      "name": "Spacer",
+      "line": 663
+    },
+    {
+      "kind": "callable",
+      "name": "_buildQualitySelector",
+      "line": 664
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 665
+    },
+    {
+      "kind": "callable",
+      "name": "_buildSpeedButton",
+      "line": 666
+    },
+    {
+      "kind": "callable",
+      "name": "_buildQualitySelector",
+      "line": 676
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownButtonHideUnderline",
+      "line": 681
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 696
+    },
+    {
+      "kind": "callable",
+      "name": "_buildSpeedButton",
+      "line": 709
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 711
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoDetails",
+      "line": 727
+    },
+    {
+      "kind": "callable",
+      "name": "Column",
+      "line": 729
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 732
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 734
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 735
+    },
+    {
+      "kind": "callable",
+      "name": "_selectQuality",
+      "line": 744
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 746
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 752
+    },
+    {
+      "kind": "callable",
+      "name": "_handleSnapshot",
+      "line": 758
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 766
+    },
+    {
+      "kind": "callable",
+      "name": "_startActivityTracking",
+      "line": 768
+    },
+    {
+      "kind": "callable",
+      "name": "_startWatchActivityFlushTimer",
+      "line": 769
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 771
+    },
+    {
+      "kind": "callable",
+      "name": "_stopWatchActivityFlushTimer",
+      "line": 772
+    },
+    {
+      "kind": "callable",
+      "name": "_showControls",
+      "line": 775
+    },
+    {
+      "kind": "callable",
+      "name": "_togglePlayback",
+      "line": 783
+    },
+    {
+      "kind": "callable",
+      "name": "_stopActivityTracking",
+      "line": 787
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 790
+    },
+    {
+      "kind": "callable",
+      "name": "_showControls",
+      "line": 795
+    },
+    {
+      "kind": "callable",
+      "name": "_toggleControlsVisibility",
+      "line": 797
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 801
+    },
+    {
+      "kind": "callable",
+      "name": "_showControls",
+      "line": 803
+    },
+    {
+      "kind": "callable",
+      "name": "_showControls",
+      "line": 806
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 809
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleControlsHide",
+      "line": 811
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleControlsHide",
+      "line": 813
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 819
+    },
+    {
+      "kind": "callable",
+      "name": "_toggleFullscreen",
+      "line": 823
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 827
+    },
+    {
+      "kind": "callable",
+      "name": "_showControls",
+      "line": 828
+    },
+    {
+      "kind": "callable",
+      "name": "_restoreSystemUi",
+      "line": 836
+    },
+    {
+      "kind": "callable",
+      "name": "_restoreSystemUi",
+      "line": 839
+    },
+    {
+      "kind": "callable",
+      "name": "_savePlaylist",
+      "line": 849
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 851
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlaylist",
+      "line": 854
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 883
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 893
+    },
+    {
+      "kind": "callable",
+      "name": "_loadSource",
+      "line": 900
+    },
+    {
+      "kind": "callable",
+      "name": "_stopActivityTracking",
+      "line": 902
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 904
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 916
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 925
+    },
+    {
+      "kind": "callable",
+      "name": "_prepareCurrentVideo",
+      "line": 932
+    },
+    {
+      "kind": "callable",
+      "name": "_recordWatchHistory",
+      "line": 933
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 939
+    },
+    {
+      "kind": "callable",
+      "name": "_selectLecture",
+      "line": 948
+    },
+    {
+      "kind": "callable",
+      "name": "_stopActivityTracking",
+      "line": 950
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 952
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 961
+    },
+    {
+      "kind": "callable",
+      "name": "_prepareCurrentVideo",
+      "line": 969
+    },
+    {
+      "kind": "callable",
+      "name": "_prefetchNextLecture",
+      "line": 970
+    },
+    {
+      "kind": "callable",
+      "name": "_recordWatchHistory",
+      "line": 971
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 977
+    },
+    {
+      "kind": "callable",
+      "name": "_seekBy",
+      "line": 986
+    },
+    {
+      "kind": "callable",
+      "name": "_seekPlaybackTo",
+      "line": 992
+    },
+    {
+      "kind": "callable",
+      "name": "_seekPlaybackTo",
+      "line": 994
+    },
+    {
+      "kind": "callable",
+      "name": "_recordWatchHistory",
+      "line": 999
+    },
+    {
+      "kind": "callable",
+      "name": "RecentWatchEntry",
+      "line": 1003
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1016
+    },
+    {
+      "kind": "callable",
+      "name": "_prefetchNextLecture",
+      "line": 1021
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1030
+    },
+    {
+      "kind": "callable",
+      "name": "_prepareCurrentVideo",
+      "line": 1036
+    },
+    {
+      "kind": "callable",
+      "name": "_saveVideoMetadata",
+      "line": 1038
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1042
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 1049
+    },
+    {
+      "kind": "callable",
+      "name": "_seekPlaybackTo",
+      "line": 1052
+    },
+    {
+      "kind": "callable",
+      "name": "_startWatchActivityFlushTimer",
+      "line": 1055
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 1059
+    },
+    {
+      "kind": "callable",
+      "name": "_stopWatchActivityFlushTimer",
+      "line": 1063
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1067
+    },
+    {
+      "kind": "callable",
+      "name": "_flushWatchActivity",
+      "line": 1069
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 1075
+    },
+    {
+      "kind": "callable",
+      "name": "didChangeAppLifecycleState",
+      "line": 1085
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1088
+    },
+    {
+      "kind": "callable",
+      "name": "_saveVideoMetadata",
+      "line": 1090
+    },
+    {
+      "kind": "callable",
+      "name": "LearningVideo",
+      "line": 1093
+    },
+    {
+      "kind": "callable",
+      "name": "_startActivityTracking",
+      "line": 1104
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 1109
+    },
+    {
+      "kind": "callable",
+      "name": "_stopActivityTracking",
+      "line": 1113
+    },
+    {
+      "kind": "callable",
+      "name": "_flushPlaybackData",
+      "line": 1117
+    },
+    {
+      "kind": "callable",
+      "name": "_flushPlaybackData",
+      "line": 1120
+    },
+    {
+      "kind": "callable",
+      "name": "_performActivityFlush",
+      "line": 1130
+    },
+    {
+      "kind": "callable",
+      "name": "_saveCurrentProgress",
+      "line": 1154
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1158
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 1164
+    },
+    {
+      "kind": "callable",
+      "name": "_saveCurrentProgress",
+      "line": 1173
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 1180
+    },
+    {
+      "kind": "callable",
+      "name": "_markLessonComplete",
+      "line": 1191
+    },
+    {
+      "kind": "callable",
+      "name": "_saveVideoMetadata",
+      "line": 1196
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 1199
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1217
+    },
+    {
+      "kind": "callable",
+      "name": "_saveVideoToPlaylistPrompt",
+      "line": 1221
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1229
+    },
+    {
+      "kind": "callable",
+      "name": "showDialog",
+      "line": 1235
+    },
+    {
+      "kind": "callable",
+      "name": "SimpleDialogOption",
+      "line": 1242
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1245
+    },
+    {
+      "kind": "callable",
+      "name": "_saveVideoToPlaylist",
+      "line": 1253
+    },
+    {
+      "kind": "callable",
+      "name": "LearningVideo",
+      "line": 1259
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1275
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 1283
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1298
+    },
+    {
+      "kind": "callable",
+      "name": "_cycleSpeed",
+      "line": 1304
+    },
+    {
+      "kind": "callable",
+      "name": "_buildVideoNotes",
+      "line": 1312
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1317
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1320
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1326
+    },
+    {
+      "kind": "callable",
+      "name": "Column",
+      "line": 1328
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 1331
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 1340
+    },
+    {
+      "kind": "callable",
+      "name": "_formatTime",
+      "line": 1342
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 1346
+    },
+    {
+      "kind": "callable",
+      "name": "_openVideoNote",
+      "line": 1357
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 1369
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1384
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1391
+    },
+    {
+      "kind": "callable",
+      "name": "_saveNote",
+      "line": 1396
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1402
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 1410
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1428
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1436
+    },
+    {
+      "kind": "callable",
+      "name": "_seekAndOpenNote",
+      "line": 1440
+    },
+    {
+      "kind": "callable",
+      "name": "_seekPlaybackTo",
+      "line": 1444
+    },
+    {
+      "kind": "callable",
+      "name": "_formatTime",
+      "line": 1447
+    }
+  ],
+  "screens": [
+    {
+      "name": "LearningPlayerScreen",
+      "line": 26
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "c3ff97a271abdab344b015d0256aba5951e8d7597fb011c98e71150827b1d99d"
+}

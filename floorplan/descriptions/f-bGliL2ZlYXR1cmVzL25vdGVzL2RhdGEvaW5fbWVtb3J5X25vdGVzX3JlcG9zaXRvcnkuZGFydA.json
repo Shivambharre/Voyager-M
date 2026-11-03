@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/data/in_memory_notes_repository.dart",
+  "name": "InMemoryNotesRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/features/notes/browser_notes_repository_test.dart",
+    "test/features/notes/note_editor_test.dart",
+    "test/features/notes/note_image_store_test.dart",
+    "test/features/notes/notes_home_page_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "typedef",
+      "name": "NotesLoader",
+      "line": 8
+    },
+    {
+      "kind": "typedef",
+      "name": "NotesWriter",
+      "line": 10
+    },
+    {
+      "kind": "class",
+      "name": "InMemoryNotesRepository",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "InMemoryNotesRepository",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "InMemoryNotesRepository",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "FormatException",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "jsonEncode",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "_restore",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "getNotes",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "saveNote",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "deleteNote",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "_noteToJson",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "_noteFromJson",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 138
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "b9a5b6fc167db1b12af3b37274452c1185a75b78ba100fab385086450c340025"
+}

@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/source_detector_test.dart",
+  "name": "source detector test test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 16 detected test/helper declarations and 3 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "group",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 47
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "76707ada96594bd8b98a321fe06f278b8753457ca7c8c8075da73088e2349b98"
+}

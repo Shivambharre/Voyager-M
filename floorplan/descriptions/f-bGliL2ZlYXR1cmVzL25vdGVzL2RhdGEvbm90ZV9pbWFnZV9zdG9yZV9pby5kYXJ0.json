@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/data/note_image_store_io.dart",
+  "name": "note_image_store_io data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "feature data adapter in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:path",
+    "package:path_provider"
+  ],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "saveImage",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "deleteUnusedImages",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "_imageDirectory",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "Directory",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "_supportedExtension",
+      "line": 29
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "75273b680b0729171cec4b2a00c74e3228ff69b9c0e1e91a3d0601d90ba74631"
+}

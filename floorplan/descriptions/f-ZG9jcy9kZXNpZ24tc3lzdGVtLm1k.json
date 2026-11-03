@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "docs/design-system.md",
+  "name": "design system documentation",
+  "simple": "Explains project behavior and development guidance for design system; statements should be checked against current code.",
+  "developer": "Markdown documentation file. It is context, not execution evidence; the map cross-checks claims against scanned source and tests.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "9acff832e3d31063ce7ea0dfc1e5586763abe0c0dd974fb9c392131a51a16095"
+}

@@ -45,6 +45,9 @@ dependencies:
   flutter_quill: ^11.6.0
   flutter_quill_extensions: ^11.0.0
   flutter_highlight: ^0.7.0
+  image_picker: ^1.2.4
+  highlight: ^0.7.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

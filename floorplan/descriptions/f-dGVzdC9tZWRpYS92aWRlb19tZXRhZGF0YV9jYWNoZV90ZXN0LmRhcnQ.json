@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/video_metadata_cache_test.dart",
+  "name": "video metadata cache test test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 27 detected test/helper declarations and 7 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "package:sqflite_common_ffi",
+    "lib/core/database/database.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "setUpAll",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "loadStreams",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "loadExpiredStream",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 136
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 139
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 153
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 164
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 166
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 168
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 195
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "f4da59cb3de0f77f58921667921d5593b9549cbdd6004091070a18667009f352"
+}

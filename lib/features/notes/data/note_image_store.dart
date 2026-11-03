@@ -6,12 +6,28 @@ import 'package:image_picker/image_picker.dart';
 import '../domain/notes_repository.dart';
 
 import 'note_image_store_stub.dart'
-    if (dart.library.io) 'note_image_store_io.dart' as storage;
+    if (dart.library.io) 'note_image_store_io.dart'
+    as storage;
 
 class NoteImageStore {
   NoteImageStore({ImagePicker? picker}) : _picker = picker ?? ImagePicker();
 
   final ImagePicker _picker;
+
+  bool containsLocalImage(String? contentJson) {
+    if (contentJson == null || contentJson.isEmpty) return false;
+    try {
+      final delta = jsonDecode(contentJson);
+      if (delta is! List) return false;
+      return delta.whereType<Map>().any((operation) {
+        final insert = operation['insert'];
+        if (insert is! Map || insert['image'] is! String) return false;
+        return !(insert['image'] as String).startsWith('data:image/');
+      });
+    } on FormatException {
+      return false;
+    }
+  }
 
   Future<String?> pickAndStoreImage() async {
     final selected = await _picker.pickImage(source: ImageSource.gallery);
@@ -53,9 +69,7 @@ class NoteImageStore {
     await storage.deleteUnusedImages(referencedImages);
   }
 
-  Future<void> deleteUnusedImageReferences(
-    NotesRepository repository,
-  ) async {
+  Future<void> deleteUnusedImageReferences(NotesRepository repository) async {
     await cleanUnusedImages(repository);
   }
 }

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "THIRD_PARTY_NOTICES.md",
+  "name": "THIRD PARTY NOTICES",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "Markdown file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "5026e13736767676f9fdba6c549a5a5ce79c55c28eedc5f3a93f3554b6e8f3ff"
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "docs/data-flow.md",
+  "name": "data flow documentation",
+  "simple": "Explains project behavior and development guidance for data flow; statements should be checked against current code.",
+  "developer": "Markdown documentation file. It is context, not execution evidence; the map cross-checks claims against scanned source and tests.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "df4cca1639e59b05d4ca38c92ab5aeea9dfb9a5d641cc483217a12cade4e60d8"
+}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/notes/notes_home_page_test.dart",
+  "name": "notes home page test test",
+  "simple": "Checks selected behavior around notes using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 12 detected test/helper declarations and 8 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 86
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 87
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "872aeceef063f7327eaf74b67f7385bcbf911448d2c7ba973aa5aa7db017cdcf"
+}

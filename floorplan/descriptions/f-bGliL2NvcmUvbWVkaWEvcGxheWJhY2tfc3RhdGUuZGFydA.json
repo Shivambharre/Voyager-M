@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/playback_state.dart",
+  "name": "PlayerStatus",
+  "simple": "Supports the media pipeline by defining PlayerStatus, PlayerSnapshot.",
+  "developer": "Dart file classified as media; detected declarations: PlayerStatus, PlayerSnapshot.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+    "test/features/watch_activity/watch_activity_tracker_test.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "enum",
+      "name": "PlayerStatus",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "PlayerSnapshot",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 3
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "dc29cde2c6579457a4e342df89b57ec7ee7345c481a04580fbb52ca6f68d8787"
+}

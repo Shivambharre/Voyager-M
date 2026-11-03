@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/playback_controller.dart",
+  "name": "PlaybackController",
+  "simple": "Supports the media pipeline by defining PlaybackController, DefaultPlaybackController.",
+  "developer": "Dart file classified as media; detected declarations: PlaybackController, DefaultPlaybackController.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/config/app_config.dart"
+  ],
+  "dependencies": [
+    "lib/core/config/app_config.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "PlaybackController",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 21
+    },
+    {
+      "kind": "callable",
+      "name": "prefetchVideo",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "selectLecture",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "selectStream",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 32
+    },
+    {
+      "kind": "class",
+      "name": "DefaultPlaybackController",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "DefaultPlaybackController",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 91
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "_loadPlaylist",
+      "line": 109
+    },
+    {
+      "kind": "callable",
+      "name": "_loadVideo",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "_loadPlaylist",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 124
+    },
+    {
+      "kind": "callable",
+      "name": "_loadVideo",
+      "line": 130
+    },
+    {
+      "kind": "callable",
+      "name": "_playVideo",
+      "line": 172
+    },
+    {
+      "kind": "callable",
+      "name": "prefetchVideo",
+      "line": 182
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "_prefetchVideo",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 222
+    },
+    {
+      "kind": "callable",
+      "name": "selectLecture",
+      "line": 232
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 233
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 242
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 246
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 252
+    },
+    {
+      "kind": "callable",
+      "name": "_loadVideo",
+      "line": 258
+    },
+    {
+      "kind": "callable",
+      "name": "_playVideo",
+      "line": 260
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 273
+    },
+    {
+      "kind": "callable",
+      "name": "_streamSelectionMessage",
+      "line": 279
+    },
+    {
+      "kind": "callable",
+      "name": "_considerQualityUpgrade",
+      "line": 295
+    },
+    {
+      "kind": "callable",
+      "name": "_resolveQualityInBackground",
+      "line": 298
+    },
+    {
+      "kind": "callable",
+      "name": "_considerQualityUpgrade",
+      "line": 316
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 318
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 322
+    },
+    {
+      "kind": "callable",
+      "name": "_considerQualityUpgrade",
+      "line": 330
+    },
+    {
+      "kind": "callable",
+      "name": "_isBetterQuality",
+      "line": 339
+    },
+    {
+      "kind": "callable",
+      "name": "selectStream",
+      "line": 351
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 352
+    },
+    {
+      "kind": "callable",
+      "name": "_replaceStream",
+      "line": 361
+    },
+    {
+      "kind": "callable",
+      "name": "_replaceStream",
+      "line": 363
+    },
+    {
+      "kind": "callable",
+      "name": "_upgradeTo",
+      "line": 368
+    },
+    {
+      "kind": "callable",
+      "name": "_performUpgrade",
+      "line": 389
+    },
+    {
+      "kind": "callable",
+      "name": "_replaceStream",
+      "line": 399
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 403
+    },
+    {
+      "kind": "callable",
+      "name": "_streamSelectionMessage",
+      "line": 411
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 425
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 428
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 435
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 438
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 441
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 446
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 452
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "92afc1093451c292f14db1977f81f6262a00587e1bd5a4e82034da12fc997a8d"
+}

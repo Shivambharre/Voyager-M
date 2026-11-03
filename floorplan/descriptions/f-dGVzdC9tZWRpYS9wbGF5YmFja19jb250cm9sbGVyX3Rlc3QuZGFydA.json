@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/playback_controller_test.dart",
+  "name": " FakeAdapter test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 64 detected test/helper declarations and 13 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/config/app_config.dart",
+    "lib/core/media/media_player.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/video_models.dart",
+    "lib/core/media/video_source_adapter.dart",
+    "lib/core/media/video_source_registry.dart"
+  ],
+  "dependencies": [
+    "lib/core/config/app_config.dart",
+    "lib/core/media/media_player.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/playback_state.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/video_models.dart",
+    "lib/core/media/video_source_adapter.dart",
+    "lib/core/media/video_source_registry.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "isNot",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 73
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 89
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 103
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 121
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 122
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 124
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 133
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 134
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 139
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 141
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 150
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 156
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 160
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 167
+    },
+    {
+      "kind": "callable",
+      "name": "contains",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 172
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 178
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 182
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 186
+    },
+    {
+      "kind": "class",
+      "name": "_FakeAdapter",
+      "line": 193
+    },
+    {
+      "kind": "callable",
+      "name": "getFastVideoInfo",
+      "line": 205
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 210
+    },
+    {
+      "kind": "callable",
+      "name": "canHandle",
+      "line": 225
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 228
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 230
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistInfo",
+      "line": 241
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistInfo",
+      "line": 243
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 249
+    },
+    {
+      "kind": "callable",
+      "name": "getStreams",
+      "line": 260
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 271
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 281
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 290
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 303
+    },
+    {
+      "kind": "class",
+      "name": "_FakeMediaPlayer",
+      "line": 305
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 323
+    },
+    {
+      "kind": "callable",
+      "name": "replaceStream",
+      "line": 335
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 344
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 354
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 357
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 360
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 363
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 369
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "2092287a4cb206dcc6edc181848aff129e80cff77ebcff02677e8cfa200e708f"
+}

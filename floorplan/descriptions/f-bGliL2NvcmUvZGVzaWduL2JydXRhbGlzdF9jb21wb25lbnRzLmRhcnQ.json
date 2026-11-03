@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/design/brutalist_components.dart",
+  "name": "BrutalistButton",
+  "simple": "Supports the shared visual system by defining BrutalistButton, _BrutalistButtonState, BrutalistIconButton, BrutalistCard, BrutalistSectionHeader, BrutalistChip, BrutalistProgressBar, BrutalistSearchField, BrutalistInput, BrutalistCheckbox, BrutalistEmptyState, BrutalistLoadingState, BrutalistErrorState, BrutalistListItem.",
+  "developer": "Dart file classified as design; detected declarations: BrutalistButton, _BrutalistButtonState, BrutalistIconButton, BrutalistCard, BrutalistSectionHeader, BrutalistChip, BrutalistProgressBar, BrutalistSearchField, BrutalistInput, BrutalistCheckbox, BrutalistEmptyState, BrutalistLoadingState, BrutalistErrorState, BrutalistListItem.",
+  "responsibility": "Defines shared colors, typography, themes, reusable controls, and a debug showcase.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "BrutalistButton",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 21
+    },
+    {
+      "kind": "class",
+      "name": "_BrutalistButtonState",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "BoxShadow",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 89
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 90
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistIconButton",
+      "line": 104
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistIconButton",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 121
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistCard",
+      "line": 148
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 150
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 166
+    },
+    {
+      "kind": "callable",
+      "name": "BoxShadow",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 190
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistSectionHeader",
+      "line": 203
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 205
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 211
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 212
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 214
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistChip",
+      "line": 230
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistChip",
+      "line": 232
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 244
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 268
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistProgressBar",
+      "line": 275
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistProgressBar",
+      "line": 277
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 284
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 286
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 292
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 296
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 297
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 304
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 305
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistSearchField",
+      "line": 331
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSearchField",
+      "line": 333
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 345
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 346
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistInput",
+      "line": 373
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistInput",
+      "line": 375
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 393
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 394
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistCheckbox",
+      "line": 422
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCheckbox",
+      "line": 424
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 436
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 437
+    },
+    {
+      "kind": "callable",
+      "name": "Checkbox",
+      "line": 458
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 462
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistEmptyState",
+      "line": 470
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 472
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 484
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 485
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 490
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 491
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 492
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 494
+    },
+    {
+      "kind": "callable",
+      "name": "showBrutalistDialog",
+      "line": 502
+    },
+    {
+      "kind": "callable",
+      "name": "showDialog",
+      "line": 509
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 521
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 522
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 524
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 525
+    },
+    {
+      "kind": "callable",
+      "name": "showBrutalistBottomSheet",
+      "line": 537
+    },
+    {
+      "kind": "callable",
+      "name": "showModalBottomSheet",
+      "line": 542
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistLoadingState",
+      "line": 562
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistLoadingState",
+      "line": 564
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 567
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 568
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistErrorState",
+      "line": 580
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistErrorState",
+      "line": 582
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 592
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 593
+    },
+    {
+      "kind": "class",
+      "name": "BrutalistListItem",
+      "line": 604
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 606
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 622
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 623
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 628
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 644
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 645
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 649
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 650
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 651
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "04c6254670b62a750a583e8fd5bb866b1361cb1d7321a1baa8453620f5f39050"
+}

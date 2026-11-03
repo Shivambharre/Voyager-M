@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/progress/data/sqlite_progress_repository.dart",
+  "name": "SqliteProgressRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for progress, bookmarks.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: progress, bookmarks.",
+  "responsibility": "Saves playback progress and completion and lists or removes saved playback moments.",
+  "status": "Partial",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteProgressRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteProgressRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getProgress",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "getAllProgress",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "saveProgress",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "getBookmarks",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "getAllBookmarks",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "saveBookmark",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "deleteBookmark",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "_progressFromRow",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "_bookmarkFromRow",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "LearningBookmark",
+      "line": 89
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Bookmark listing/deletion is wired in the home shell; no saveBookmark call is present in the current player screen."
+  ],
+  "lastScannedFingerprint": "c49212a78090e28ec38c45d61a98f75883925a6f71001ff0902c7fce3134eec4"
+}

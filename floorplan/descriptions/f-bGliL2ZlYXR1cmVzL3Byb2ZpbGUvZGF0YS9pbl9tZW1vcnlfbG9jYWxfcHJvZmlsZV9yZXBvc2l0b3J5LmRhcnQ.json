@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/profile/data/in_memory_local_profile_repository.dart",
+  "name": "InMemoryLocalProfileRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryLocalProfileRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getProfile",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "saveProfile",
+      "line": 10
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "59e96fc454eaf5d3ec10ceb38816f187230d5f0163a38b6828c07b0467663328"
+}

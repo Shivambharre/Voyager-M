@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/share/shared_youtube_link.dart",
+  "name": "SharedYoutubeLink",
+  "simple": "Supports the shared-link integration by defining SharedYoutubeLink.",
+  "developer": "Dart file classified as sharing; detected declarations: SharedYoutubeLink.",
+  "responsibility": "Parses incoming shared YouTube links and bridges Android share intents into Flutter.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "test/core/shared_youtube_link_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SharedYoutubeLink",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "extract",
+      "line": 6
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "2c5855be658277a13c74b587f83592156ed4bab4f31f47776a78a1345ea78519"
+}

@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/stream_selector_test.dart",
+  "name": "stream selector test test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 41 detected test/helper declarations and 3 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 43
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 91
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 96
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 99
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 117
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 123
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 125
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 134
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 141
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 144
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 149
+    },
+    {
+      "kind": "callable",
+      "name": "StreamSelectionPolicy",
+      "line": 151
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 157
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 160
+    },
+    {
+      "kind": "callable",
+      "name": "stream",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 170
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a65dde4c9b414a2e9ad0e1a694fb8a7be7ad8d41bf58b80bdb0cabd39fb9bfd2"
+}

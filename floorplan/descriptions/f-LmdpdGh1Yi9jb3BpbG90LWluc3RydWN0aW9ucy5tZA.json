@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": ".github/copilot-instructions.md",
+  "name": "copilot-instructions",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "Markdown file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "c3eed06e5b368674531120e022736d6d6d8235ce55c5425450f0a2d3f7f62583"
+}

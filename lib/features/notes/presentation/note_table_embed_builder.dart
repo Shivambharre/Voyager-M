@@ -26,9 +26,7 @@ class NoteTableEmbedBuilder extends EmbedBuilder {
           .map((row) => (row as List).map((cell) => cell.toString()).toList())
           .toList();
       return GestureDetector(
-        onTap: embedContext.readOnly
-            ? null
-            : () => onEdit(embedContext),
+        onTap: embedContext.readOnly ? null : () => onEdit(embedContext),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Table(
@@ -98,16 +96,18 @@ Future<List<List<String>>?> showNoteTableDialog(
                   for (var row = 0; row < rows.length; row++)
                     Row(
                       children: [
-                        for (var column = 0;
-                            column < rows[row].length;
-                            column++)
+                        for (
+                          var column = 0;
+                          column < rows[row].length;
+                          column++
+                        )
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.all(3),
                               child: TextField(
-                                controller: controllers[
-                                  row * rows[row].length + column
-                                ],
+                                controller:
+                                    controllers[row * rows[row].length +
+                                        column],
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
                                   hintText: 'Cell',
@@ -142,16 +142,13 @@ Future<List<List<String>>?> showNoteTableDialog(
             FilledButton(
               onPressed: () {
                 final columns = rows.first.length;
-                Navigator.pop(
-                  context,
-                  [
-                    for (var row = 0; row < rows.length; row++)
-                      [
-                        for (var column = 0; column < columns; column++)
-                          controllers[row * columns + column].text,
-                      ],
-                  ],
-                );
+                Navigator.pop(context, [
+                  for (var row = 0; row < rows.length; row++)
+                    [
+                      for (var column = 0; column < columns; column++)
+                        controllers[row * columns + column].text,
+                    ],
+                ]);
               },
               child: const Text('Save table'),
             ),

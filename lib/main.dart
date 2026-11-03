@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_quill/flutter_quill.dart'
+    show FlutterQuillLocalizations;
 
 import 'core/design/app_theme.dart';
 import 'core/di/service_locator.dart';
@@ -62,6 +64,7 @@ class _VoyagerAppState extends State<VoyagerApp> {
       title: 'VoyagerM',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
+      localizationsDelegates: FlutterQuillLocalizations.localizationsDelegates,
       themeMode: switch (_settings.appearance) {
         AppearanceMode.system => ThemeMode.system,
         AppearanceMode.light => ThemeMode.light,

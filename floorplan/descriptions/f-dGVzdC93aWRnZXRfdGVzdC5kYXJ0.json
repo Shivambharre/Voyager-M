@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/widget_test.dart",
+  "name": " FakeSharedVideoIntentSource test",
+  "simple": "Checks selected behavior around test using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 58 detected test/helper declarations and 11 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/di/service_locator.dart",
+    "lib/core/share/shared_video_intent_source.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/main.dart"
+  ],
+  "dependencies": [
+    "lib/core/di/service_locator.dart",
+    "lib/core/share/shared_video_intent_source.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/main.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "configureDependencies",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 51
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 71
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 76
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "greaterThan",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 97
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 99
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 100
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 103
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 122
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 123
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 125
+    },
+    {
+      "kind": "callable",
+      "name": "RecentWatchEntry",
+      "line": 129
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 139
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 149
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 151
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 156
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 162
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 167
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 173
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 187
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 191
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 196
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 202
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 203
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 219
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 221
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 223
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 228
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 230
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 240
+    },
+    {
+      "kind": "class",
+      "name": "_FakeSharedVideoIntentSource",
+      "line": 247
+    },
+    {
+      "kind": "callable",
+      "name": "add",
+      "line": 253
+    },
+    {
+      "kind": "callable",
+      "name": "close",
+      "line": 255
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "05e535958249f46e5ee9e6ac5d3f0cdd3b8b23cb4948a2a75b477bcff6054186"
+}

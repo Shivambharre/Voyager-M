@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+  "name": "ic launcher platform configuration",
+  "simple": "Configures the Android build or runtime integration used by VoyagerM.",
+  "developer": "XML platform/configuration file associated with Android platform integration.",
+  "responsibility": "Implements native Media3 playback, NewPipe extraction, platform channels, and incoming share intents.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "4bc373c6781b0b6cc57cf4661f4c99899addcea7b8cbb6bc9f2f646090df2678"
+}

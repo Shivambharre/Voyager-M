@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "design-agent-prompt.md",
+  "name": "design-agent-prompt",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "Markdown file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "d1c13b611a72626106ae92a7979f2348b2462bf849f65b46e8db1285f4a1d4b3"
+}

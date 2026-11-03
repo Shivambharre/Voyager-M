@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/profile/domain/local_profile.dart",
+  "name": "LocalProfile",
+  "simple": "Supports the domain feature by defining LocalProfile.",
+  "developer": "Dart file classified as feature:features:profile; detected declarations: LocalProfile.",
+  "responsibility": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/profile/data/in_memory_local_profile_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LocalProfile",
+      "line": 1
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "754676e44c4cc11213ecb25edd9d0865779dbac71c81a85936c126ab0ea79404"
+}

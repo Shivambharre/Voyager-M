@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/goals/domain/daily_goal_summary.dart",
+  "name": "DailyGoalSummary",
+  "simple": "Supports the domain feature by defining DailyGoalSummary.",
+  "developer": "Dart file classified as feature:features:goals; detected declarations: DailyGoalSummary.",
+  "responsibility": "Tracks today’s eligible playback time and manually completed lessons against local goals.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/home/presentation/app_shell.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "DailyGoalSummary",
+      "line": 1
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "e50796b5ea79e1f8f9b472bf1b0638f9fd9cd2488b0b712aad5f647d9020e7b3"
+}

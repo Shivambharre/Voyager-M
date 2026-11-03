@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "analysis_options.yaml",
+  "name": "analysis options",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "YAML file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "98d70dd5a9033911f40e2e7f3ff9d74618e2aa13652990efe860ed0fe1cedfa9"
+}

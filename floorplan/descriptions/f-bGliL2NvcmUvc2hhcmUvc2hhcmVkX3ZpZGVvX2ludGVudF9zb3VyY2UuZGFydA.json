@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/share/shared_video_intent_source.dart",
+  "name": "SharedVideoIntentSource",
+  "simple": "Supports the shared-link integration by defining SharedVideoIntentSource, AndroidSharedVideoIntentSource.",
+  "developer": "Dart file classified as sharing; detected declarations: SharedVideoIntentSource, AndroidSharedVideoIntentSource.",
+  "responsibility": "Parses incoming shared YouTube links and bridges Android share intents into Flutter.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SharedVideoIntentSource",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "AndroidSharedVideoIntentSource",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "AndroidSharedVideoIntentSource",
+      "line": 7
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "f7577d354aa8d7d5e691edcaf24a3b3a4f259933cc7ce0336158397ff9c901cf"
+}

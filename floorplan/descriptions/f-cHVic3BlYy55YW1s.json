@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "pubspec.yaml",
+  "name": "pubspec",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "YAML file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "9643f465f47de77c9fbccf69d4022356f9b41bf2465c618db140201527fea52f"
+}

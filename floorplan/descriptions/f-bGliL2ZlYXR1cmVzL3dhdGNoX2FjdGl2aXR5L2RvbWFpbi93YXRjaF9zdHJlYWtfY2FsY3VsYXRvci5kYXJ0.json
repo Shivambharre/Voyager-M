@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/domain/watch_streak_calculator.dart",
+  "name": "WatchStreakSummary",
+  "simple": "Supports the domain feature by defining WatchStreakSummary, WatchStreakCalculator.",
+  "developer": "Dart file classified as feature:features:watch_activity; detected declarations: WatchStreakSummary, WatchStreakCalculator.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/profile/presentation/profile_page.dart",
+    "test/features/watch_activity/watch_activity_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "WatchStreakSummary",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "WatchStreakSummary",
+      "line": 3
+    },
+    {
+      "kind": "class",
+      "name": "WatchStreakCalculator",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "WatchStreakCalculator",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "calculate",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "qualifies",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "WatchStreakSummary",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "_parseDateKey",
+      "line": 74
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a35c8e24bf5995443df05461b4849407c14509902af42259f506e0984682f54f"
+}

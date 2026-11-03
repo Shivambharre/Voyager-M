@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/domain/study_note.dart",
+  "name": "StudyNote",
+  "simple": "Supports the domain feature by defining StudyNote, NoteResourceType.",
+  "developer": "Dart file classified as feature:features:notes; detected declarations: StudyNote, NoteResourceType.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/presentation/note_editor_page.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/features/notes/browser_notes_repository_test.dart",
+    "test/features/notes/note_editor_test.dart",
+    "test/features/notes/note_image_store_test.dart",
+    "test/features/notes/notes_home_page_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "StudyNote",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "copyWith",
+      "line": 49
+    },
+    {
+      "kind": "enum",
+      "name": "NoteResourceType",
+      "line": 72
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "ed971b242def182460044d45ee0f1f48bab2db9f0155a50b212ce841c763226b"
+}

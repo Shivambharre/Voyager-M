@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/video_source_registry.dart",
+  "name": "VideoSourceRegistry",
+  "simple": "Supports the media pipeline by defining VideoSourceRegistry.",
+  "developer": "Dart file classified as media; detected declarations: VideoSourceRegistry.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/playback_controller_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "VideoSourceRegistry",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceRegistry",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "resolve",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "sourceKindFor",
+      "line": 29
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "2d9f98ada2f6372725e181fcd6298bfc09a0ee381b1b68dc6b8003cba344e7ce"
+}

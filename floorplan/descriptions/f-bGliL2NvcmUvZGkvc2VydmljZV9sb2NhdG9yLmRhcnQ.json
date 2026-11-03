@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/di/service_locator.dart",
+  "name": "Dependency composition root",
+  "simple": "Connects app-owned service contracts to the correct local storage and media implementations.",
+  "developer": "Registers GetIt factories/singletons, selects in-memory versus SQLite repositories, and configures PlaybackController.",
+  "responsibility": "Initializes Flutter, registers app services, loads settings, and creates the root app shell.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:get_it",
+    "lib/core/database/database.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/settings/data/in_memory_settings_repository.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/profile/data/in_memory_local_profile_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/domain/local_profile_repository.dart",
+    "lib/core/config/app_config.dart",
+    "lib/core/media/media_player.dart",
+    "lib/core/media/android_media_player.dart",
+    "lib/core/media/mit_ocw_adapter.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/newpipe_youtube_adapter.dart",
+    "lib/core/media/video_source_registry.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/settings/data/in_memory_settings_repository.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/profile/data/in_memory_local_profile_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/profile/domain/local_profile_repository.dart",
+    "lib/core/config/app_config.dart",
+    "lib/core/media/media_player.dart",
+    "lib/core/media/android_media_player.dart",
+    "lib/core/media/mit_ocw_adapter.dart",
+    "lib/core/media/playback_controller.dart",
+    "lib/core/media/stream_selector.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/core/media/newpipe_youtube_adapter.dart",
+    "lib/core/media/video_source_registry.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/features/library/library_playlist_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "configureDependencies",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 51
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "NewPipeYoutubeAdapter",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "MitOcwAdapter",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "AndroidMediaPlayer",
+      "line": 126
+    },
+    {
+      "kind": "callable",
+      "name": "_registerIfMissing",
+      "line": 138
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "d12754cb0aaa188b6f858ffcacf4f9a4f7c27b3af70643c6ed36ebfec6665b9f"
+}

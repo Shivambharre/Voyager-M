@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/history/domain/recent_watch_entry.dart",
+  "name": "RecentWatchEntry",
+  "simple": "Supports the domain feature by defining RecentWatchEntry.",
+  "developer": "Dart file classified as feature:features:history; detected declarations: RecentWatchEntry.",
+  "responsibility": "Records recently loaded lessons and presents the recent list from Home.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "RecentWatchEntry",
+      "line": 1
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "e59d0ba6078dc37b16cc31fd2452157827f8bddbb95b26748060a7c8315c8def"
+}

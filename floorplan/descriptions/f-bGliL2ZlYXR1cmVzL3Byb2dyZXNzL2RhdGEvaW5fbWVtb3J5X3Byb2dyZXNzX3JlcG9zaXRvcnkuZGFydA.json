@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/progress/data/in_memory_progress_repository.dart",
+  "name": "InMemoryProgressRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Saves playback progress and completion and lists or removes saved playback moments.",
+  "status": "Partial",
+  "importantDependencies": [
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryProgressRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getProgress",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "getAllProgress",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "saveProgress",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "getBookmarks",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "getAllBookmarks",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "saveBookmark",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "deleteBookmark",
+      "line": 49
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Bookmark listing/deletion is wired in the home shell; no saveBookmark call is present in the current player screen."
+  ],
+  "lastScannedFingerprint": "436e3ee7c76ed1018041c56f15b3392d22813bcaaae488142d89713cc46c0a99"
+}

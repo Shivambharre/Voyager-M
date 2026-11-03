@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/mit_ocw_adapter.dart",
+  "name": "MitOcwAdapter",
+  "simple": "Supports the media pipeline by defining MitOcwAdapter, on.",
+  "developer": "Dart file classified as media; detected declarations: MitOcwAdapter, on.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:html",
+    "package:html",
+    "package:http"
+  ],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/mit_ocw_adapter_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "MitOcwAdapter",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "MitOcwAdapter",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "canHandle",
+      "line": 21
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "_meta",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "getFastVideoInfo",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistInfo",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "getStreams",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 73
+    },
+    {
+      "kind": "callable",
+      "name": "_extractStreams",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "_getPage",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 86
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 92
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "_extractStreams",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 136
+    },
+    {
+      "kind": "callable",
+      "name": "_meta",
+      "line": 148
+    },
+    {
+      "kind": "callable",
+      "name": "_resolveUri",
+      "line": 161
+    },
+    {
+      "kind": "callable",
+      "name": "_isAllowedMediaHost",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "_hasSupportedExtension",
+      "line": 173
+    },
+    {
+      "kind": "callable",
+      "name": "_mimeType",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 192
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 198
+    },
+    {
+      "kind": "extension",
+      "name": "on",
+      "line": 205
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "f0ca96b13bdc52c2636bdb713beaec9eaa06d3b3f0e687dd39a8fcd057b3df5a"
+}

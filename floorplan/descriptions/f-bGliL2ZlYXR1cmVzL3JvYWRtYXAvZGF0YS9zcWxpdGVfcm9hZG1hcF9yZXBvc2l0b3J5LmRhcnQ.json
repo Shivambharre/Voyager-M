@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+  "name": "SqliteRoadmapRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for roadmaps, topics, notes.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: roadmaps, topics, notes.",
+  "responsibility": "Creates and edits roadmaps and their learning topics through a repository contract.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/roadmap/domain/roadmap.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteRoadmapRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteRoadmapRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmaps",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmap",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "saveRoadmap",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "deleteRoadmap",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "getTopicsForRoadmap",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "saveTopic",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "deleteTopic",
+      "line": 96
+    },
+    {
+      "kind": "callable",
+      "name": "_roadmapFromRow",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "_topicFromRow",
+      "line": 122
+    },
+    {
+      "kind": "callable",
+      "name": "FormatException",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "Topic",
+      "line": 129
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "179926c54107694aaf5c21f0db9e08c456cb6015b892b931bd4b78b677aaca5f"
+}

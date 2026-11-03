@@ -1,0 +1,630 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/profile/presentation/profile_page.dart",
+  "name": "ProfilePage",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: ProfilePage.",
+  "responsibility": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_streak_calculator.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_streak_calculator.dart",
+    "lib/features/profile/domain/local_profile.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "ProfilePage",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "ProfilePage",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 31
+    },
+    {
+      "kind": "class",
+      "name": "_ProfilePageState",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "_loadProfileData",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileData",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "_editProfile",
+      "line": 63
+    },
+    {
+      "kind": "callable",
+      "name": "FlutterErrorDetails",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "_openAndRefresh",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "openPage",
+      "line": 89
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 94
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 111
+    },
+    {
+      "kind": "callable",
+      "name": "_buildIdentity",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "_buildStatistics",
+      "line": 116
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 117
+    },
+    {
+      "kind": "callable",
+      "name": "_buildActivity",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 121
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 122
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 132
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 137
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 142
+    },
+    {
+      "kind": "callable",
+      "name": "Divider",
+      "line": 143
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 144
+    },
+    {
+      "kind": "callable",
+      "name": "_buildIdentity",
+      "line": 157
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 166
+    },
+    {
+      "kind": "callable",
+      "name": "CircleAvatar",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 179
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 180
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 184
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 200
+    },
+    {
+      "kind": "callable",
+      "name": "_buildStatistics",
+      "line": 209
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 211
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 213
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 221
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 222
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 230
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 231
+    },
+    {
+      "kind": "callable",
+      "name": "_buildActivity",
+      "line": 242
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 254
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 258
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 259
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 260
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 261
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 262
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 264
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 270
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 274
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 275
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 280
+    },
+    {
+      "kind": "callable",
+      "name": "SingleChildScrollView",
+      "line": 281
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 287
+    },
+    {
+      "kind": "callable",
+      "name": "_buildActivityCell",
+      "line": 292
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 295
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 308
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 309
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 312
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 313
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 315
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 325
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 326
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 330
+    },
+    {
+      "kind": "callable",
+      "name": "Wrap",
+      "line": 331
+    },
+    {
+      "kind": "callable",
+      "name": "Chip",
+      "line": 336
+    },
+    {
+      "kind": "callable",
+      "name": "_buildActivityCell",
+      "line": 348
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 364
+    },
+    {
+      "kind": "callable",
+      "name": "_showActivityDetails",
+      "line": 395
+    },
+    {
+      "kind": "callable",
+      "name": "showDialog",
+      "line": 401
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 410
+    },
+    {
+      "kind": "callable",
+      "name": "_showLocalOnlyNotice",
+      "line": 418
+    },
+    {
+      "kind": "callable",
+      "name": "showDialog",
+      "line": 420
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 429
+    },
+    {
+      "kind": "class",
+      "name": "_ProfileData",
+      "line": 438
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileData",
+      "line": 440
+    },
+    {
+      "kind": "class",
+      "name": "_StatisticCard",
+      "line": 452
+    },
+    {
+      "kind": "callable",
+      "name": "_StatisticCard",
+      "line": 454
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 467
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 468
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 474
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 475
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 476
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 483
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 484
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 485
+    },
+    {
+      "kind": "class",
+      "name": "_ProfileOption",
+      "line": 497
+    },
+    {
+      "kind": "callable",
+      "name": "_ProfileOption",
+      "line": 499
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 514
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 516
+    },
+    {
+      "kind": "class",
+      "name": "_EditProfileDialog",
+      "line": 526
+    },
+    {
+      "kind": "callable",
+      "name": "_EditProfileDialog",
+      "line": 528
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 533
+    },
+    {
+      "kind": "class",
+      "name": "_EditProfileDialogState",
+      "line": 535
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 546
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 551
+    },
+    {
+      "kind": "callable",
+      "name": "RegExp",
+      "line": 555
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 559
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 566
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 571
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 576
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 582
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 583
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 591
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 595
+    },
+    {
+      "kind": "callable",
+      "name": "_formatEligibleTime",
+      "line": 599
+    },
+    {
+      "kind": "callable",
+      "name": "_formatDate",
+      "line": 607
+    }
+  ],
+  "screens": [
+    {
+      "name": "ProfilePage",
+      "line": 11
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "8408602b61fb8657ca355978c8ed5bb249b72c8da1c203ad4533a0ebf601004e"
+}

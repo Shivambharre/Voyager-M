@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/architecture/mock_mode_test.dart",
+  "name": "mock mode test test",
+  "simple": "Checks selected behavior around architecture using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 28 detected test/helper declarations and 14 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/di/service_locator.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/profile/domain/local_profile_repository.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "configureDependencies",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "isA",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "isA",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "isA",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "isA",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "isA",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 51
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 57
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 96
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 97
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "c3342f22c79e1c303ea8a1d95ededf82caeb78d70040216ef342ae4559464cd1"
+}

@@ -1,0 +1,1526 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-03T04:26:10.741Z",
+  "repository": {
+    "name": "VoyagerM",
+    "commit": "6a21d9fadd04",
+    "branch": "main"
+  },
+  "project": {
+    "name": "VoyagerM",
+    "summary": "A local-first Flutter learning app for roadmaps, saved learning materials, study notes, and supported YouTube/MIT OpenCourseWare playback.",
+    "architectureNote": "No backend service or REST API is inferred; storage and playback boundaries are local repositories and platform media integrations.",
+    "explanationModes": [
+      "simple",
+      "developer"
+    ],
+    "evidencePolicy": "Source imports, declarations, repository registrations, platform channels, and schema statements are source-backed. Curated workflows are marked partial where source wiring is incomplete."
+  },
+  "components": [
+    {
+      "id": "runtime",
+      "parentId": "app",
+      "name": "Startup & dependency wiring",
+      "kind": "infrastructure",
+      "path": "lib/main.dart",
+      "summary": "Initializes Flutter, registers app services, loads settings, and creates the root app shell.",
+      "developerSummary": "The composition root configures GetIt, resolves initial settings, and constructs VoyagerApp/AppShell.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/main.dart",
+        "lib/core/di/service_locator.dart"
+      ],
+      "files": [
+        "lib/core/di/service_locator.dart",
+        "lib/main.dart"
+      ]
+    },
+    {
+      "id": "feature-home",
+      "parentId": "app",
+      "name": "Home & navigation",
+      "kind": "ui",
+      "path": "lib/features/home/",
+      "summary": "Hosts the main tabs and opens the app’s library, history, progress, bookmarks, profile, and player flows.",
+      "developerSummary": "AppShell owns tab selection and routes secondary screens through Navigator/MaterialPageRoute.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/home/presentation/app_shell.dart"
+      ],
+      "files": [
+        "lib/features/home/presentation/app_shell.dart"
+      ]
+    },
+    {
+      "id": "feature-roadmap",
+      "parentId": "app",
+      "name": "Roadmaps",
+      "kind": "domain",
+      "path": "lib/features/roadmap/",
+      "summary": "Creates and edits roadmaps and their learning topics through a repository contract.",
+      "developerSummary": "RoadmapsPage uses RoadmapRepository for roadmap/topic CRUD and completion confirmation.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/roadmap/domain/roadmap_repository.dart",
+        "lib/features/roadmap/presentation/roadmaps_page.dart"
+      ],
+      "files": [
+        "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+        "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+        "lib/features/roadmap/domain/roadmap_repository.dart",
+        "lib/features/roadmap/domain/roadmap.dart",
+        "lib/features/roadmap/presentation/roadmaps_page.dart"
+      ]
+    },
+    {
+      "id": "feature-library",
+      "parentId": "app",
+      "name": "Learning library",
+      "kind": "data",
+      "path": "lib/features/library/",
+      "summary": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+      "developerSummary": "The library contract has SQLite and in-memory implementations; screens save and resolve content through it.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/library/domain/learning_library_repository.dart",
+        "lib/features/library/presentation/playlist_detail_page.dart"
+      ],
+      "files": [
+        "lib/features/library/data/in_memory_learning_library_repository.dart",
+        "lib/features/library/data/sqlite_learning_library_repository.dart",
+        "lib/features/library/domain/learning_content.dart",
+        "lib/features/library/domain/learning_library_repository.dart",
+        "lib/features/library/presentation/playlist_detail_page.dart"
+      ]
+    },
+    {
+      "id": "feature-notes",
+      "parentId": "app",
+      "name": "Study notes",
+      "kind": "data",
+      "path": "lib/features/notes/",
+      "summary": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+      "developerSummary": "NotesRepository is used by NotesHomePage, NoteEditorPage, and the player; images are stored as local files on IO platforms and inline data URLs in Web notes.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/notes/domain/notes_repository.dart",
+        "lib/features/notes/presentation/note_editor_page.dart"
+      ],
+      "notes": [
+        "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+        "This does not imply support for arbitrary file attachments."
+      ],
+      "files": [
+        "lib/features/notes/data/browser_note_storage_stub.dart",
+        "lib/features/notes/data/browser_note_storage_web.dart",
+        "lib/features/notes/data/in_memory_notes_repository.dart",
+        "lib/features/notes/data/note_image_store_io.dart",
+        "lib/features/notes/data/note_image_store_stub.dart",
+        "lib/features/notes/data/note_image_store.dart",
+        "lib/features/notes/data/sqlite_notes_repository.dart",
+        "lib/features/notes/domain/notes_repository.dart",
+        "lib/features/notes/domain/study_note.dart",
+        "lib/features/notes/presentation/note_editor_page.dart",
+        "lib/features/notes/presentation/note_table_embed_builder.dart",
+        "lib/features/notes/presentation/notes_home_page.dart"
+      ]
+    },
+    {
+      "id": "feature-progress",
+      "parentId": "app",
+      "name": "Progress & bookmarks",
+      "kind": "data",
+      "path": "lib/features/progress/",
+      "summary": "Saves playback progress and completion and lists or removes saved playback moments.",
+      "developerSummary": "ProgressRepository has SQLite/in-memory implementations; player writes progress, but no active player call creates bookmarks.",
+      "status": "Partial",
+      "evidence": [
+        "lib/features/progress/domain/progress_repository.dart",
+        "lib/features/home/presentation/app_shell.dart"
+      ],
+      "notes": [
+        "Bookmark listing/deletion is wired in the home shell; no saveBookmark call is present in the current player screen."
+      ],
+      "files": [
+        "lib/features/progress/data/in_memory_progress_repository.dart",
+        "lib/features/progress/data/sqlite_progress_repository.dart",
+        "lib/features/progress/domain/learning_progress.dart",
+        "lib/features/progress/domain/progress_repository.dart"
+      ]
+    },
+    {
+      "id": "feature-history",
+      "parentId": "app",
+      "name": "Recent watch history",
+      "kind": "data",
+      "path": "lib/features/history/",
+      "summary": "Records recently loaded lessons and presents the recent list from Home.",
+      "developerSummary": "RecentWatchHistoryRepository is injected into the player and read by the home history page.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/history/domain/recent_watch_history_repository.dart",
+        "lib/features/player/presentation/learning_player_screen.dart"
+      ],
+      "files": [
+        "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+        "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+        "lib/features/history/domain/recent_watch_entry.dart",
+        "lib/features/history/domain/recent_watch_history_repository.dart"
+      ]
+    },
+    {
+      "id": "feature-goals",
+      "parentId": "app",
+      "name": "Daily goals",
+      "kind": "data",
+      "path": "lib/features/goals/",
+      "summary": "Tracks today’s eligible playback time and manually completed lessons against local goals.",
+      "developerSummary": "DailyGoalRepository is registered centrally, updated by player activity/completion, and read by Home/Settings.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/goals/domain/daily_goal_repository.dart",
+        "lib/features/player/presentation/learning_player_screen.dart"
+      ],
+      "files": [
+        "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+        "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+        "lib/features/goals/domain/daily_goal_repository.dart",
+        "lib/features/goals/domain/daily_goal_summary.dart"
+      ]
+    },
+    {
+      "id": "feature-watch-activity",
+      "parentId": "app",
+      "name": "Watch activity & streaks",
+      "kind": "domain",
+      "path": "lib/features/watch_activity/",
+      "summary": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+      "developerSummary": "WatchActivityTracker consumes player snapshots; repositories persist date-keyed totals and WatchStreakCalculator derives streaks.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+        "lib/features/watch_activity/domain/watch_streak_calculator.dart"
+      ],
+      "files": [
+        "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+        "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+        "lib/features/watch_activity/domain/watch_activity_repository.dart",
+        "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+        "lib/features/watch_activity/domain/watch_activity.dart",
+        "lib/features/watch_activity/domain/watch_calendar.dart",
+        "lib/features/watch_activity/domain/watch_streak_calculator.dart"
+      ]
+    },
+    {
+      "id": "feature-profile",
+      "parentId": "app",
+      "name": "Local profile",
+      "kind": "data",
+      "path": "lib/features/profile/",
+      "summary": "Stores a local display name and username and shows watch activity; there is no cloud account.",
+      "developerSummary": "ProfilePage composes LocalProfileRepository with WatchActivityRepository and WatchStreakCalculator.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/profile/domain/local_profile_repository.dart",
+        "lib/features/profile/presentation/profile_page.dart"
+      ],
+      "files": [
+        "lib/features/profile/data/in_memory_local_profile_repository.dart",
+        "lib/features/profile/data/sqlite_local_profile_repository.dart",
+        "lib/features/profile/domain/local_profile_repository.dart",
+        "lib/features/profile/domain/local_profile.dart",
+        "lib/features/profile/presentation/profile_page.dart"
+      ]
+    },
+    {
+      "id": "feature-settings",
+      "parentId": "app",
+      "name": "Settings",
+      "kind": "configuration",
+      "path": "lib/features/settings/",
+      "summary": "Persists appearance, playback, resume, completion-confirmation, and daily-goal preferences locally.",
+      "developerSummary": "SettingsRepository is loaded before runApp and updated by the settings screen through VoyagerApp.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/settings/domain/settings_repository.dart",
+        "lib/main.dart"
+      ],
+      "files": [
+        "lib/features/settings/data/in_memory_settings_repository.dart",
+        "lib/features/settings/data/sqlite_settings_repository.dart",
+        "lib/features/settings/domain/learning_settings.dart",
+        "lib/features/settings/domain/settings_repository.dart"
+      ]
+    },
+    {
+      "id": "feature-player",
+      "parentId": "app",
+      "name": "Learning player",
+      "kind": "ui",
+      "path": "lib/features/player/",
+      "summary": "Connects lesson loading, playback controls, note saving, history, progress, and eligible watch-time tracking.",
+      "developerSummary": "LearningPlayerScreen is the UI boundary around PlaybackController and injected repository contracts.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/features/player/presentation/learning_player_screen.dart"
+      ],
+      "files": [
+        "lib/features/player/presentation/learning_player_screen.dart"
+      ]
+    },
+    {
+      "id": "media",
+      "parentId": "app",
+      "name": "Media source & playback",
+      "kind": "infrastructure",
+      "path": "lib/core/media/",
+      "summary": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+      "developerSummary": "DefaultPlaybackController composes SourceDetector, VideoSourceRegistry, adapters, StreamSelectionPolicy, cache, and MediaPlayer.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/core/media/playback_controller.dart",
+        "lib/core/media/source_detector.dart",
+        "lib/core/media/video_source_registry.dart"
+      ],
+      "external": [
+        "YouTube",
+        "MIT OpenCourseWare"
+      ],
+      "files": [
+        "lib/core/media/android_media_player.dart",
+        "lib/core/media/media_player.dart",
+        "lib/core/media/mit_ocw_adapter.dart",
+        "lib/core/media/newpipe_youtube_adapter.dart",
+        "lib/core/media/playback_controller.dart",
+        "lib/core/media/playback_state.dart",
+        "lib/core/media/source_detector.dart",
+        "lib/core/media/stream_selector.dart",
+        "lib/core/media/video_metadata_cache.dart",
+        "lib/core/media/video_models.dart",
+        "lib/core/media/video_source_adapter.dart",
+        "lib/core/media/video_source_registry.dart",
+        "lib/core/media/youtube_adapter.dart"
+      ]
+    },
+    {
+      "id": "persistence",
+      "parentId": "app",
+      "name": "SQLite & persistence",
+      "kind": "data",
+      "path": "lib/core/database/",
+      "summary": "Provides the app-owned database contract and SQLite schema/migrations used by local repositories.",
+      "developerSummary": "AppDatabase abstracts sqflite; SqfliteAppDatabase owns schema version 7, migrations, indexes, and transactions.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/core/database/database.dart"
+      ],
+      "external": [
+        "SQLite"
+      ],
+      "files": [
+        "lib/core/database/database.dart"
+      ]
+    },
+    {
+      "id": "design",
+      "parentId": "app",
+      "name": "Design system",
+      "kind": "ui",
+      "path": "lib/core/design/",
+      "summary": "Defines shared colors, typography, themes, reusable controls, and a debug showcase.",
+      "developerSummary": "DesignTokens feeds AppTheme and shared controls; DesignSystemShowcase is opened only in debug builds.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/core/design/design_tokens.dart",
+        "lib/core/design/app_theme.dart"
+      ],
+      "files": [
+        "lib/core/design/app_theme.dart",
+        "lib/core/design/brutalist_components.dart",
+        "lib/core/design/design_system_showcase.dart",
+        "lib/core/design/design_tokens.dart"
+      ]
+    },
+    {
+      "id": "sharing",
+      "parentId": "app",
+      "name": "Shared links",
+      "kind": "infrastructure",
+      "path": "lib/core/share/",
+      "summary": "Parses incoming shared YouTube links and bridges Android share intents into Flutter.",
+      "developerSummary": "SharedYoutubeLink validates supported links; AndroidSharedVideoIntentSource consumes the EventChannel contract.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/core/share/shared_youtube_link.dart",
+        "lib/core/share/shared_video_intent_source.dart"
+      ],
+      "files": [
+        "lib/core/share/shared_video_intent_source.dart",
+        "lib/core/share/shared_youtube_link.dart"
+      ]
+    },
+    {
+      "id": "configuration",
+      "parentId": "app",
+      "name": "App configuration",
+      "kind": "configuration",
+      "path": "lib/core/config/",
+      "summary": "Reads build-time configuration used to enable or disable supported media extraction.",
+      "developerSummary": "AppConfig reads compile-time environment values; it does not define a server or cloud configuration.",
+      "status": "Implemented",
+      "evidence": [
+        "lib/core/config/app_config.dart"
+      ],
+      "files": [
+        "lib/core/config/app_config.dart"
+      ]
+    },
+    {
+      "id": "android",
+      "parentId": "app",
+      "name": "Android platform",
+      "kind": "infrastructure",
+      "path": "android/",
+      "summary": "Implements native Media3 playback, NewPipe extraction, platform channels, and incoming share intents.",
+      "developerSummary": "MainActivity registers player/extractor/share channels and a platform view; Gradle adds Media3 and NewPipe.",
+      "status": "Implemented",
+      "evidence": [
+        "android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt",
+        "android/app/src/main/AndroidManifest.xml"
+      ],
+      "external": [
+        "Android Media3",
+        "NewPipe Extractor"
+      ],
+      "files": [
+        "android/app/build.gradle.kts",
+        "android/app/src/debug/AndroidManifest.xml",
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/kotlin/com/voyager/voyager_learning/AudioTrackSelection.kt",
+        "android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt",
+        "android/app/src/main/res/drawable-v21/launch_background.xml",
+        "android/app/src/main/res/drawable/launch_background.xml",
+        "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+        "android/app/src/main/res/values-night/styles.xml",
+        "android/app/src/main/res/values-v31/styles.xml",
+        "android/app/src/main/res/values/styles.xml",
+        "android/app/src/main/res/values/voyager_icon_colors.xml",
+        "android/app/src/profile/AndroidManifest.xml",
+        "android/app/src/test/kotlin/com/voyager/voyager_learning/AudioTrackSelectionTest.kt",
+        "android/build.gradle.kts",
+        "android/gradle.properties",
+        "android/gradle/wrapper/gradle-wrapper.properties",
+        "android/settings.gradle.kts"
+      ]
+    },
+    {
+      "id": "web",
+      "parentId": "app",
+      "name": "Web preview",
+      "kind": "infrastructure",
+      "path": "web/",
+      "summary": "Provides Flutter Web bootstrap assets; repository selection uses in-memory stores on Web by default.",
+      "developerSummary": "Web is a Flutter target; this directory does not contain a separate backend or custom web API.",
+      "status": "Implemented",
+      "evidence": [
+        "web/index.html",
+        "lib/core/di/service_locator.dart"
+      ],
+      "files": [
+        "web/index.html",
+        "web/manifest.json"
+      ]
+    },
+    {
+      "id": "tests",
+      "parentId": "app",
+      "name": "Automated tests",
+      "kind": "test",
+      "path": "test/",
+      "summary": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+      "developerSummary": "Flutter tests use fakes/in-memory repositories; live provider extraction and Android device playback are not established by these tests.",
+      "status": "Implemented",
+      "evidence": [
+        "test/architecture/mock_mode_test.dart",
+        "test/media/playback_controller_test.dart"
+      ],
+      "files": [
+        "test/architecture/mock_mode_test.dart",
+        "test/core/shared_youtube_link_test.dart",
+        "test/database/sqlite_repositories_test.dart",
+        "test/features/library/library_playlist_test.dart",
+        "test/features/notes/browser_notes_repository_test.dart",
+        "test/features/notes/note_editor_test.dart",
+        "test/features/notes/note_image_store_test.dart",
+        "test/features/notes/notes_home_page_test.dart",
+        "test/features/watch_activity/watch_activity_test.dart",
+        "test/features/watch_activity/watch_activity_tracker_test.dart",
+        "test/media/mit_ocw_adapter_test.dart",
+        "test/media/newpipe_youtube_adapter_test.dart",
+        "test/media/playback_controller_test.dart",
+        "test/media/player_features_test.dart",
+        "test/media/source_detector_test.dart",
+        "test/media/stream_selector_test.dart",
+        "test/media/video_metadata_cache_test.dart",
+        "test/widget_test.dart"
+      ]
+    },
+    {
+      "id": "project-config",
+      "parentId": "app",
+      "name": "Project configuration & docs",
+      "kind": "configuration",
+      "path": "",
+      "summary": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+      "developerSummary": "Includes pubspec/analyzer configuration, platform build files, and project documentation. Documentation is not treated as proof of execution.",
+      "status": "Verified in part",
+      "evidence": [
+        "pubspec.yaml",
+        "analysis_options.yaml"
+      ],
+      "notes": [
+        "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+      ],
+      "files": [
+        ".github/copilot-instructions.md",
+        "analysis_options.yaml",
+        "design-agent-prompt.md",
+        "docs/ai-development-rules.md",
+        "docs/architecture.md",
+        "docs/data-flow.md",
+        "docs/database.md",
+        "docs/decisions.md",
+        "docs/design-system.md",
+        "docs/development-roadmap.md",
+        "docs/development-workflow.md",
+        "docs/implementation-status.md",
+        "docs/media-provider.md",
+        "docs/modules.md",
+        "docs/player.md",
+        "docs/testing.md",
+        "pubspec.yaml",
+        "README.md",
+        "THIRD_PARTY_NOTICES.md",
+        "TODO.md"
+      ]
+    }
+  ],
+  "fileAssignments": {
+    ".github/copilot-instructions.md": "project-config",
+    "analysis_options.yaml": "project-config",
+    "android/app/build.gradle.kts": "android",
+    "android/app/src/debug/AndroidManifest.xml": "android",
+    "android/app/src/main/AndroidManifest.xml": "android",
+    "android/app/src/main/kotlin/com/voyager/voyager_learning/AudioTrackSelection.kt": "android",
+    "android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt": "android",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "android",
+    "android/app/src/main/res/drawable/launch_background.xml": "android",
+    "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": "android",
+    "android/app/src/main/res/values-night/styles.xml": "android",
+    "android/app/src/main/res/values-v31/styles.xml": "android",
+    "android/app/src/main/res/values/styles.xml": "android",
+    "android/app/src/main/res/values/voyager_icon_colors.xml": "android",
+    "android/app/src/profile/AndroidManifest.xml": "android",
+    "android/app/src/test/kotlin/com/voyager/voyager_learning/AudioTrackSelectionTest.kt": "android",
+    "android/build.gradle.kts": "android",
+    "android/gradle.properties": "android",
+    "android/gradle/wrapper/gradle-wrapper.properties": "android",
+    "android/settings.gradle.kts": "android",
+    "design-agent-prompt.md": "project-config",
+    "docs/ai-development-rules.md": "project-config",
+    "docs/architecture.md": "project-config",
+    "docs/data-flow.md": "project-config",
+    "docs/database.md": "project-config",
+    "docs/decisions.md": "project-config",
+    "docs/design-system.md": "project-config",
+    "docs/development-roadmap.md": "project-config",
+    "docs/development-workflow.md": "project-config",
+    "docs/implementation-status.md": "project-config",
+    "docs/media-provider.md": "project-config",
+    "docs/modules.md": "project-config",
+    "docs/player.md": "project-config",
+    "docs/testing.md": "project-config",
+    "lib/core/config/app_config.dart": "configuration",
+    "lib/core/database/database.dart": "persistence",
+    "lib/core/design/app_theme.dart": "design",
+    "lib/core/design/brutalist_components.dart": "design",
+    "lib/core/design/design_system_showcase.dart": "design",
+    "lib/core/design/design_tokens.dart": "design",
+    "lib/core/di/service_locator.dart": "runtime",
+    "lib/core/media/android_media_player.dart": "media",
+    "lib/core/media/media_player.dart": "media",
+    "lib/core/media/mit_ocw_adapter.dart": "media",
+    "lib/core/media/newpipe_youtube_adapter.dart": "media",
+    "lib/core/media/playback_controller.dart": "media",
+    "lib/core/media/playback_state.dart": "media",
+    "lib/core/media/source_detector.dart": "media",
+    "lib/core/media/stream_selector.dart": "media",
+    "lib/core/media/video_metadata_cache.dart": "media",
+    "lib/core/media/video_models.dart": "media",
+    "lib/core/media/video_source_adapter.dart": "media",
+    "lib/core/media/video_source_registry.dart": "media",
+    "lib/core/media/youtube_adapter.dart": "media",
+    "lib/core/share/shared_video_intent_source.dart": "sharing",
+    "lib/core/share/shared_youtube_link.dart": "sharing",
+    "lib/features/goals/data/in_memory_daily_goal_repository.dart": "feature-goals",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart": "feature-goals",
+    "lib/features/goals/domain/daily_goal_repository.dart": "feature-goals",
+    "lib/features/goals/domain/daily_goal_summary.dart": "feature-goals",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart": "feature-history",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart": "feature-history",
+    "lib/features/history/domain/recent_watch_entry.dart": "feature-history",
+    "lib/features/history/domain/recent_watch_history_repository.dart": "feature-history",
+    "lib/features/home/presentation/app_shell.dart": "feature-home",
+    "lib/features/library/data/in_memory_learning_library_repository.dart": "feature-library",
+    "lib/features/library/data/sqlite_learning_library_repository.dart": "feature-library",
+    "lib/features/library/domain/learning_content.dart": "feature-library",
+    "lib/features/library/domain/learning_library_repository.dart": "feature-library",
+    "lib/features/library/presentation/playlist_detail_page.dart": "feature-library",
+    "lib/features/notes/data/browser_note_storage_stub.dart": "feature-notes",
+    "lib/features/notes/data/browser_note_storage_web.dart": "feature-notes",
+    "lib/features/notes/data/in_memory_notes_repository.dart": "feature-notes",
+    "lib/features/notes/data/note_image_store_io.dart": "feature-notes",
+    "lib/features/notes/data/note_image_store_stub.dart": "feature-notes",
+    "lib/features/notes/data/note_image_store.dart": "feature-notes",
+    "lib/features/notes/data/sqlite_notes_repository.dart": "feature-notes",
+    "lib/features/notes/domain/notes_repository.dart": "feature-notes",
+    "lib/features/notes/domain/study_note.dart": "feature-notes",
+    "lib/features/notes/presentation/note_editor_page.dart": "feature-notes",
+    "lib/features/notes/presentation/note_table_embed_builder.dart": "feature-notes",
+    "lib/features/notes/presentation/notes_home_page.dart": "feature-notes",
+    "lib/features/player/presentation/learning_player_screen.dart": "feature-player",
+    "lib/features/profile/data/in_memory_local_profile_repository.dart": "feature-profile",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart": "feature-profile",
+    "lib/features/profile/domain/local_profile_repository.dart": "feature-profile",
+    "lib/features/profile/domain/local_profile.dart": "feature-profile",
+    "lib/features/profile/presentation/profile_page.dart": "feature-profile",
+    "lib/features/progress/data/in_memory_progress_repository.dart": "feature-progress",
+    "lib/features/progress/data/sqlite_progress_repository.dart": "feature-progress",
+    "lib/features/progress/domain/learning_progress.dart": "feature-progress",
+    "lib/features/progress/domain/progress_repository.dart": "feature-progress",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart": "feature-roadmap",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart": "feature-roadmap",
+    "lib/features/roadmap/domain/roadmap_repository.dart": "feature-roadmap",
+    "lib/features/roadmap/domain/roadmap.dart": "feature-roadmap",
+    "lib/features/roadmap/presentation/roadmaps_page.dart": "feature-roadmap",
+    "lib/features/settings/data/in_memory_settings_repository.dart": "feature-settings",
+    "lib/features/settings/data/sqlite_settings_repository.dart": "feature-settings",
+    "lib/features/settings/domain/learning_settings.dart": "feature-settings",
+    "lib/features/settings/domain/settings_repository.dart": "feature-settings",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart": "feature-watch-activity",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart": "feature-watch-activity",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart": "feature-watch-activity",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart": "feature-watch-activity",
+    "lib/features/watch_activity/domain/watch_activity.dart": "feature-watch-activity",
+    "lib/features/watch_activity/domain/watch_calendar.dart": "feature-watch-activity",
+    "lib/features/watch_activity/domain/watch_streak_calculator.dart": "feature-watch-activity",
+    "lib/main.dart": "runtime",
+    "pubspec.yaml": "project-config",
+    "README.md": "project-config",
+    "test/architecture/mock_mode_test.dart": "tests",
+    "test/core/shared_youtube_link_test.dart": "tests",
+    "test/database/sqlite_repositories_test.dart": "tests",
+    "test/features/library/library_playlist_test.dart": "tests",
+    "test/features/notes/browser_notes_repository_test.dart": "tests",
+    "test/features/notes/note_editor_test.dart": "tests",
+    "test/features/notes/note_image_store_test.dart": "tests",
+    "test/features/notes/notes_home_page_test.dart": "tests",
+    "test/features/watch_activity/watch_activity_test.dart": "tests",
+    "test/features/watch_activity/watch_activity_tracker_test.dart": "tests",
+    "test/media/mit_ocw_adapter_test.dart": "tests",
+    "test/media/newpipe_youtube_adapter_test.dart": "tests",
+    "test/media/playback_controller_test.dart": "tests",
+    "test/media/player_features_test.dart": "tests",
+    "test/media/source_detector_test.dart": "tests",
+    "test/media/stream_selector_test.dart": "tests",
+    "test/media/video_metadata_cache_test.dart": "tests",
+    "test/widget_test.dart": "tests",
+    "THIRD_PARTY_NOTICES.md": "project-config",
+    "TODO.md": "project-config",
+    "web/index.html": "web",
+    "web/manifest.json": "web"
+  },
+  "workflows": [
+    {
+      "id": "startup",
+      "name": "Application startup",
+      "summary": "Flutter initializes, repositories and media services are registered, saved settings are loaded, and the app shell is shown.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Initialize Flutter",
+          "simple": "Prepare Flutter before the app uses plugins.",
+          "developer": "main() calls WidgetsFlutterBinding.ensureInitialized().",
+          "filePaths": [
+            "lib/main.dart"
+          ],
+          "componentIds": [
+            "runtime"
+          ]
+        },
+        {
+          "title": "Register services",
+          "simple": "Choose app storage and create the media services the screens will use.",
+          "developer": "configureDependencies() registers in-memory or SQLite repositories and a PlaybackController factory in GetIt.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "persistence",
+            "media"
+          ]
+        },
+        {
+          "title": "Load settings",
+          "simple": "Read the saved appearance and playback preferences.",
+          "developer": "main() resolves SettingsRepository and awaits getSettings() before runApp.",
+          "filePaths": [
+            "lib/main.dart",
+            "lib/features/settings/domain/settings_repository.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "feature-settings"
+          ]
+        },
+        {
+          "title": "Build the UI",
+          "simple": "Show VoyagerApp and its main navigation shell.",
+          "developer": "VoyagerApp builds MaterialApp and AppShell with the selected settings and repositories.",
+          "filePaths": [
+            "lib/main.dart",
+            "lib/features/home/presentation/app_shell.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "feature-home",
+            "design"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "storage-selection",
+      "name": "Select local storage",
+      "summary": "The composition root chooses in-memory repositories for Web/mock mode and SQLite otherwise.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Choose mode",
+          "simple": "Web uses temporary in-memory data by default; tests can request the same mode.",
+          "developer": "shouldUseMocks is useMocks ?? kIsWeb; this is not a blanket “all non-Android is Web” check.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "web"
+          ]
+        },
+        {
+          "title": "Register store implementations",
+          "simple": "The app connects each repository contract to an in-memory or SQLite implementation.",
+          "developer": "GetIt registrations pair feature repository interfaces with implementations; SQLite initialization is skipped in mock mode.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "feature-roadmap",
+            "feature-library",
+            "feature-notes",
+            "feature-progress",
+            "feature-settings",
+            "feature-history",
+            "feature-goals",
+            "feature-watch-activity",
+            "feature-profile",
+            "persistence"
+          ]
+        },
+        {
+          "title": "Initialize SQLite when selected",
+          "simple": "The SQLite branch opens the versioned local database.",
+          "developer": "SqfliteAppDatabase.initialize() opens the v7 database with foreign keys enabled and upgrade callbacks.",
+          "filePaths": [
+            "lib/core/database/database.dart"
+          ],
+          "componentIds": [
+            "persistence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roadmap",
+      "name": "Open roadmaps",
+      "summary": "The main shell shows RoadmapsPage with the roadmap repository selected during app setup.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Select Roadmaps",
+          "simple": "Choose the Roadmaps tab in the main navigation.",
+          "developer": "AppShell selects RoadmapsPage in the tab list and passes its repository and completion setting.",
+          "filePaths": [
+            "lib/features/home/presentation/app_shell.dart"
+          ],
+          "componentIds": [
+            "feature-home",
+            "feature-roadmap"
+          ]
+        },
+        {
+          "title": "Read or update topics",
+          "simple": "The page loads roadmaps and saves topic changes through its repository.",
+          "developer": "RoadmapsPage calls RoadmapRepository; it does not issue SQLite queries directly.",
+          "filePaths": [
+            "lib/features/roadmap/presentation/roadmaps_page.dart",
+            "lib/features/roadmap/domain/roadmap_repository.dart"
+          ],
+          "componentIds": [
+            "feature-roadmap"
+          ]
+        },
+        {
+          "title": "Persist through the selected implementation",
+          "simple": "The selected repository stores changes in memory or SQLite.",
+          "developer": "The composition root registers InMemoryRoadmapRepository or SqliteRoadmapRepository backed by AppDatabase.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart",
+            "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+            "lib/features/roadmap/data/in_memory_roadmap_repository.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "feature-roadmap",
+            "persistence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save-playlist",
+      "name": "Save a playlist",
+      "summary": "The player resolves playlist metadata and entries, then saves them via the learning-library contract.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Load playlist source",
+          "simple": "Paste or open a supported playlist link in the player.",
+          "developer": "LearningPlayerScreen delegates source loading to PlaybackController and handles PlaylistInfo.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/core/media/playback_controller.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "media"
+          ]
+        },
+        {
+          "title": "Resolve entries",
+          "simple": "The selected adapter turns the provider response into app-owned playlist and video models.",
+          "developer": "The source registry selects an adapter; platform-specific extraction is hidden behind VideoSourceAdapter.",
+          "filePaths": [
+            "lib/core/media/video_source_registry.dart",
+            "lib/core/media/video_source_adapter.dart",
+            "lib/core/media/newpipe_youtube_adapter.dart"
+          ],
+          "componentIds": [
+            "media",
+            "android"
+          ]
+        },
+        {
+          "title": "Save library records",
+          "simple": "The player writes the playlist, its videos, and their order through the library repository.",
+          "developer": "The player calls LearningLibraryRepository methods; the selected implementation stores the playlist and ordered entries.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/features/library/domain/learning_library_repository.dart",
+            "lib/features/library/data/sqlite_learning_library_repository.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "feature-library",
+            "persistence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "play-video",
+      "name": "Load and play a lesson",
+      "summary": "A supported YouTube or MIT OCW URL is identified, resolved, converted into a selected stream, and sent to a platform player.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Accept a supported link",
+          "simple": "The player checks the pasted link and recognizes supported YouTube or MIT OCW sources.",
+          "developer": "LearningPlayerScreen calls DefaultPlaybackController; SourceDetector validates the URL and produces a SourceDescriptor.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/core/media/source_detector.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "media"
+          ]
+        },
+        {
+          "title": "Select a provider adapter",
+          "simple": "The registry chooses the adapter that understands this source.",
+          "developer": "VideoSourceRegistry selects NewPipeYoutubeAdapter or MitOcwAdapter through VideoSourceAdapter.",
+          "filePaths": [
+            "lib/core/media/video_source_registry.dart",
+            "lib/core/media/newpipe_youtube_adapter.dart",
+            "lib/core/media/mit_ocw_adapter.dart"
+          ],
+          "componentIds": [
+            "media",
+            "android"
+          ]
+        },
+        {
+          "title": "Choose a playable stream",
+          "simple": "The app picks a supported stream with the required audio/video tracks.",
+          "developer": "StreamSelectionPolicy filters supported MIME types/resolution and PlaybackController requests stream replacement when needed.",
+          "filePaths": [
+            "lib/core/media/stream_selector.dart",
+            "lib/core/media/playback_controller.dart"
+          ],
+          "componentIds": [
+            "media"
+          ]
+        },
+        {
+          "title": "Start platform playback",
+          "simple": "Android uses the native Media3 player; other configured targets use video_player.",
+          "developer": "service_locator selects AndroidMediaPlayer only for Android outside mock mode; otherwise it creates FlutterMediaPlayer.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart",
+            "lib/core/media/android_media_player.dart",
+            "lib/core/media/media_player.dart",
+            "android/app/src/main/kotlin/com/voyager/voyager_learning/MainActivity.kt"
+          ],
+          "componentIds": [
+            "runtime",
+            "media",
+            "android"
+          ]
+        },
+        {
+          "title": "Record stable learning activity",
+          "simple": "The player records loaded-video history and eligible playback totals, not temporary media URLs.",
+          "developer": "LearningPlayerScreen writes RecentWatchHistoryRepository and WatchActivityTracker data; metadata cache keeps stable details.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/features/history/domain/recent_watch_history_repository.dart",
+            "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+            "lib/core/media/video_metadata_cache.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "feature-history",
+            "feature-watch-activity",
+            "media"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "save-note",
+      "name": "Save a timestamped note",
+      "summary": "A player note is linked to the active video and playback position, then written through NotesRepository.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Capture the current lesson",
+          "simple": "The note editor receives the active video and the current playback time.",
+          "developer": "LearningPlayerScreen prepares a StudyNote with videoId and timestampSeconds.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/features/notes/domain/study_note.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "feature-notes"
+          ]
+        },
+        {
+          "title": "Save through the note contract",
+          "simple": "The player asks NotesRepository to save the note.",
+          "developer": "The player calls NotesRepository; it does not write SQL directly.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/features/notes/domain/notes_repository.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "feature-notes"
+          ]
+        },
+        {
+          "title": "Persist locally",
+          "simple": "The selected notes store saves the note on device or in the current in-memory store.",
+          "developer": "DI selects SQLite, in-memory, or browser-backed note storage according to platform/mode.",
+          "filePaths": [
+            "lib/core/di/service_locator.dart",
+            "lib/features/notes/data/sqlite_notes_repository.dart",
+            "lib/features/notes/data/in_memory_notes_repository.dart",
+            "lib/features/notes/data/browser_note_storage_web.dart"
+          ],
+          "componentIds": [
+            "runtime",
+            "feature-notes",
+            "persistence",
+            "web"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "note-image",
+      "name": "Insert an image in a note",
+      "summary": "The note editor embeds a picked image; storage differs between IO platforms and Web.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Choose an image",
+          "simple": "The note editor opens the system image picker.",
+          "developer": "NoteEditorPage._insertImage() asks NoteImageStore to pick an image from the gallery.",
+          "filePaths": [
+            "lib/features/notes/presentation/note_editor_page.dart",
+            "lib/features/notes/data/note_image_store.dart"
+          ],
+          "componentIds": [
+            "feature-notes"
+          ]
+        },
+        {
+          "title": "Store for the current platform",
+          "simple": "Web embeds the image data in the note; other IO platforms write a file in app documents.",
+          "developer": "NoteImageStore returns a data URL for Web and delegates to the IO implementation, which writes under notes/images and returns that local path.",
+          "filePaths": [
+            "lib/features/notes/data/note_image_store.dart",
+            "lib/features/notes/data/note_image_store_io.dart",
+            "lib/features/notes/data/note_image_store_stub.dart"
+          ],
+          "componentIds": [
+            "feature-notes",
+            "web"
+          ]
+        },
+        {
+          "title": "Save the note and its image reference",
+          "simple": "The note repository stores the editor document locally; unused IO image files are cleaned after note changes.",
+          "developer": "The note Delta is saved through NotesRepository. IO cleanup retains referenced file paths and deletes unreferenced files; Web data URLs are stored with browser-backed notes.",
+          "filePaths": [
+            "lib/features/notes/presentation/note_editor_page.dart",
+            "lib/features/notes/domain/notes_repository.dart",
+            "lib/features/notes/data/sqlite_notes_repository.dart",
+            "lib/features/notes/data/browser_note_storage_web.dart",
+            "lib/features/notes/data/note_image_store_io.dart"
+          ],
+          "componentIds": [
+            "feature-notes",
+            "persistence",
+            "web"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "progress",
+      "name": "Save playback progress",
+      "summary": "The player saves the current position and completion state, and Home can reopen an incomplete lesson.",
+      "status": "Implemented",
+      "steps": [
+        {
+          "title": "Observe lesson position",
+          "simple": "The player reads the playback position while the lesson is open.",
+          "developer": "LearningPlayerScreen calls PlaybackController.currentPosition and saves LearningProgress during activity flush/cleanup.",
+          "filePaths": [
+            "lib/features/player/presentation/learning_player_screen.dart",
+            "lib/core/media/playback_controller.dart"
+          ],
+          "componentIds": [
+            "feature-player",
+            "media"
+          ]
+        },
+        {
+          "title": "Store progress through its contract",
+          "simple": "The progress repository saves the position and completion state.",
+          "developer": "ProgressRepository abstracts SQLite and in-memory stores; metadata is stored so progress has a stable video record.",
+          "filePaths": [
+            "lib/features/progress/domain/progress_repository.dart",
+            "lib/features/progress/data/sqlite_progress_repository.dart",
+            "lib/features/library/domain/learning_library_repository.dart"
+          ],
+          "componentIds": [
+            "feature-progress",
+            "feature-library",
+            "persistence"
+          ]
+        },
+        {
+          "title": "Resume from Home",
+          "simple": "Home opens the saved position without starting playback automatically.",
+          "developer": "AppShell resolves the latest incomplete LearningProgress and opens LearningPlayerScreen with initialPosition.",
+          "filePaths": [
+            "lib/features/home/presentation/app_shell.dart",
+            "lib/features/player/presentation/learning_player_screen.dart"
+          ],
+          "componentIds": [
+            "feature-home",
+            "feature-player",
+            "feature-progress"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bookmarks",
+      "name": "Browse bookmarks (creation is not wired)",
+      "summary": "The app can list, open, and delete existing bookmarks; the current player has no active call that creates one.",
+      "status": "Partial",
+      "steps": [
+        {
+          "title": "Read bookmark records",
+          "simple": "The Home bookmark page reads saved moments from ProgressRepository.",
+          "developer": "AppShell._BookmarksPageState queries getAllBookmarks and joins each record with library video metadata.",
+          "filePaths": [
+            "lib/features/home/presentation/app_shell.dart",
+            "lib/features/progress/domain/progress_repository.dart"
+          ],
+          "componentIds": [
+            "feature-home",
+            "feature-progress",
+            "feature-library"
+          ]
+        },
+        {
+          "title": "Open or delete a moment",
+          "simple": "Selecting a record reopens its saved time; the delete action removes it.",
+          "developer": "The screen passes initialPosition to the player and calls deleteBookmark; no saveBookmark call is wired in the current player.",
+          "filePaths": [
+            "lib/features/home/presentation/app_shell.dart",
+            "lib/features/player/presentation/learning_player_screen.dart"
+          ],
+          "componentIds": [
+            "feature-home",
+            "feature-player",
+            "feature-progress"
+          ]
+        }
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "title": "Start at the app shell",
+      "componentId": "app"
+    },
+    {
+      "title": "Inspect the composition root",
+      "componentId": "runtime"
+    },
+    {
+      "title": "Follow a feature contract",
+      "componentId": "feature-library"
+    },
+    {
+      "title": "Trace media to the platform",
+      "componentId": "media"
+    },
+    {
+      "title": "Check the local data boundary",
+      "componentId": "persistence"
+    }
+  ],
+  "externalDependencies": [
+    {
+      "name": "cupertino_icons",
+      "label": "Cupertino Icons",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^1.0.8"
+    },
+    {
+      "name": "flutter_highlight",
+      "label": "Flutter Highlight",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^0.7.0"
+    },
+    {
+      "name": "flutter_lints",
+      "label": "Flutter lints",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "development",
+      "constraint": "^6.0.0"
+    },
+    {
+      "name": "flutter_quill",
+      "label": "Flutter Quill",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^11.6.0"
+    },
+    {
+      "name": "flutter_quill_extensions",
+      "label": "Flutter Quill extensions",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^11.0.0"
+    },
+    {
+      "name": "flutter_test",
+      "label": "flutter_test",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "development",
+      "constraint": "sdk: flutter"
+    },
+    {
+      "name": "get_it",
+      "label": "GetIt",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^9.3.0"
+    },
+    {
+      "name": "highlight",
+      "label": "Highlight",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^0.7.0"
+    },
+    {
+      "name": "html",
+      "label": "HTML parser",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^0.15.7"
+    },
+    {
+      "name": "http",
+      "label": "HTTP client",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^1.6.0"
+    },
+    {
+      "name": "image_picker",
+      "label": "Image Picker",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^1.2.4"
+    },
+    {
+      "name": "path",
+      "label": "Path",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^1.9.1"
+    },
+    {
+      "name": "path_provider",
+      "label": "Path Provider",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^2.1.6"
+    },
+    {
+      "name": "sqflite",
+      "label": "sqflite",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^2.4.4"
+    },
+    {
+      "name": "sqflite_common_ffi",
+      "label": "sqflite FFI",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "development",
+      "constraint": "^2.4.3"
+    },
+    {
+      "name": "video_player",
+      "label": "video_player",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^2.14.0"
+    },
+    {
+      "name": "web",
+      "label": "Web interop",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^1.1.1"
+    },
+    {
+      "name": "youtube_explode_dart",
+      "label": "youtube_explode_dart",
+      "category": "package",
+      "declaredIn": "pubspec.yaml",
+      "scope": "runtime",
+      "constraint": "^3.1.0"
+    },
+    {
+      "name": "media3-exoplayer",
+      "label": "androidx.media3:media3-exoplayer:1.9.2",
+      "category": "Android Gradle package",
+      "declaredIn": "android/app/build.gradle.kts",
+      "scope": "implementation",
+      "version": "1.9.2"
+    },
+    {
+      "name": "media3-ui",
+      "label": "androidx.media3:media3-ui:1.9.2",
+      "category": "Android Gradle package",
+      "declaredIn": "android/app/build.gradle.kts",
+      "scope": "implementation",
+      "version": "1.9.2"
+    },
+    {
+      "name": "NewPipeExtractor",
+      "label": "com.github.TeamNewPipe:NewPipeExtractor:v0.26.5",
+      "category": "Android Gradle package",
+      "declaredIn": "android/app/build.gradle.kts",
+      "scope": "implementation",
+      "version": "v0.26.5"
+    },
+    {
+      "name": "desugar_jdk_libs_nio",
+      "label": "com.android.tools:desugar_jdk_libs_nio:2.1.5",
+      "category": "Android Gradle package",
+      "declaredIn": "android/app/build.gradle.kts",
+      "scope": "coreLibraryDesugaring",
+      "version": "2.1.5"
+    },
+    {
+      "name": "junit",
+      "label": "junit:junit:4.13.2",
+      "category": "Android Gradle package",
+      "declaredIn": "android/app/build.gradle.kts",
+      "scope": "testImplementation",
+      "version": "4.13.2"
+    }
+  ],
+  "database": {
+    "schemaVersion": 7,
+    "tables": [
+      {
+        "name": "roadmaps",
+        "line": 101,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "topics",
+        "line": 109,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "videos",
+        "line": 118,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "playlists",
+        "line": 130,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "playlist_entries",
+        "line": 140,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "notes",
+        "line": 148,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "progress",
+        "line": 166,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "bookmarks",
+        "line": 175,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "settings",
+        "line": 184,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "video_metadata_cache",
+        "line": 223,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "recent_watch_history",
+        "line": 236,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "daily_goal_activity",
+        "line": 253,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "watch_activity",
+        "line": 265,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "name": "local_profile",
+        "line": 276,
+        "file": "lib/core/database/database.dart"
+      }
+    ],
+    "relationships": [
+      {
+        "fromTable": "topics",
+        "fromColumn": "roadmap_id",
+        "toTable": "roadmaps",
+        "toColumn": "id",
+        "line": 110,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "playlist_entries",
+        "fromColumn": "playlist_id",
+        "toTable": "playlists",
+        "toColumn": "id",
+        "line": 140,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "playlist_entries",
+        "fromColumn": "video_id",
+        "toTable": "videos",
+        "toColumn": "id",
+        "line": 141,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "notes",
+        "fromColumn": "video_id",
+        "toTable": "videos",
+        "toColumn": "id",
+        "line": 152,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "notes",
+        "fromColumn": "topic_id",
+        "toTable": "topics",
+        "toColumn": "id",
+        "line": 153,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "progress",
+        "fromColumn": "video_id",
+        "toTable": "videos",
+        "toColumn": "id",
+        "line": 166,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "bookmarks",
+        "fromColumn": "video_id",
+        "toTable": "videos",
+        "toColumn": "id",
+        "line": 176,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "notes",
+        "fromColumn": "video_id",
+        "toTable": "videos",
+        "toColumn": "id",
+        "line": 329,
+        "file": "lib/core/database/database.dart"
+      },
+      {
+        "fromTable": "notes",
+        "fromColumn": "topic_id",
+        "toTable": "topics",
+        "toColumn": "id",
+        "line": 330,
+        "file": "lib/core/database/database.dart"
+      }
+    ]
+  },
+  "implementationNotes": [
+    {
+      "status": "Partial",
+      "title": "Bookmark creation is not wired in the player",
+      "explanation": "Current source lists, opens, and deletes bookmarks, but no player call creates them.",
+      "evidence": [
+        "lib/features/home/presentation/app_shell.dart",
+        "lib/features/progress/domain/progress_repository.dart"
+      ]
+    },
+    {
+      "status": "Documentation drift",
+      "title": "Development roadmap has stale status claims",
+      "explanation": "It still says settings and progress are not saved/connected, while current source wires settings persistence and playback progress.",
+      "evidence": [
+        "docs/development-roadmap.md",
+        "lib/features/home/presentation/app_shell.dart",
+        "lib/features/player/presentation/learning_player_screen.dart"
+      ]
+    },
+    {
+      "status": "Documentation drift",
+      "title": "Note image embeds are missing from the implementation status",
+      "explanation": "The note editor can insert images. IO platforms store image files under app documents; Web embeds data URLs with browser-local notes. This does not establish arbitrary file attachment support.",
+      "evidence": [
+        "docs/implementation-status.md",
+        "lib/features/notes/presentation/note_editor_page.dart",
+        "lib/features/notes/data/note_image_store_io.dart",
+        "lib/features/notes/data/browser_note_storage_web.dart"
+      ]
+    },
+    {
+      "status": "Unverified",
+      "title": "Provider availability is not established by unit tests",
+      "explanation": "Controlled tests do not guarantee live YouTube/OCW extraction or device playback will keep working.",
+      "evidence": [
+        "docs/implementation-status.md",
+        "test/media/newpipe_youtube_adapter_test.dart"
+      ]
+    }
+  ],
+  "healthSummary": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 4,
+    "informational": 0
+  }
+}

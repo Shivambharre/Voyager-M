@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "android/app/src/main/AndroidManifest.xml",
+  "name": "AndroidManifest platform configuration",
+  "simple": "Configures the Android build or runtime integration used by VoyagerM.",
+  "developer": "XML platform/configuration file associated with Android platform integration.",
+  "responsibility": "Implements native Media3 playback, NewPipe extraction, platform channels, and incoming share intents.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "92818a2b84a308c84cefcf28929272cc1f76b420b603f63b92d44d97367563b2"
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/roadmap/domain/roadmap.dart",
+  "name": "Roadmap",
+  "simple": "Supports the domain feature by defining Roadmap, Topic, TopicStatus.",
+  "developer": "Dart file classified as feature:features:roadmap; detected declarations: Roadmap, Topic, TopicStatus.",
+  "responsibility": "Creates and edits roadmaps and their learning topics through a repository contract.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "Roadmap",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "Topic",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "Topic",
+      "line": 15
+    },
+    {
+      "kind": "enum",
+      "name": "TopicStatus",
+      "line": 29
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "b8a91573f07a19a3c7ad27450b5e22704e178b248fa6cf2ac1a028164b6ff21e"
+}

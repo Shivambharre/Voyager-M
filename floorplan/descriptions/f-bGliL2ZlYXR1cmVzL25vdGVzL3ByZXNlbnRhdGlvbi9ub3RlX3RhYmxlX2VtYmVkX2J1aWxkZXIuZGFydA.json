@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/presentation/note_table_embed_builder.dart",
+  "name": "NoteTableEmbedBuilder",
+  "simple": "Supports the presentation feature by defining NoteTableEmbedBuilder.",
+  "developer": "Dart file classified as feature:features:notes; detected declarations: NoteTableEmbedBuilder.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_quill"
+  ],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "NoteTableEmbedBuilder",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "NoteTableEmbedBuilder",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "GestureDetector",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "TableRow",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "toPlainText",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "showNoteTableDialog",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 96
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 103
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 137
+    },
+    {
+      "kind": "callable",
+      "name": "FilledButton",
+      "line": 141
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "06eaa8f084e0ca0e6fd9516076f3b69e41e5a45a2be03446b9ccb4f63968b890"
+}

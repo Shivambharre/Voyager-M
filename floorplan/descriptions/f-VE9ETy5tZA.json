@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "TODO.md",
+  "name": "TODO",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "Markdown file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "9e42eea8e194904ca65ed830403c749f6870ae0ec13cdb65696f8b09a6e255aa"
+}

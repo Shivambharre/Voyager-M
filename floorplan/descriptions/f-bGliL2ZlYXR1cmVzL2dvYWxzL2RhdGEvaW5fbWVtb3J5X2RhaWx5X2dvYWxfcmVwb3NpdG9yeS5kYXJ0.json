@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/goals/data/in_memory_daily_goal_repository.dart",
+  "name": "InMemoryDailyGoalRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Tracks today’s eligible playback time and manually completed lessons against local goals.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart"
+  ],
+  "dependencies": [
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryDailyGoalRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getSummary",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "DailyGoalSummary",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "addPlaybackTime",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "markLessonCompleted",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "_dateKey",
+      "line": 52
+    },
+    {
+      "kind": "class",
+      "name": "_DailyGoalEntry",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "_DailyGoalEntry",
+      "line": 60
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "67c042550e2a6827015881ede321913050495651198b320a7b7bdf0c6e8eb066"
+}

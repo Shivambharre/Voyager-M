@@ -3,15 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:highlight/highlight.dart' as syntax show highlight, Node;
-import 'package:image_picker/image_picker.dart';
 
 import '../../../core/design/design_tokens.dart';
-import '../../../core/di/service_locator.dart';
 import '../data/note_image_store.dart';
 import '../domain/notes_repository.dart';
 import '../domain/study_note.dart';
@@ -55,6 +52,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   bool _isDirty = false;
   bool _isSaving = false;
   bool _allowPop = false;
+  int _revision = 0;
+  Future<bool>? _saveOperation;
   String _saveStatus = 'Saved';
 
   bool get _isEditingExisting => widget.note != null;
@@ -111,6 +110,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _scheduleSave() {
+    _revision++;
     _isDirty = true;
     if (mounted) {
       setState(() => _saveStatus = 'Unsaved changes');
@@ -122,16 +122,29 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   Future<bool> _saveNow() async {
-    if (!_isDirty || _isSaving) return !_isDirty;
+    if (!_isDirty) return true;
+    final existingOperation = _saveOperation;
+    if (existingOperation != null) return existingOperation;
     _saveTimer?.cancel();
+    final operation = _persistNote();
+    _saveOperation = operation;
+    try {
+      return await operation;
+    } finally {
+      _saveOperation = null;
+    }
+  }
+
+  Future<bool> _persistNote() async {
     final title = _titleController.text.trim().isEmpty
         ? 'Untitled Note'
         : _titleController.text.trim();
     final delta = jsonEncode(_editorController.document.toDelta().toJson());
     final plainText = _editorController.document
-        .toPlainText(embedBuilders: _embedBuilders)
+        .toPlainText(_embedBuilders)
         .trim();
     final timestamp = _attachTimestamp ? _timestampSeconds : null;
+    final savingRevision = _revision;
     setState(() {
       _isSaving = true;
       _saveStatus = 'Saving';
@@ -158,19 +171,26 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       await widget.repository.saveNote(note);
       _savedNote = note;
       _createdAt ??= now;
-      _isDirty = false;
-      try {
-        await _imageStore.cleanUnusedImages(widget.repository);
-      } on Object {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Note saved, but unused images could not be cleaned up.'),
-            ),
-          );
+      _isDirty = _revision != savingRevision;
+      if (_imageStore.containsLocalImage(previous?.contentJson)) {
+        try {
+          await _imageStore.cleanUnusedImages(widget.repository);
+        } on Object {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Note saved, but unused images could not be cleaned up.',
+                ),
+              ),
+            );
+          }
         }
       }
-      if (mounted) setState(() => _saveStatus = 'Saved');
+      if (mounted) {
+        setState(() => _saveStatus = _isDirty ? 'Unsaved changes' : 'Saved');
+        if (_isDirty) _scheduleSave();
+      }
       return true;
     } on Object {
       if (mounted) setState(() => _saveStatus = 'Save failed');
@@ -196,7 +216,10 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       : previous?.libraryId;
 
   Future<void> _saveAndPop() async {
-    if (!await _saveNow() || !mounted) return;
+    while (_isDirty) {
+      if (!await _saveNow() || !mounted) return;
+    }
+    if (!mounted) return;
     setState(() => _allowPop = true);
     Navigator.of(context).pop(true);
   }
@@ -224,7 +247,9 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     if (shouldDelete != true || !mounted) return;
     try {
       await widget.repository.deleteNote(note.id);
-      await _imageStore.cleanUnusedImages(widget.repository);
+      if (_imageStore.containsLocalImage(note.contentJson)) {
+        await _imageStore.cleanUnusedImages(widget.repository);
+      }
       if (mounted) Navigator.of(context).pop(true);
     } on Object {
       if (mounted) {
@@ -249,7 +274,9 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     } on Object {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not read the playback position.')),
+          const SnackBar(
+            content: Text('Could not read the playback position.'),
+          ),
         );
       }
     }
@@ -341,7 +368,10 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         title: const Text('C code preview'),
         content: SingleChildScrollView(
           child: SelectableText.rich(
-            _syntaxHighlightedText(selected, const TextStyle(fontFamily: 'monospace')),
+            _syntaxHighlightedText(
+              selected,
+              const TextStyle(fontFamily: 'monospace'),
+            ),
           ),
         ),
         actions: [
@@ -355,7 +385,16 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   List<EmbedBuilder> get _embedBuilders => [
-    ...FlutterQuillEmbeds.defaultEditorBuilders(),
+    ...FlutterQuillEmbeds.editorBuilders(
+      imageEmbedConfig: QuillEditorImageEmbedConfig(
+        imageProviderBuilder: (_, imageUrl) {
+          if (!imageUrl.startsWith('data:image/')) return null;
+          final encodedImage = imageUrl.split(',').last;
+          return MemoryImage(base64Decode(encodedImage));
+        },
+        onImageRemovedCallback: (_) async {},
+      ),
+    ),
     NoteTableEmbedBuilder(onEdit: _editTable),
   ];
 
@@ -390,9 +429,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     final nodes = syntax.highlight.parse(text, language: 'c').nodes ?? [];
     return TextSpan(
       style: baseStyle,
-      children: [
-        for (final node in nodes) _highlightNodeSpan(node),
-      ],
+      children: [for (final node in nodes) _highlightNodeSpan(node)],
     );
   }
 
@@ -437,130 +474,137 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           ],
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.resourceName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ),
-                    Text(
-                      _saveStatus,
-                      key: const Key('note-save-status'),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: _saveStatus == 'Save failed'
-                            ? Theme.of(context).colorScheme.error
-                            : null,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (widget.note?.isResourceArchived ?? false)
-                const ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text('The original resource is unavailable.'),
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  key: const Key('note-title-field'),
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    hintText: 'Untitled Note',
-                    border: InputBorder.none,
-                  ),
-                  style: Theme.of(context).textTheme.headlineSmall,
-                  textCapitalization: TextCapitalization.sentences,
-                ),
-              ),
-              if (widget.resourceType == NoteResourceType.video)
+          child: Localizations.override(
+            context: context,
+            delegates: FlutterQuillLocalizations.localizationsDelegates,
+            child: Column(
+              children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Row(
                     children: [
-                      Checkbox(
-                        value: _attachTimestamp,
-                        onChanged: (value) {
-                          setState(() => _attachTimestamp = value ?? false);
-                          _scheduleSave();
-                        },
-                      ),
-                      const Expanded(child: Text('Attach playback timestamp')),
-                      if (_attachTimestamp)
-                        TextButton(
-                          onPressed: widget.onCaptureTimestamp == null
-                              ? null
-                              : () => unawaited(_attachCurrentTimestamp()),
-                          child: const Text('Use current time'),
+                      Expanded(
+                        child: Text(
+                          widget.resourceName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelMedium,
                         ),
-                      if (_attachTimestamp && _timestampSeconds != null)
-                        TextButton(
-                          onPressed: widget.onJumpToTimestamp == null
-                              ? null
-                              : () => unawaited(_jumpToTimestamp()),
-                          child: Text(_formatTime(_timestampSeconds!)),
+                      ),
+                      Text(
+                        _saveStatus,
+                        key: const Key('note-save-status'),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: _saveStatus == 'Save failed'
+                              ? Theme.of(context).colorScheme.error
+                              : null,
                         ),
-                    ],
-                  ),
-                ),
-              const Divider(height: 1),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: QuillSimpleToolbar(
-                  controller: _editorController,
-                  config: QuillSimpleToolbarConfig(
-                    showFontFamily: false,
-                    showFontSize: false,
-                    showColorButton: false,
-                    showBackgroundColorButton: false,
-                    showInlineCode: false,
-                    showClearFormat: false,
-                    showSearchButton: false,
-                    showDirection: false,
-                    showSubscript: false,
-                    showSuperscript: false,
-                    showQuote: false,
-                    customButtons: [
-                      QuillToolbarCustomButtonOptions(
-                        icon: const Icon(Icons.image_outlined),
-                        tooltip: 'Insert image',
-                        onPressed: () => unawaited(_insertImage()),
-                      ),
-                      QuillToolbarCustomButtonOptions(
-                        icon: const Icon(Icons.table_chart_outlined),
-                        tooltip: 'Insert table',
-                        onPressed: () => unawaited(_insertTable()),
-                      ),
-                      QuillToolbarCustomButtonOptions(
-                        icon: const Icon(Icons.code),
-                        tooltip: 'Preview C syntax highlighting',
-                        onPressed: () => unawaited(_previewCode()),
                       ),
                     ],
                   ),
                 ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: QuillEditor.basic(
-                  controller: _editorController,
-                  config: QuillEditorConfig(
-                    padding: const EdgeInsets.all(DesignTokens.space4),
-                    placeholder: 'Write your note...',
-                    embedBuilders: embedBuilders,
-                    textSpanBuilder: _buildCodeSpan,
+                if (widget.note?.isResourceArchived ?? false)
+                  const ListTile(
+                    leading: Icon(Icons.info_outline),
+                    title: Text('The original resource is unavailable.'),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    key: const Key('note-title-field'),
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      hintText: 'Untitled Note',
+                      border: InputBorder.none,
+                    ),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
-              ),
-            ],
+                if (widget.resourceType == NoteResourceType.video)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _attachTimestamp,
+                          onChanged: (value) {
+                            setState(() => _attachTimestamp = value ?? false);
+                            _scheduleSave();
+                          },
+                        ),
+                        const Expanded(
+                          child: Text('Attach playback timestamp'),
+                        ),
+                        if (_attachTimestamp)
+                          TextButton(
+                            onPressed: widget.onCaptureTimestamp == null
+                                ? null
+                                : () => unawaited(_attachCurrentTimestamp()),
+                            child: const Text('Use current time'),
+                          ),
+                        if (_attachTimestamp && _timestampSeconds != null)
+                          TextButton(
+                            onPressed: widget.onJumpToTimestamp == null
+                                ? null
+                                : () => unawaited(_jumpToTimestamp()),
+                            child: Text(_formatTime(_timestampSeconds!)),
+                          ),
+                      ],
+                    ),
+                  ),
+                const Divider(height: 1),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: QuillSimpleToolbar(
+                    controller: _editorController,
+                    config: QuillSimpleToolbarConfig(
+                      showFontFamily: false,
+                      showFontSize: false,
+                      showColorButton: false,
+                      showBackgroundColorButton: false,
+                      showInlineCode: false,
+                      showClearFormat: false,
+                      showSearchButton: false,
+                      showDirection: false,
+                      showSubscript: false,
+                      showSuperscript: false,
+                      showQuote: false,
+                      customButtons: [
+                        QuillToolbarCustomButtonOptions(
+                          icon: const Icon(Icons.image_outlined),
+                          tooltip: 'Insert image',
+                          onPressed: () => unawaited(_insertImage()),
+                        ),
+                        QuillToolbarCustomButtonOptions(
+                          icon: const Icon(Icons.table_chart_outlined),
+                          tooltip: 'Insert table',
+                          onPressed: () => unawaited(_insertTable()),
+                        ),
+                        QuillToolbarCustomButtonOptions(
+                          icon: const Icon(Icons.code),
+                          tooltip: 'Preview C syntax highlighting',
+                          onPressed: () => unawaited(_previewCode()),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: QuillEditor.basic(
+                    key: const Key('note-body-editor'),
+                    controller: _editorController,
+                    config: QuillEditorConfig(
+                      padding: const EdgeInsets.all(DesignTokens.space4),
+                      placeholder: 'Write your note...',
+                      embedBuilders: embedBuilders,
+                      textSpanBuilder: _buildCodeSpan,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

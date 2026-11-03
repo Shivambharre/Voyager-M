@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/roadmap/domain/roadmap_repository.dart",
+  "name": "RoadmapRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the RoadmapRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Creates and edits roadmaps and their learning topics through a repository contract.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart",
+    "test/architecture/mock_mode_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "RoadmapRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmaps",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "getRoadmap",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "saveRoadmap",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "deleteRoadmap",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "getTopicsForRoadmap",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "saveTopic",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "deleteTopic",
+      "line": 9
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "9daeceba7b53770034ca949d368c47a09d565e39ec7aaf7a2fa44381a095c31b"
+}

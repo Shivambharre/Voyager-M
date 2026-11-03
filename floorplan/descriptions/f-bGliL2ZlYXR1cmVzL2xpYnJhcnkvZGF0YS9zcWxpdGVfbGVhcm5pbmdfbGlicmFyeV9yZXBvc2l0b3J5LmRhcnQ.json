@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/library/data/sqlite_learning_library_repository.dart",
+  "name": "SqliteLearningLibraryRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for videos, notes, playlists, playlist_entries.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: videos, notes, playlists, playlist_entries.",
+  "responsibility": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteLearningLibraryRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteLearningLibraryRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getVideos",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideo",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideoMetadata",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "deleteVideo",
+      "line": 80
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylists",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylist",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "deletePlaylist",
+      "line": 137
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistEntries",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylistEntries",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 198
+    },
+    {
+      "kind": "callable",
+      "name": "_videoFromRow",
+      "line": 214
+    },
+    {
+      "kind": "callable",
+      "name": "_playlistFromRow",
+      "line": 224
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlaylist",
+      "line": 226
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "1c29484a75d937d99258fce4f6302ee3aff06016cf40b76dd7adf2c716eb99eb"
+}

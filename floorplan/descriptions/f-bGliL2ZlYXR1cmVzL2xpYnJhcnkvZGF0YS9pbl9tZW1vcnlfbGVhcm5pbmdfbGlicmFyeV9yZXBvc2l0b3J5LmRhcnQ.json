@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/library/data/in_memory_learning_library_repository.dart",
+  "name": "InMemoryLearningLibraryRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/features/notes/notes_home_page_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryLearningLibraryRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getVideos",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideo",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideoMetadata",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "deleteVideo",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylists",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylist",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "deletePlaylist",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistEntries",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylistEntries",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 78
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "4f6d6ebde10e046e47acdfd361c2f94c261f9e845fb92f17b3d4cce99ad6fae4"
+}

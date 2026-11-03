@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/notes/note_editor_test.dart",
+  "name": "note editor test test",
+  "simple": "Checks selected behavior around notes using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 14 detected test/helper declarations and 5 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/note_editor_page.dart"
+  ],
+  "dependencies": [
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart",
+    "lib/features/notes/presentation/note_editor_page.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialApp",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 75
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 78
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "659dbec4625290e626039cb093c74286aa2d994774b3cf903b8a07ca4661baa2"
+}

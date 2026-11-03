@@ -18,8 +18,10 @@ class StudyNote {
 
   final String id;
   final String title;
+
   /// Extracted plain text used for search and simple previews.
   final String content;
+
   /// Quill Delta JSON. Empty for notes created before rich text was added.
   final String? contentJson;
   final DateTime createdAt;

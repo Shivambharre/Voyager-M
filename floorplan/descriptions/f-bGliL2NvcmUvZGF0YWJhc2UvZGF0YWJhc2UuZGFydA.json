@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/database/database.dart",
+  "name": "SQLite schema and adapter",
+  "simple": "Defines the local database contract, tables, transactions, and schema upgrades.",
+  "developer": "Implements AppDatabase through sqflite; the current schema is version 7 and its migrations are extracted from the source.",
+  "responsibility": "Provides the app-owned database contract and SQLite schema/migrations used by local repositories.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:path",
+    "package:sqflite"
+  ],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/core/media/video_metadata_cache.dart",
+    "lib/features/goals/data/sqlite_daily_goal_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/profile/data/sqlite_local_profile_repository.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "lib/features/roadmap/data/sqlite_roadmap_repository.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/media/video_metadata_cache_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "DatabaseExecutor",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "query",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "insert",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "upsert",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "update",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "delete",
+      "line": 27
+    },
+    {
+      "kind": "class",
+      "name": "DatabaseTransaction",
+      "line": 34
+    },
+    {
+      "kind": "class",
+      "name": "AppDatabase",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "initialize",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "close",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "transaction",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 43
+    },
+    {
+      "kind": "class",
+      "name": "SqfliteAppDatabase",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "SqfliteAppDatabase",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "initialize",
+      "line": 70
+    },
+    {
+      "kind": "callable",
+      "name": "_createSchema",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "_createMetadataCache",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "_createRecentWatchHistory",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "_createDailyGoalActivity",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "_createWatchActivity",
+      "line": 86
+    },
+    {
+      "kind": "callable",
+      "name": "_createLocalProfile",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "_upgradeSchema",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "_createSchema",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "_createMetadataCache",
+      "line": 218
+    },
+    {
+      "kind": "callable",
+      "name": "_createRecentWatchHistory",
+      "line": 232
+    },
+    {
+      "kind": "callable",
+      "name": "_createDailyGoalActivity",
+      "line": 249
+    },
+    {
+      "kind": "callable",
+      "name": "_createWatchActivity",
+      "line": 261
+    },
+    {
+      "kind": "callable",
+      "name": "_createLocalProfile",
+      "line": 272
+    },
+    {
+      "kind": "callable",
+      "name": "_upgradeSchema",
+      "line": 283
+    },
+    {
+      "kind": "callable",
+      "name": "_createSchema",
+      "line": 290
+    },
+    {
+      "kind": "callable",
+      "name": "_createMetadataCache",
+      "line": 293
+    },
+    {
+      "kind": "callable",
+      "name": "_createRecentWatchHistory",
+      "line": 296
+    },
+    {
+      "kind": "callable",
+      "name": "_createDailyGoalActivity",
+      "line": 305
+    },
+    {
+      "kind": "callable",
+      "name": "_createWatchActivity",
+      "line": 313
+    },
+    {
+      "kind": "callable",
+      "name": "_createLocalProfile",
+      "line": 314
+    },
+    {
+      "kind": "callable",
+      "name": "query",
+      "line": 380
+    },
+    {
+      "kind": "callable",
+      "name": "insert",
+      "line": 397
+    },
+    {
+      "kind": "callable",
+      "name": "upsert",
+      "line": 402
+    },
+    {
+      "kind": "callable",
+      "name": "transaction",
+      "line": 408
+    },
+    {
+      "kind": "callable",
+      "name": "update",
+      "line": 422
+    },
+    {
+      "kind": "callable",
+      "name": "delete",
+      "line": 437
+    },
+    {
+      "kind": "callable",
+      "name": "transaction",
+      "line": 450
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 451
+    },
+    {
+      "kind": "callable",
+      "name": "close",
+      "line": 459
+    },
+    {
+      "kind": "class",
+      "name": "_SqfliteTransaction",
+      "line": 465
+    },
+    {
+      "kind": "callable",
+      "name": "_SqfliteTransaction",
+      "line": 467
+    },
+    {
+      "kind": "callable",
+      "name": "query",
+      "line": 472
+    },
+    {
+      "kind": "callable",
+      "name": "insert",
+      "line": 489
+    },
+    {
+      "kind": "callable",
+      "name": "upsert",
+      "line": 494
+    },
+    {
+      "kind": "callable",
+      "name": "update",
+      "line": 512
+    },
+    {
+      "kind": "callable",
+      "name": "delete",
+      "line": 527
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "714bb0d0c8157ff8ca1e00d22fadf784c9a9481a199c3fd4f7b2cf195413f795"
+}

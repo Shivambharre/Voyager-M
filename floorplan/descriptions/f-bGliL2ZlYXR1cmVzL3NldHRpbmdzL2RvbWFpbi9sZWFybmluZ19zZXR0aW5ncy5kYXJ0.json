@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/settings/domain/learning_settings.dart",
+  "name": "AppearanceMode",
+  "simple": "Supports the domain feature by defining AppearanceMode, LearningSettings.",
+  "developer": "Dart file classified as feature:features:settings; detected declarations: AppearanceMode, LearningSettings.",
+  "responsibility": "Persists appearance, playback, resume, completion-confirmation, and daily-goal preferences locally.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/settings/data/in_memory_settings_repository.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "enum",
+      "name": "AppearanceMode",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "LearningSettings",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "LearningSettings",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "copyWith",
+      "line": 20
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "b0a3284be3a4edf68c0cda141b3fab35fadd37cf64fa488f93fe41e58c25b8cf"
+}

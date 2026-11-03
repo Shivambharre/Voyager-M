@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/settings/domain/settings_repository.dart",
+  "name": "SettingsRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the SettingsRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Persists appearance, playback, resume, completion-confirmation, and daily-goal preferences locally.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/settings/data/in_memory_settings_repository.dart",
+    "lib/features/settings/data/sqlite_settings_repository.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SettingsRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getSettings",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "saveSettings",
+      "line": 4
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "0b310459522dd59d8783cfa3eb6d943cb9a95d887caafcdf546fd61232f986be"
+}

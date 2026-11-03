@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/presentation/note_editor_page.dart",
+  "name": "NoteEditorPage",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: NoteEditorPage.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_quill",
+    "package:flutter_quill_extensions",
+    "package:flutter_highlight",
+    "package:highlight",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/notes/data/note_image_store.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/design_tokens.dart",
+    "lib/features/notes/data/note_image_store.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/features/notes/note_editor_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "NoteEditorPage",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "NoteEditorPage",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 39
+    },
+    {
+      "kind": "class",
+      "name": "_NoteEditorPageState",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleSave",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "_documentFor",
+      "line": 82
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 102
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleSave",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 119
+    },
+    {
+      "kind": "callable",
+      "name": "_saveNow",
+      "line": 122
+    },
+    {
+      "kind": "callable",
+      "name": "_persistNote",
+      "line": 136
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 180
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "_resourceVideoId",
+      "line": 201
+    },
+    {
+      "kind": "callable",
+      "name": "_resourceTopicId",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "_resourceLibraryId",
+      "line": 211
+    },
+    {
+      "kind": "callable",
+      "name": "_saveAndPop",
+      "line": 216
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 222
+    },
+    {
+      "kind": "callable",
+      "name": "_deleteNote",
+      "line": 225
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 235
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 239
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 256
+    },
+    {
+      "kind": "callable",
+      "name": "_attachCurrentTimestamp",
+      "line": 261
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 268
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleSave",
+      "line": 272
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 276
+    },
+    {
+      "kind": "callable",
+      "name": "_jumpToTimestamp",
+      "line": 283
+    },
+    {
+      "kind": "callable",
+      "name": "callback",
+      "line": 288
+    },
+    {
+      "kind": "callable",
+      "name": "_insertImage",
+      "line": 290
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 307
+    },
+    {
+      "kind": "callable",
+      "name": "_insertTable",
+      "line": 312
+    },
+    {
+      "kind": "callable",
+      "name": "_insertTableEmbed",
+      "line": 316
+    },
+    {
+      "kind": "callable",
+      "name": "_editTable",
+      "line": 318
+    },
+    {
+      "kind": "callable",
+      "name": "CustomBlockEmbed",
+      "line": 336
+    },
+    {
+      "kind": "callable",
+      "name": "jsonEncode",
+      "line": 337
+    },
+    {
+      "kind": "callable",
+      "name": "_insertTableEmbed",
+      "line": 344
+    },
+    {
+      "kind": "callable",
+      "name": "CustomBlockEmbed",
+      "line": 352
+    },
+    {
+      "kind": "callable",
+      "name": "_previewCode",
+      "line": 357
+    },
+    {
+      "kind": "callable",
+      "name": "showDialog",
+      "line": 364
+    },
+    {
+      "kind": "callable",
+      "name": "_syntaxHighlightedText",
+      "line": 370
+    },
+    {
+      "kind": "callable",
+      "name": "TextStyle",
+      "line": 372
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 377
+    },
+    {
+      "kind": "callable",
+      "name": "MemoryImage",
+      "line": 392
+    },
+    {
+      "kind": "callable",
+      "name": "NoteTableEmbedBuilder",
+      "line": 397
+    },
+    {
+      "kind": "callable",
+      "name": "_buildCodeSpan",
+      "line": 399
+    },
+    {
+      "kind": "callable",
+      "name": "defaultSpanBuilder",
+      "line": 412
+    },
+    {
+      "kind": "callable",
+      "name": "_syntaxHighlightedText",
+      "line": 421
+    },
+    {
+      "kind": "callable",
+      "name": "_syntaxHighlightedText",
+      "line": 426
+    },
+    {
+      "kind": "callable",
+      "name": "TextSpan",
+      "line": 429
+    },
+    {
+      "kind": "callable",
+      "name": "_highlightNodeSpan",
+      "line": 434
+    },
+    {
+      "kind": "callable",
+      "name": "TextSpan",
+      "line": 439
+    },
+    {
+      "kind": "callable",
+      "name": "TextSpan",
+      "line": 441
+    },
+    {
+      "kind": "callable",
+      "name": "_highlightNodeSpan",
+      "line": 445
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 451
+    },
+    {
+      "kind": "callable",
+      "name": "PopScope",
+      "line": 453
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 463
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 468
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 481
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 485
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 493
+    },
+    {
+      "kind": "callable",
+      "name": "ListTile",
+      "line": 506
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 510
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 524
+    },
+    {
+      "kind": "callable",
+      "name": "Checkbox",
+      "line": 528
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 531
+    },
+    {
+      "kind": "callable",
+      "name": "_scheduleSave",
+      "line": 532
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 535
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 539
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 546
+    },
+    {
+      "kind": "callable",
+      "name": "Divider",
+      "line": 555
+    },
+    {
+      "kind": "callable",
+      "name": "SingleChildScrollView",
+      "line": 556
+    },
+    {
+      "kind": "callable",
+      "name": "QuillToolbarCustomButtonOptions",
+      "line": 573
+    },
+    {
+      "kind": "callable",
+      "name": "QuillToolbarCustomButtonOptions",
+      "line": 578
+    },
+    {
+      "kind": "callable",
+      "name": "QuillToolbarCustomButtonOptions",
+      "line": 583
+    },
+    {
+      "kind": "callable",
+      "name": "Divider",
+      "line": 592
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 593
+    },
+    {
+      "kind": "callable",
+      "name": "_formatTime",
+      "line": 612
+    }
+  ],
+  "screens": [
+    {
+      "name": "NoteEditorPage",
+      "line": 15
+    }
+  ],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "16648017ebc84a3e8d56334421cb293d7b99021157697aedb6a576e48b4c17b8"
+}

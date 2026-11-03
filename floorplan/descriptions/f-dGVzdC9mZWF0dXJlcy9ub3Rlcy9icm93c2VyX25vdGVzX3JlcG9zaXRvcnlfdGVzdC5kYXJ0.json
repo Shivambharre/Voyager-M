@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/notes/browser_notes_repository_test.dart",
+  "name": "browser notes repository test test",
+  "simple": "Checks selected behavior around notes using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 11 detected test/helper declarations and 3 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "expectLater",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 58
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a342abaa300828ee1954372a88a4e29e32dea4ada113dc73fea0834e5a667beb"
+}

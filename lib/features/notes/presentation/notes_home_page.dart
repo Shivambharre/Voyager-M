@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design/brutalist_components.dart';
 import '../../../core/design/design_tokens.dart';
-import '../../library/domain/learning_content.dart';
 import '../../library/domain/learning_library_repository.dart';
 import '../../roadmap/domain/roadmap.dart';
 import '../../roadmap/domain/roadmap_repository.dart';
@@ -124,7 +123,9 @@ class _NotesHomePageState extends State<NotesHomePage> {
     if (resources.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Save a video or create a library before adding notes.'),
+          content: Text(
+            'Save a video or create a library before adding notes.',
+          ),
         ),
       );
       return;
@@ -152,7 +153,9 @@ class _NotesHomePageState extends State<NotesHomePage> {
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
-              for (final item in resources.where((item) => item.type == category))
+              for (final item in resources.where(
+                (item) => item.type == category,
+              ))
                 ListTile(
                   leading: Icon(
                     category == NoteResourceType.video
@@ -180,8 +183,9 @@ class _NotesHomePageState extends State<NotesHomePage> {
               ListTile(
                 leading: const Icon(Icons.library_books_outlined),
                 title: Text(item.name),
-                subtitle:
-                    item.description.isEmpty ? null : Text(item.description),
+                subtitle: item.description.isEmpty
+                    ? null
+                    : Text(item.description),
                 onTap: () => Navigator.pop(context, item),
               ),
           ],
@@ -261,20 +265,19 @@ class _NotesHomePageState extends State<NotesHomePage> {
               .length;
           final libraryNotes = data.notes
               .where(
-                (note) =>
-                    note.resolvedResourceType == NoteResourceType.library,
+                (note) => note.resolvedResourceType == NoteResourceType.library,
               )
               .length;
           final recent = [...visibleNotes]
-            ..sort((first, second) => second.updatedAt.compareTo(first.updatedAt));
+            ..sort(
+              (first, second) => second.updatedAt.compareTo(first.updatedAt),
+            );
           return ListView(
             padding: const EdgeInsets.all(DesignTokens.space4),
             children: [
               Row(
                 children: [
-                  const Expanded(
-                    child: BrutalistSectionHeader(title: 'Notes'),
-                  ),
+                  const Expanded(child: BrutalistSectionHeader(title: 'Notes')),
                   BrutalistIconButton(
                     icon: Icons.add,
                     label: 'Add note',
@@ -285,9 +288,8 @@ class _NotesHomePageState extends State<NotesHomePage> {
               const SizedBox(height: DesignTokens.space2),
               Text(
                 'Keep lesson ideas and library notes together.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.mutedColor,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: context.mutedColor),
               ),
               const SizedBox(height: DesignTokens.space4),
               BrutalistSearchField(
@@ -303,10 +305,7 @@ class _NotesHomePageState extends State<NotesHomePage> {
                       title: 'Video / Lesson Notes',
                       count: videoLessonNotes,
                       icon: Icons.play_lesson_outlined,
-                      onTap: () => _openCategory(
-                        NoteResourceType.video,
-                        data,
-                      ),
+                      onTap: () => _openCategory(NoteResourceType.video, data),
                     ),
                   ),
                   const SizedBox(width: DesignTokens.space3),
@@ -315,10 +314,8 @@ class _NotesHomePageState extends State<NotesHomePage> {
                       title: 'Library Notes',
                       count: libraryNotes,
                       icon: Icons.library_books_outlined,
-                      onTap: () => _openCategory(
-                        NoteResourceType.library,
-                        data,
-                      ),
+                      onTap: () =>
+                          _openCategory(NoteResourceType.library, data),
                     ),
                   ),
                 ],
@@ -340,10 +337,8 @@ class _NotesHomePageState extends State<NotesHomePage> {
                   _NoteCard(
                     note: note,
                     parentName: note.resourceName ?? 'Unlinked lesson',
-                    onTap: () => _editNote(
-                      note,
-                      _resourceForNote(note, data.resources),
-                    ),
+                    onTap: () =>
+                        _editNote(note, _resourceForNote(note, data.resources)),
                     onTimestampTap: note.timestampSeconds == null
                         ? null
                         : () => unawaited(
@@ -403,7 +398,9 @@ class _NotesHomePageState extends State<NotesHomePage> {
         ),
       );
     }
-    resources.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    resources.sort(
+      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+    );
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => _NotesCategoryPage(
@@ -446,9 +443,11 @@ class _NotesCategoryPage extends StatelessWidget {
   final String title;
   final List<_NoteResource> resources;
   final Map<String, List<StudyNote>> groups;
-  final Future<void> Function(_NoteResource resource, {
+  final Future<void> Function(
+    _NoteResource resource, {
     required List<StudyNote> notes,
-  }) onOpenResource;
+  })
+  onOpenResource;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -457,7 +456,8 @@ class _NotesCategoryPage extends StatelessWidget {
         ? const Center(
             child: BrutalistEmptyState(
               title: 'No resources with notes',
-              message: 'Add a note to a video, lesson, or library to see it here.',
+              message:
+                  'Add a note to a video, lesson, or library to see it here.',
             ),
           )
         : ListView(
@@ -468,8 +468,8 @@ class _NotesCategoryPage extends StatelessWidget {
                   onTap: () => unawaited(
                     onOpenResource(
                       resource,
-                      notes: groups[
-                              '${resource.type.name}:${resource.id ?? '__unlinked__'}'] ??
+                      notes:
+                          groups['${resource.type.name}:${resource.id ?? '__unlinked__'}'] ??
                           const [],
                     ),
                   ),
@@ -562,9 +562,6 @@ class _NotesResourcePageState extends State<_NotesResourcePage> {
           timestampSeconds: widget.resource.type == NoteResourceType.video
               ? note?.timestampSeconds
               : null,
-          onCaptureTimestamp: widget.resource.type == NoteResourceType.video
-              ? null
-              : null,
           onJumpToTimestamp: note?.timestampSeconds == null
               ? null
               : (position) => _openTimestamp(note!, position),
@@ -585,7 +582,10 @@ class _NotesResourcePageState extends State<_NotesResourcePage> {
       );
       return;
     }
-    await widget.onOpenPlayer(sourceUrl: video.sourceUrl, initialPosition: position);
+    await widget.onOpenPlayer(
+      sourceUrl: video.sourceUrl,
+      initialPosition: position,
+    );
   }
 
   @override

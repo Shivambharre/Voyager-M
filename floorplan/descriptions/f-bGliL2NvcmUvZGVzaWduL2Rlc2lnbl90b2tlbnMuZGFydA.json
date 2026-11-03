@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/design/design_tokens.dart",
+  "name": "DesignTokens",
+  "simple": "Supports the shared visual system by defining DesignTokens, DesignColors.",
+  "developer": "Dart file classified as design; detected declarations: DesignTokens, DesignColors.",
+  "responsibility": "Defines shared colors, typography, themes, reusable controls, and a debug showcase.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/notes/presentation/note_editor_page.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "DesignTokens",
+      "line": 1
+    },
+    {
+      "kind": "extension",
+      "name": "DesignColors",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 96
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "d75f8aa76260cc8cc83d491965a144efd7c3a5fb1c01b502f32e41f62cd3ead4"
+}

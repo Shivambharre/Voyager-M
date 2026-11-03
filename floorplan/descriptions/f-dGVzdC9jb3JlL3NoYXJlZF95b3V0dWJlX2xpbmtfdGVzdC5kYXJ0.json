@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/core/shared_youtube_link_test.dart",
+  "name": "shared youtube link test test",
+  "simple": "Checks selected behavior around core using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 8 detected test/helper declarations and 2 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/share/shared_youtube_link.dart"
+  ],
+  "dependencies": [
+    "lib/core/share/shared_youtube_link.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 21
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 29
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "9b08ed100064ce51630c3243da3977ce5df755a22cb60b22ef3b576df7798c40"
+}

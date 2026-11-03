@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/history/domain/recent_watch_history_repository.dart",
+  "name": "RecentWatchHistoryRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the RecentWatchHistoryRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Records recently loaded lessons and presents the recent list from Home.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/history/data/in_memory_recent_watch_history_repository.dart",
+    "lib/features/history/data/sqlite_recent_watch_history_repository.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/widget_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "RecentWatchHistoryRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getRecent",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "record",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "clear",
+      "line": 5
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "0fd6682bd34f18196ac7aed71d897c1b9cad0d5206a153c6e1fafe32784b9bb4"
+}

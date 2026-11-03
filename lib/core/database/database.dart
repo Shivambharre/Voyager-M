@@ -211,9 +211,7 @@ class SqfliteAppDatabase implements AppDatabase {
     await db.execute(
       'CREATE INDEX notes_resource_updated ON notes(resource_type, resource_id, updated_at DESC)',
     );
-    await db.execute(
-      'CREATE INDEX notes_updated ON notes(updated_at DESC)',
-    );
+    await db.execute('CREATE INDEX notes_updated ON notes(updated_at DESC)');
     await db.execute(
       'CREATE INDEX bookmarks_video_position ON bookmarks(video_id, position_seconds)',
     );
@@ -316,33 +314,62 @@ class SqfliteAppDatabase implements AppDatabase {
       await _createWatchActivity(db);
       await _createLocalProfile(db);
     }
-    if (oldVersion < 7 && newVersion >= 7) {
-      await db.execute(
-        "ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT 'Untitled Note'",
+    if (oldVersion >= 1 && oldVersion < 7 && newVersion >= 7) {
+      final noteTables = await db.query(
+        'sqlite_master',
+        columns: ['name'],
+        where: "type = 'table' AND name = 'notes'",
       );
-      await db.execute(
-        "ALTER TABLE notes ADD COLUMN content_json TEXT NOT NULL DEFAULT ''",
-      );
-      await db.execute('ALTER TABLE notes ADD COLUMN resource_type TEXT');
-      await db.execute('ALTER TABLE notes ADD COLUMN resource_id TEXT');
-      await db.execute('ALTER TABLE notes ADD COLUMN resource_name TEXT');
-      await db.execute(
-        'ALTER TABLE notes ADD COLUMN resource_archived INTEGER NOT NULL DEFAULT 0 CHECK (resource_archived IN (0, 1))',
-      );
-      await db.execute('''
+      if (noteTables.isEmpty) {
+        await db.execute('''
+          CREATE TABLE notes (
+            id TEXT PRIMARY KEY NOT NULL,
+            title TEXT NOT NULL DEFAULT 'Untitled Note',
+            content TEXT NOT NULL,
+            content_json TEXT NOT NULL DEFAULT '',
+            video_id TEXT REFERENCES videos(id) ON DELETE SET NULL,
+            topic_id TEXT REFERENCES topics(id) ON DELETE SET NULL,
+            timestamp_seconds INTEGER
+              CHECK (timestamp_seconds IS NULL OR timestamp_seconds >= 0),
+            resource_type TEXT,
+            resource_id TEXT,
+            resource_name TEXT,
+            resource_archived INTEGER NOT NULL DEFAULT 0
+              CHECK (resource_archived IN (0, 1)),
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+          )
+        ''');
+      } else {
+        await db.execute(
+          "ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT 'Untitled Note'",
+        );
+        await db.execute(
+          "ALTER TABLE notes ADD COLUMN content_json TEXT NOT NULL DEFAULT ''",
+        );
+        await db.execute('ALTER TABLE notes ADD COLUMN resource_type TEXT');
+        await db.execute('ALTER TABLE notes ADD COLUMN resource_id TEXT');
+        await db.execute('ALTER TABLE notes ADD COLUMN resource_name TEXT');
+        await db.execute(
+          'ALTER TABLE notes ADD COLUMN resource_archived INTEGER NOT NULL DEFAULT 0 CHECK (resource_archived IN (0, 1))',
+        );
+      }
+      if (noteTables.isNotEmpty) {
+        await db.execute('''
         UPDATE notes
         SET resource_type = 'video',
             resource_id = video_id,
             resource_name = (SELECT title FROM videos WHERE videos.id = notes.video_id)
         WHERE video_id IS NOT NULL
       ''');
-      await db.execute('''
+        await db.execute('''
         UPDATE notes
         SET resource_type = 'lesson',
             resource_id = topic_id,
             resource_name = (SELECT title FROM topics WHERE topics.id = notes.topic_id)
         WHERE topic_id IS NOT NULL
       ''');
+      }
       await db.execute(
         'CREATE INDEX notes_resource_updated ON notes(resource_type, resource_id, updated_at DESC)',
       );

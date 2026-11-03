@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "docs/decisions.md",
+  "name": "decisions documentation",
+  "simple": "Explains project behavior and development guidance for decisions; statements should be checked against current code.",
+  "developer": "Markdown documentation file. It is context, not execution evidence; the map cross-checks claims against scanned source and tests.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "d42e370a7e6aac8080ce7cf815397385257ce9cab26dc02d36a1333d589d323e"
+}

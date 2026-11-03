@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-11-03T04:26:10.845Z",
+  "disclaimer": "Automated preliminary checks only; this is not a professional security audit and can miss vulnerabilities or report false positives.",
+  "findings": [
+    {
+      "id": "architecture:lib/features/player/presentation/learning_player_screen.dart:0:Bookmark creation is not connected",
+      "severity": "medium",
+      "category": "architecture",
+      "file": "lib/features/player/presentation/learning_player_screen.dart",
+      "line": null,
+      "title": "Bookmark creation is not connected",
+      "explanation": "The current player has no saveBookmark call; the Home bookmarks flow can read and delete records, but this scan found no active UI path that creates them.",
+      "whyItMatters": "A stored feature contract can look complete while the user-facing workflow is only partially wired.",
+      "remediation": "If bookmark creation is intended, connect an explicit player action to ProgressRepository and test creation/open/delete; otherwise label the action unavailable.",
+      "confidence": 9,
+      "confidenceLabel": "High",
+      "evidence": [
+        "lib/features/progress/domain/progress_repository.dart",
+        "lib/features/home/presentation/app_shell.dart"
+      ]
+    },
+    {
+      "id": "documentation:docs/implementation-status.md:13:Implementation status omits the note image workflow",
+      "severity": "low",
+      "category": "documentation",
+      "file": "docs/implementation-status.md",
+      "line": 13,
+      "title": "Implementation status omits the note image workflow",
+      "explanation": "The documented limit on arbitrary file attachments remains accurate, but the status does not mention that the note editor supports embedded images stored locally on IO platforms and inline with browser-backed notes on Web.",
+      "whyItMatters": "A status summary that omits an active workflow can obscure platform-specific local storage behavior.",
+      "remediation": "Document image embeds separately from general file attachments and retain the arbitrary-attachment limitation.",
+      "confidence": 9,
+      "confidenceLabel": "High",
+      "evidence": [
+        "lib/features/notes/presentation/note_editor_page.dart",
+        "lib/features/notes/data/note_image_store.dart",
+        "lib/features/notes/data/note_image_store_io.dart",
+        "lib/features/notes/data/browser_note_storage_web.dart"
+      ]
+    },
+    {
+      "id": "documentation:docs/development-roadmap.md:1:Roadmap status conflicts with active settings wiring",
+      "severity": "low",
+      "category": "documentation",
+      "file": "docs/development-roadmap.md",
+      "line": 1,
+      "title": "Roadmap status conflicts with active settings wiring",
+      "explanation": "The roadmap says Settings does not persist settings, but current app code connects SettingsRepository and the settings screen.",
+      "whyItMatters": "Outdated status notes can cause later work to duplicate or remove an active workflow.",
+      "remediation": "Update the roadmap status when documentation changes are in scope; this checker does not edit application or documentation files.",
+      "confidence": 8,
+      "confidenceLabel": "High",
+      "evidence": [
+        "lib/main.dart",
+        "lib/core/di/service_locator.dart",
+        "lib/features/home/presentation/app_shell.dart"
+      ]
+    },
+    {
+      "id": "architecture:lib/features/home/presentation/app_shell.dart:0:Large Dart source file",
+      "severity": "low",
+      "category": "architecture",
+      "file": "lib/features/home/presentation/app_shell.dart",
+      "line": null,
+      "title": "Large Dart source file",
+      "explanation": "The file contains 1811 lines, which makes focused review and safe edits harder.",
+      "whyItMatters": "Large UI and orchestration files can accumulate unrelated responsibilities.",
+      "remediation": "Consider extracting cohesive widgets or helpers when the file is next changed; do not refactor solely to satisfy this heuristic.",
+      "confidence": 8,
+      "confidenceLabel": "High for size; low for impact",
+      "evidence": []
+    },
+    {
+      "id": "architecture:lib/features/player/presentation/learning_player_screen.dart:0:Large Dart source file",
+      "severity": "low",
+      "category": "architecture",
+      "file": "lib/features/player/presentation/learning_player_screen.dart",
+      "line": null,
+      "title": "Large Dart source file",
+      "explanation": "The file contains 1458 lines, which makes focused review and safe edits harder.",
+      "whyItMatters": "Large UI and orchestration files can accumulate unrelated responsibilities.",
+      "remediation": "Consider extracting cohesive widgets or helpers when the file is next changed; do not refactor solely to satisfy this heuristic.",
+      "confidence": 8,
+      "confidenceLabel": "High for size; low for impact",
+      "evidence": []
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 4,
+    "informational": 0
+  }
+}

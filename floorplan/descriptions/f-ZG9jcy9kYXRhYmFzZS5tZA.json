@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "docs/database.md",
+  "name": "database documentation",
+  "simple": "Explains project behavior and development guidance for database; statements should be checked against current code.",
+  "developer": "Markdown documentation file. It is context, not execution evidence; the map cross-checks claims against scanned source and tests.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "6f16bf1e30e126360f400a2f68e7c34c3dcfbf1a250136b08df41ea5c8e3dd2e"
+}

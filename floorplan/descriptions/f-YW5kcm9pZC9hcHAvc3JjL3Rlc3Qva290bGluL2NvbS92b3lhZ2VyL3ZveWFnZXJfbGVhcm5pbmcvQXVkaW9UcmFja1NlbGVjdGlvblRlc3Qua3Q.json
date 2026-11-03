@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "android/app/src/test/kotlin/com/voyager/voyager_learning/AudioTrackSelectionTest.kt",
+  "name": "AudioTrackSelectionTest platform configuration",
+  "simple": "Configures the Android build or runtime integration used by VoyagerM.",
+  "developer": "Kotlin platform/configuration file associated with Android platform integration.",
+  "responsibility": "Implements native Media3 playback, NewPipe extraction, platform channels, and incoming share intents.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "b8faa075fff9dc640408271626cfdfe0614801b2155506d63c934dddd206272c"
+}

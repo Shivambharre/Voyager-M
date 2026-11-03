@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/domain/watch_activity_repository.dart",
+  "name": "WatchActivityRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the WatchActivityRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "test/architecture/mock_mode_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "WatchActivityRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getActivities",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "addEligibleSeconds",
+      "line": 4
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "ed357e3e2d821540a6efc2608f6f72c70e9caf5de0a7998fcf7781f51152f784"
+}

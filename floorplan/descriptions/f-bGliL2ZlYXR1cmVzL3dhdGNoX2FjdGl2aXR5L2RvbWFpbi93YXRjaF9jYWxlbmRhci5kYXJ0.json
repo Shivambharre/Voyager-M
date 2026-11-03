@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/domain/watch_calendar.dart",
+  "name": "WatchCalendar",
+  "simple": "Supports the domain feature by defining WatchCalendar, SystemWatchCalendar.",
+  "developer": "Dart file classified as feature:features:watch_activity; detected declarations: WatchCalendar, SystemWatchCalendar.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "test/features/watch_activity/watch_activity_tracker_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "WatchCalendar",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "localDateTime",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "nextMidnightAfter",
+      "line": 2
+    },
+    {
+      "kind": "class",
+      "name": "SystemWatchCalendar",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "SystemWatchCalendar",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "localDateTime",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "nextMidnightAfter",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "DateTime",
+      "line": 14
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "bc859a86c8ed571519576b9fad521551170a71780985a590701e2984a5f3a49f"
+}

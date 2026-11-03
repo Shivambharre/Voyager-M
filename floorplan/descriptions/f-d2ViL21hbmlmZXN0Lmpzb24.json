@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "web/manifest.json",
+  "name": "manifest platform configuration",
+  "simple": "Configures the Web build or runtime integration used by VoyagerM.",
+  "developer": "JSON platform/configuration file associated with web platform configuration.",
+  "responsibility": "Provides Flutter Web bootstrap assets; repository selection uses in-memory stores on Web by default.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "f296091e570794ff6d31d1701ecd08e3e2e34d2a1194783e83bcc53f7379d2c9"
+}

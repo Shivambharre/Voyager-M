@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+  "name": "InMemoryWatchActivityRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "in-memory repository in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart"
+  ],
+  "dependencies": [
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/features/watch_activity/watch_activity_tracker_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "InMemoryWatchActivityRepository",
+      "line": 2
+    },
+    {
+      "kind": "callable",
+      "name": "getActivities",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "addEligibleSeconds",
+      "line": 13
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "c719fab2ca65db24dbb5a2cfe28966d0b730c44a152aed2a38b70cc44db1f3b3"
+}

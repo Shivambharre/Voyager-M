@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/media/newpipe_youtube_adapter_test.dart",
+  "name": "newpipe youtube adapter test test",
+  "simple": "Checks selected behavior around media using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 43 detected test/helper declarations and 6 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/media/newpipe_youtube_adapter.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/newpipe_youtube_adapter.dart",
+    "lib/core/media/source_detector.dart",
+    "lib/core/media/video_models.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 20
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 63
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 64
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 111
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 113
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "fail",
+      "line": 150
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 155
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 165
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 167
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 168
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 174
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 201
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 203
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 204
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 205
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 207
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 208
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 209
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 210
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a9d868a1b5385511b45c0a7c94be776c681b6513137643ee80e7e1b1c1d1062d"
+}

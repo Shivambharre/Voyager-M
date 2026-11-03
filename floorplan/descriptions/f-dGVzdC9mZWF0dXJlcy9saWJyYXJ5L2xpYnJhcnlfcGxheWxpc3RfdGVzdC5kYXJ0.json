@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/library/library_playlist_test.dart",
+  "name": "library playlist test test",
+  "simple": "Checks selected behavior around library using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 31 detected test/helper declarations and 9 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/di/service_locator.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/main.dart"
+  ],
+  "dependencies": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/roadmap/data/in_memory_roadmap_repository.dart",
+    "lib/main.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "configureDependencies",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "tearDown",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 24
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 42
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 44
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 48
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "testWidgets",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 102
+    },
+    {
+      "kind": "callable",
+      "name": "LearningProgress",
+      "line": 111
+    },
+    {
+      "kind": "callable",
+      "name": "VoyagerApp",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 125
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 128
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 133
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 137
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 138
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 146
+    },
+    {
+      "kind": "callable",
+      "name": "Key",
+      "line": 156
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 166
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 175
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 178
+    },
+    {
+      "kind": "callable",
+      "name": "lessThan",
+      "line": 180
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 182
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "19b127449623af5654a3c0c8c666ca358ebe106a84cb8517a78ef0b24859b351"
+}

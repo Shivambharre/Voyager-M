@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/android_media_player.dart",
+  "name": "AndroidMediaPlayer",
+  "simple": "Supports the media pipeline by defining AndroidMediaPlayer.",
+  "developer": "Dart file classified as media; detected declarations: AndroidMediaPlayer.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "AndroidMediaPlayer",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "AndroidMediaPlayer",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "_requireHttpUri",
+      "line": 34
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "_refreshSnapshot",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "TimeoutException",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "replaceStream",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "_requireHttpUri",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 81
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "_refreshSnapshot",
+      "line": 109
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 126
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 141
+    },
+    {
+      "kind": "callable",
+      "name": "_requireHttpUri",
+      "line": 154
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 160
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 166
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "88e61a2573e14ff53c6c4e6a6e7cf39e39cb7a3756b4be2deaea0efb8d0b7fac"
+}

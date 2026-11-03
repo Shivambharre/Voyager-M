@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/stream_selector.dart",
+  "name": "NetworkQuality",
+  "simple": "Supports the media pipeline by defining NetworkQuality, StreamSelectionFailure, StreamSelectionPolicy, StreamSelection, StreamSelector.",
+  "developer": "Dart file classified as media; detected declarations: NetworkQuality, StreamSelectionFailure, StreamSelectionPolicy, StreamSelection, StreamSelector.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/stream_selector_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "enum",
+      "name": "NetworkQuality",
+      "line": 1
+    },
+    {
+      "kind": "enum",
+      "name": "StreamSelectionFailure",
+      "line": 3
+    },
+    {
+      "kind": "class",
+      "name": "StreamSelectionPolicy",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "StreamSelectionPolicy",
+      "line": 12
+    },
+    {
+      "kind": "class",
+      "name": "StreamSelection",
+      "line": 28
+    },
+    {
+      "kind": "class",
+      "name": "StreamSelector",
+      "line": 43
+    },
+    {
+      "kind": "callable",
+      "name": "_normalizedMimeType",
+      "line": 45
+    },
+    {
+      "kind": "callable",
+      "name": "available",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "_normalizedMimeType",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "selectFast",
+      "line": 66
+    },
+    {
+      "kind": "callable",
+      "name": "select",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "select",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "_normalizedMimeType",
+      "line": 135
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "1279b93cfa829ec1860203bc21d0c41cad9e25140c6d913e97681718a84fe063"
+}

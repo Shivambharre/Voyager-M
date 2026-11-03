@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/library/presentation/playlist_detail_page.dart",
+  "name": "PlaylistDetailPage",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: PlaylistDetailPage.",
+  "responsibility": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart"
+  ],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "PlaylistDetailPage",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistDetailPage",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 27
+    },
+    {
+      "kind": "class",
+      "name": "_PlaylistDetailPageState",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "_loadVideos",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "_PlaylistVideo",
+      "line": 50
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 54
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 56
+    },
+    {
+      "kind": "callable",
+      "name": "_openVideo",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "_reorder",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 93
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 99
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 108
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 114
+    },
+    {
+      "kind": "callable",
+      "name": "Column",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 133
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 145
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 150
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 151
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 159
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 171
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 173
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 193
+    },
+    {
+      "kind": "callable",
+      "name": "_PlaylistVideoRow",
+      "line": 196
+    },
+    {
+      "kind": "class",
+      "name": "_PlaylistVideoRow",
+      "line": 213
+    },
+    {
+      "kind": "callable",
+      "name": "_PlaylistVideoRow",
+      "line": 215
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 227
+    },
+    {
+      "kind": "callable",
+      "name": "Color",
+      "line": 240
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 242
+    },
+    {
+      "kind": "callable",
+      "name": "ClipRRect",
+      "line": 251
+    },
+    {
+      "kind": "callable",
+      "name": "_ThumbnailPlaceholder",
+      "line": 257
+    },
+    {
+      "kind": "callable",
+      "name": "_ThumbnailPlaceholder",
+      "line": 262
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 266
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 267
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 271
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 278
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 279
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 286
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 287
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 299
+    },
+    {
+      "kind": "callable",
+      "name": "ReorderableDragStartListener",
+      "line": 310
+    },
+    {
+      "kind": "class",
+      "name": "_PlaylistVideo",
+      "line": 327
+    },
+    {
+      "kind": "callable",
+      "name": "_PlaylistVideo",
+      "line": 329
+    },
+    {
+      "kind": "class",
+      "name": "_ThumbnailPlaceholder",
+      "line": 339
+    },
+    {
+      "kind": "callable",
+      "name": "_ThumbnailPlaceholder",
+      "line": 341
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 344
+    },
+    {
+      "kind": "callable",
+      "name": "_formatDuration",
+      "line": 349
+    }
+  ],
+  "screens": [
+    {
+      "name": "PlaylistDetailPage",
+      "line": 10
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "ecaa9dfec43ea1cfd8c81a61c05d94a736d5e0f9cdd08bae3d408007562bcf42"
+}

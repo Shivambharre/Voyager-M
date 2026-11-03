@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/video_metadata_cache.dart",
+  "name": "VideoMetadataCache",
+  "simple": "Supports the media pipeline by defining VideoMetadataCache, InMemoryVideoMetadataCache, SqliteVideoMetadataCache, _EphemeralStreamCache, _CachedStreams.",
+  "developer": "Dart file classified as media; detected declarations: VideoMetadataCache, InMemoryVideoMetadataCache, SqliteVideoMetadataCache, _EphemeralStreamCache, _CachedStreams.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/video_metadata_cache_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "VideoMetadataCache",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "putVideo",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "getOrLoadStreams",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "getCachedStreams",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "hasCompleteStreams",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "putFastStreams",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "putPlaylist",
+      "line": 24
+    },
+    {
+      "kind": "class",
+      "name": "InMemoryVideoMetadataCache",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "_key",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "putVideo",
+      "line": 40
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 45
+    },
+    {
+      "kind": "callable",
+      "name": "putPlaylist",
+      "line": 49
+    },
+    {
+      "kind": "class",
+      "name": "SqliteVideoMetadataCache",
+      "line": 53
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteVideoMetadataCache",
+      "line": 57
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "putVideo",
+      "line": 83
+    },
+    {
+      "kind": "callable",
+      "name": "_write",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 103
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistInfo",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "putPlaylist",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "_write",
+      "line": 132
+    },
+    {
+      "kind": "callable",
+      "name": "_read",
+      "line": 153
+    },
+    {
+      "kind": "callable",
+      "name": "_write",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "_optionalUri",
+      "line": 183
+    },
+    {
+      "kind": "mixin",
+      "name": "_EphemeralStreamCache",
+      "line": 187
+    },
+    {
+      "kind": "callable",
+      "name": "getOrLoadStreams",
+      "line": 194
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 198
+    },
+    {
+      "kind": "callable",
+      "name": "getCachedStreams",
+      "line": 234
+    },
+    {
+      "kind": "callable",
+      "name": "_getValidEntry",
+      "line": 239
+    },
+    {
+      "kind": "callable",
+      "name": "hasCompleteStreams",
+      "line": 241
+    },
+    {
+      "kind": "callable",
+      "name": "_getValidEntry",
+      "line": 243
+    },
+    {
+      "kind": "callable",
+      "name": "putFastStreams",
+      "line": 244
+    },
+    {
+      "kind": "callable",
+      "name": "_getValidEntry",
+      "line": 269
+    },
+    {
+      "kind": "class",
+      "name": "_CachedStreams",
+      "line": 280
+    },
+    {
+      "kind": "callable",
+      "name": "_CachedStreams",
+      "line": 282
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "13a1ee1b03a151683f133641807cb663c11221b4d13942ba949df5d2eb7ede2e"
+}

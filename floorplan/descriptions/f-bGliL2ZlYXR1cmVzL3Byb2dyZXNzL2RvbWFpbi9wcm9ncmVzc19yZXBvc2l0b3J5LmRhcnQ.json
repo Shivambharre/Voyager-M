@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/progress/domain/progress_repository.dart",
+  "name": "ProgressRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the ProgressRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Saves playback progress and completion and lists or removes saved playback moments.",
+  "status": "Partial",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/features/library/library_playlist_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "ProgressRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getProgress",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "getAllProgress",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "saveProgress",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getBookmarks",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "getAllBookmarks",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "saveBookmark",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "deleteBookmark",
+      "line": 9
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Bookmark listing/deletion is wired in the home shell; no saveBookmark call is present in the current player screen."
+  ],
+  "lastScannedFingerprint": "933fd47dafbf8068a284f5518c0f192001c56c09b407a848991695d298fb5fce"
+}

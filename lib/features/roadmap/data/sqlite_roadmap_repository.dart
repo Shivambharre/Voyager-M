@@ -9,7 +9,10 @@ class SqliteRoadmapRepository implements RoadmapRepository {
 
   @override
   Future<List<Roadmap>> getRoadmaps() async {
-    final rows = await _database.query('roadmaps', orderBy: 'title COLLATE NOCASE');
+    final rows = await _database.query(
+      'roadmaps',
+      orderBy: 'title COLLATE NOCASE',
+    );
     return rows.map(_roadmapFromRow).toList(growable: false);
   }
 
@@ -25,12 +28,17 @@ class SqliteRoadmapRepository implements RoadmapRepository {
 
   @override
   Future<void> saveRoadmap(Roadmap roadmap) async {
-    await _database.upsert('roadmaps', {
-      'id': roadmap.id,
-      'title': roadmap.title,
-      'description': roadmap.description,
-      'is_active': roadmap.isActive ? 1 : 0,
-    }, keyWhere: 'id = ?', keyArgs: [roadmap.id]);
+    await _database.upsert(
+      'roadmaps',
+      {
+        'id': roadmap.id,
+        'title': roadmap.title,
+        'description': roadmap.description,
+        'is_active': roadmap.isActive ? 1 : 0,
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [roadmap.id],
+    );
   }
 
   @override
@@ -45,10 +53,7 @@ class SqliteRoadmapRepository implements RoadmapRepository {
       for (final topic in topics) {
         await transaction.update(
           'notes',
-          {
-            'resource_name': topic['title'],
-            'resource_archived': 1,
-          },
+          {'resource_name': topic['title'], 'resource_archived': 1},
           where: "resource_type = 'lesson' AND resource_id = ?",
           whereArgs: [topic['id']],
         );
@@ -74,13 +79,18 @@ class SqliteRoadmapRepository implements RoadmapRepository {
 
   @override
   Future<void> saveTopic(Topic topic) async {
-    await _database.upsert('topics', {
-      'id': topic.id,
-      'roadmap_id': topic.roadmapId,
-      'title': topic.title,
-      'status': topic.status.name,
-      'position': topic.position,
-    }, keyWhere: 'id = ?', keyArgs: [topic.id]);
+    await _database.upsert(
+      'topics',
+      {
+        'id': topic.id,
+        'roadmap_id': topic.roadmapId,
+        'title': topic.title,
+        'status': topic.status.name,
+        'position': topic.position,
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [topic.id],
+    );
   }
 
   @override
@@ -95,33 +105,27 @@ class SqliteRoadmapRepository implements RoadmapRepository {
       if (topics.isNotEmpty) {
         await transaction.update(
           'notes',
-          {
-            'resource_name': topics.first['title'],
-            'resource_archived': 1,
-          },
+          {'resource_name': topics.first['title'], 'resource_archived': 1},
           where: "resource_type = 'lesson' AND resource_id = ?",
           whereArgs: [topicId],
         );
       }
-      await transaction.delete(
-        'topics',
-        where: 'id = ?',
-        whereArgs: [topicId],
-      );
+      await transaction.delete('topics', where: 'id = ?', whereArgs: [topicId]);
     });
   }
 
   Roadmap _roadmapFromRow(Map<String, Object?> row) => Roadmap(
-        id: row['id']! as String,
-        title: row['title']! as String,
-        description: row['description']! as String,
-        isActive: row['is_active'] == 1,
-      );
+    id: row['id']! as String,
+    title: row['title']! as String,
+    description: row['description']! as String,
+    isActive: row['is_active'] == 1,
+  );
 
   Topic _topicFromRow(Map<String, Object?> row) {
     final status = TopicStatus.values.firstWhere(
       (value) => value.name == row['status'],
-      orElse: () => throw FormatException('Unknown topic status: ${row['status']}'),
+      orElse: () =>
+          throw FormatException('Unknown topic status: ${row['status']}'),
     );
     return Topic(
       id: row['id']! as String,

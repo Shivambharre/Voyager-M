@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/video_models.dart",
+  "name": "VideoSourceKind",
+  "simple": "Supports the media pipeline by defining VideoSourceKind, VideoInfo, PlaylistInfo, PlaylistEntryInfo, MediaStreamInfo.",
+  "developer": "Dart file classified as media; detected declarations: VideoSourceKind, VideoInfo, PlaylistInfo, PlaylistEntryInfo, MediaStreamInfo.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/share/shared_youtube_link.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/media/mit_ocw_adapter_test.dart",
+    "test/media/newpipe_youtube_adapter_test.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/player_features_test.dart",
+    "test/media/source_detector_test.dart",
+    "test/media/stream_selector_test.dart",
+    "test/media/video_metadata_cache_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "enum",
+      "name": "VideoSourceKind",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "VideoInfo",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "copyWith",
+      "line": 24
+    },
+    {
+      "kind": "class",
+      "name": "PlaylistInfo",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistInfo",
+      "line": 49
+    },
+    {
+      "kind": "class",
+      "name": "PlaylistEntryInfo",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 71
+    },
+    {
+      "kind": "class",
+      "name": "MediaStreamInfo",
+      "line": 87
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 89
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "727f84cbcc08c51688556abb78350509ad0b4392fddbb4e7ae6e0f011b9188cd"
+}

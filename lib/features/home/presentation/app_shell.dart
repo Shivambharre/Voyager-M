@@ -15,7 +15,7 @@ import '../../../features/library/domain/learning_content.dart';
 import '../../../features/library/domain/learning_library_repository.dart';
 import '../../../features/library/presentation/playlist_detail_page.dart';
 import '../../../features/notes/domain/notes_repository.dart';
-import '../../../features/notes/domain/study_note.dart';
+import '../../../features/notes/presentation/notes_home_page.dart';
 import '../../../features/goals/domain/daily_goal_repository.dart';
 import '../../../features/goals/domain/daily_goal_summary.dart';
 import '../../../features/progress/domain/learning_progress.dart';
@@ -108,9 +108,10 @@ class _AppShellState extends State<AppShell> {
         progressRepository: serviceLocator<ProgressRepository>(),
         onOpenPlayer: _openPlayer,
       ),
-      _NotesPage(
+      NotesHomePage(
         repository: serviceLocator<NotesRepository>(),
         libraryRepository: serviceLocator<LearningLibraryRepository>(),
+        roadmapRepository: widget.repository,
         onOpenPlayer: _openPlayer,
       ),
       _SettingsPage(
@@ -1529,7 +1530,9 @@ class _CreatePlaylistDialogState extends State<_CreatePlaylistDialog> {
           key: const Key('playlist-description-field'),
           controller: _descriptionController,
           maxLines: 3,
-          decoration: const InputDecoration(labelText: 'Description (optional)'),
+          decoration: const InputDecoration(
+            labelText: 'Description (optional)',
+          ),
         ),
       ],
     ),
@@ -1556,229 +1559,6 @@ IconData _playlistLibraryIcon(String playlistId) {
     (sum, unit) => sum + unit,
   );
   return icons[stableIndex % icons.length];
-}
-
-class _NotesPage extends StatefulWidget {
-  const _NotesPage({
-    required this.repository,
-    required this.libraryRepository,
-    required this.onOpenPlayer,
-  });
-
-  final NotesRepository repository;
-  final LearningLibraryRepository libraryRepository;
-  final _PlayerLauncher onOpenPlayer;
-
-  @override
-  State<_NotesPage> createState() => _NotesPageState();
-}
-
-class _NotesPageState extends State<_NotesPage> {
-  final _noteController = TextEditingController();
-  late Future<List<_NoteGroup>> _notes;
-
-  @override
-  void initState() {
-    super.initState();
-    _notes = _loadNoteGroups();
-  }
-
-  @override
-  void dispose() {
-    _noteController.dispose();
-    super.dispose();
-  }
-
-  Future<List<_NoteGroup>> _loadNoteGroups() async {
-    final notes = await widget.repository.getNotes();
-    final groups = <String, _NoteGroup>{};
-    for (final note in notes) {
-      final key = note.videoId ?? '__general__';
-      final video = note.videoId == null
-          ? null
-          : await widget.libraryRepository.getVideo(note.videoId!);
-      final title =
-          video?.title ??
-          (note.videoId == null ? 'General notes' : 'Video note');
-      groups
-          .putIfAbsent(
-            key,
-            () => _NoteGroup(title: title, notes: <StudyNote>[]),
-          )
-          .notes
-          .add(note);
-    }
-    return groups.values.toList(growable: false);
-  }
-
-  void _reload() {
-    final notes = _loadNoteGroups();
-    setState(() {
-      _notes = notes;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(DesignTokens.space4),
-      children: [
-        const BrutalistSectionHeader(title: 'Study notes'),
-        const SizedBox(height: DesignTokens.space2),
-        Text(
-          'Ideas and important moments, kept with your learning.',
-          style: Theme.of(context).textTheme.bodyMedium
-              ?.copyWith(color: context.mutedColor),
-        ),
-        const SizedBox(height: DesignTokens.space4),
-        BrutalistCard(
-          color: context.raisedColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'ADD A NOTE',
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-              const SizedBox(height: DesignTokens.space2),
-              BrutalistInput(
-                controller: _noteController,
-                hint: 'Write down what you learned...',
-                minLines: 3,
-                maxLines: 6,
-              ),
-              const SizedBox(height: DesignTokens.space3),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: BrutalistButton(
-                  label: 'Save note',
-                  icon: Icons.save_outlined,
-                  onPressed: () => unawaited(_saveNote()),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: DesignTokens.space5),
-        const BrutalistSectionHeader(title: 'Recent notes'),
-        const SizedBox(height: DesignTokens.space3),
-        FutureBuilder<List<_NoteGroup>>(
-          future: _notes,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return BrutalistErrorState(
-                message: 'Your notes could not be loaded.',
-                onRetry: _reload,
-              );
-            }
-            if (!snapshot.hasData) return const BrutalistLoadingState();
-            if (snapshot.data!.isEmpty) {
-              return const BrutalistEmptyState(
-                title: 'No notes yet',
-                message: 'Saved notes will appear here.',
-              );
-            }
-            return Column(
-              children: [
-                for (final group in snapshot.data!) ...[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      group.title.toUpperCase(),
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ),
-                  const SizedBox(height: DesignTokens.space2),
-                  for (final note in group.notes) ...[
-                    GestureDetector(
-                      onTap:
-                          note.timestampSeconds == null || note.videoId == null
-                          ? null
-                          : () => unawaited(_openNoteTimestamp(note)),
-                      child: BrutalistCard(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(note.content),
-                                  const SizedBox(height: DesignTokens.space2),
-                                  Text(
-                                    _noteSubtitle(note),
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: context.mutedColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              tooltip: 'Delete note',
-                              onPressed: () => unawaited(_deleteNote(note)),
-                              icon: const Icon(Icons.delete_outline),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: DesignTokens.space3),
-                  ],
-                ],
-              ],
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Future<void> _saveNote() async {
-    final content = _noteController.text.trim();
-    if (content.isEmpty) return;
-    final now = DateTime.now();
-    await widget.repository.saveNote(
-      StudyNote(
-        id: now.microsecondsSinceEpoch.toString(),
-        content: content,
-        createdAt: now,
-        updatedAt: now,
-      ),
-    );
-    if (!mounted) return;
-    _noteController.clear();
-    _reload();
-  }
-
-  Future<void> _deleteNote(StudyNote note) async {
-    await widget.repository.deleteNote(note.id);
-    if (mounted) _reload();
-  }
-
-  Future<void> _openNoteTimestamp(StudyNote note) async {
-    if (note.videoId == null || note.timestampSeconds == null) return;
-    final video = await widget.libraryRepository.getVideo(note.videoId!);
-    if (video == null || !mounted) return;
-    await widget.onOpenPlayer(
-      sourceUrl: video.sourceUrl,
-      initialPosition: Duration(seconds: note.timestampSeconds!),
-    );
-  }
-
-  String _noteSubtitle(StudyNote note) {
-    final timestamp = note.timestampSeconds;
-    if (timestamp == null) return 'Saved ${note.updatedAt.toLocal()}';
-    final duration = Duration(seconds: timestamp);
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return 'At $minutes:$seconds · ${note.updatedAt.toLocal()}';
-  }
-}
-
-class _NoteGroup {
-  const _NoteGroup({required this.title, required this.notes});
-
-  final String title;
-  final List<StudyNote> notes;
 }
 
 class _SettingsPage extends StatefulWidget {

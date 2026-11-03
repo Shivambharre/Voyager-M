@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,7 @@ import '../../../features/library/domain/learning_content.dart';
 import '../../../features/library/domain/learning_library_repository.dart';
 import '../../../features/notes/domain/notes_repository.dart';
 import '../../../features/notes/domain/study_note.dart';
+import '../../../features/notes/presentation/note_editor_page.dart';
 import '../../../features/progress/domain/learning_progress.dart';
 import '../../../features/progress/domain/progress_repository.dart';
 import '../../../features/watch_activity/data/in_memory_watch_activity_repository.dart';
@@ -74,6 +76,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
   Future<void>? _activityFlush;
   PlayerSnapshot _snapshot = const PlayerSnapshot.initial();
   VideoInfo? _video;
+  Future<List<StudyNote>> _videoNotes = Future.value(const <StudyNote>[]);
   PlaylistInfo? _playlist;
   String? _errorMessage;
   bool _isLoading = false;
@@ -109,6 +112,9 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
     _watchActivityTracker = WatchActivityTracker(
       repository: watchActivityRepository,
     );
+    if (_video != null) {
+      _videoNotes = _notesRepository.getNotes(videoId: _video!.id);
+    }
     if (widget.initialSourceUrl case final sourceUrl?) {
       _urlController.text = sourceUrl;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -191,7 +197,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
                           label: 'Add note',
                           icon: Icons.edit_note,
                           secondary: true,
-                          onPressed: () => unawaited(_addTimestampedNote()),
+                          onPressed: () => unawaited(_openVideoNote()),
                         ),
                         BrutalistButton(
                           label: 'Save to playlist',
@@ -358,9 +364,13 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
                       key: const Key('save-player-note-button'),
                       label: 'Save note',
                       icon: Icons.save_outlined,
-                      onPressed: () => unawaited(_saveNote()),
+                      onPressed: _video == null
+                          ? null
+                          : () => unawaited(_saveNote()),
                     ),
                   ),
+                  const SizedBox(height: DesignTokens.space2),
+                  _buildVideoNotes(),
                 ],
               ),
             ),
@@ -889,41 +899,6 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
     }
   }
 
-  Future<void> _saveNote() async {
-    final content = _noteController.text.trim();
-    if (content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Write a note before saving.')),
-      );
-      return;
-    }
-    final now = DateTime.now();
-    try {
-      final timestamp = _video == null
-          ? null
-          : (await _playbackController.currentPosition).inSeconds;
-      await _notesRepository.saveNote(
-        StudyNote(
-          id: now.microsecondsSinceEpoch.toString(),
-          content: content,
-          videoId: _video?.id,
-          timestampSeconds: timestamp,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      );
-      if (!mounted) return;
-      _noteController.clear();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Note saved.')));
-    } on Object {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save this note.')),
-      );
-    }
-  }
-
   Future<void> _loadSource() async {
     await _stopActivityTracking();
     _watchActivityTracker.resetPositionBaseline();
@@ -931,6 +906,7 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
       _isLoading = true;
       _errorMessage = null;
       _video = null;
+      _videoNotes = Future.value(const <StudyNote>[]);
       _playlist = null;
       _isPlaylistSaved = false;
       _isLessonComplete = false;
@@ -940,6 +916,9 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
       if (!mounted) return;
       setState(() {
         _video = _playbackController.currentVideo;
+        _videoNotes = _video == null
+            ? Future.value(const <StudyNote>[])
+            : _notesRepository.getNotes(videoId: _video!.id);
         _playlist = _playbackController.currentPlaylist;
         _isPlaylistSaved = false;
       });
@@ -975,12 +954,16 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
       _isLoading = true;
       _errorMessage = null;
       _video = null;
+      _videoNotes = Future.value(const <StudyNote>[]);
     });
     try {
       await _playbackController.selectLecture(entry);
       if (!mounted) return;
       setState(() {
         _video = _playbackController.currentVideo;
+        _videoNotes = _video == null
+            ? Future.value(const <StudyNote>[])
+            : _notesRepository.getNotes(videoId: _video!.id);
         _isLessonComplete = false;
       });
       if (_playbackController.currentVideo case final video?) {
@@ -1328,15 +1311,139 @@ class _LearningPlayerScreenState extends State<LearningPlayerScreen>
     );
   }
 
-  Future<void> _addTimestampedNote() async {
-    final position = await _playbackController.currentPosition;
+  Widget _buildVideoNotes() => FutureBuilder<List<StudyNote>>(
+    future: _videoNotes,
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return const Text('Video notes could not be loaded.');
+      }
+      if (!snapshot.hasData) {
+        return const Padding(
+          padding: EdgeInsets.all(12),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+      if (snapshot.data!.isEmpty) {
+        return const Text('No notes for this video yet.');
+      }
+      return Column(
+        children: [
+          for (final note in snapshot.data!)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(note.title),
+              subtitle: Text(
+                note.content.isEmpty ? 'No text yet' : note.content,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              leading: note.timestampSeconds == null
+                  ? const Icon(Icons.edit_note)
+                  : Text(
+                      _formatTime(Duration(seconds: note.timestampSeconds!)),
+                    ),
+              onTap: () => unawaited(_openVideoNote(note: note)),
+              trailing: note.timestampSeconds == null
+                  ? const Icon(Icons.chevron_right)
+                  : IconButton(
+                      tooltip: 'Seek to note timestamp',
+                      onPressed: () => unawaited(_seekAndOpenNote(note)),
+                      icon: const Icon(Icons.play_arrow),
+                    ),
+            ),
+        ],
+      );
+    },
+  );
+
+  Future<void> _openVideoNote({StudyNote? note}) async {
+    final video = _video;
+    if (video == null) return;
+    int? timestamp = note?.timestampSeconds;
+    if (note == null) {
+      timestamp = (await _playbackController.currentPosition).inSeconds;
+    }
+
     if (!mounted) return;
-    final prefix = _noteController.text.isEmpty ? '' : '\n';
-    _noteController.text =
-        '${_noteController.text}$prefix${_formatTime(position)} ';
-    _noteController.selection = TextSelection.collapsed(
-      offset: _noteController.text.length,
-    );
+    try {
+      await Navigator.of(context).push<bool>(
+        MaterialPageRoute<bool>(
+          builder: (_) => NoteEditorPage(
+            repository: _notesRepository,
+            note: note,
+            resourceType: NoteResourceType.video,
+            resourceId: video.id,
+            resourceName: video.title,
+            timestampSeconds: timestamp,
+            onCaptureTimestamp: () async =>
+                (await _playbackController.currentPosition).inSeconds,
+            onJumpToTimestamp: _seekPlaybackTo,
+          ),
+        ),
+      );
+      if (mounted && _video?.id == video.id) {
+        setState(() {
+          _videoNotes = _notesRepository.getNotes(videoId: video.id);
+        });
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open this note.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _saveNote() async {
+    final video = _video;
+    final content = _noteController.text.trim();
+    if (video == null || content.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Write a note before saving.')),
+      );
+      return;
+    }
+    final now = DateTime.now();
+    try {
+      final timestamp = (await _playbackController.currentPosition).inSeconds;
+      await _notesRepository.saveNote(
+        StudyNote(
+          id: now.microsecondsSinceEpoch.toString(),
+          title: 'Untitled Note',
+          content: content,
+          contentJson: jsonEncode([
+            {'insert': '$content\n'},
+          ]),
+          videoId: video.id,
+          resourceType: NoteResourceType.video,
+          resourceId: video.id,
+          resourceName: video.title,
+          timestampSeconds: timestamp,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+      if (!mounted) return;
+      _noteController.clear();
+      setState(() {
+        _videoNotes = _notesRepository.getNotes(videoId: video.id);
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Note saved.')));
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save this note.')),
+      );
+    }
+  }
+
+  Future<void> _seekAndOpenNote(StudyNote note) async {
+    final seconds = note.timestampSeconds;
+    if (seconds == null) return;
+    await _seekPlaybackTo(Duration(seconds: seconds));
+    if (mounted) await _openVideoNote(note: note);
   }
 
   String _formatTime(Duration duration) {

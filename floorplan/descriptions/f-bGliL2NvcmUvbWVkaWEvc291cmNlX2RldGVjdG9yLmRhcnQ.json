@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/source_detector.dart",
+  "name": "SourceDescriptor",
+  "simple": "Supports the media pipeline by defining SourceDescriptor, SourceDetector.",
+  "developer": "Dart file classified as media; detected declarations: SourceDescriptor, SourceDetector.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/share/shared_youtube_link.dart",
+    "test/media/mit_ocw_adapter_test.dart",
+    "test/media/newpipe_youtube_adapter_test.dart",
+    "test/media/playback_controller_test.dart",
+    "test/media/player_features_test.dart",
+    "test/media/source_detector_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SourceDescriptor",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "SourceDescriptor",
+      "line": 3
+    },
+    {
+      "kind": "class",
+      "name": "SourceDetector",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "detect",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "SourceDescriptor",
+      "line": 43
+    },
+    {
+      "kind": "callable",
+      "name": "SourceDescriptor",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "SourceDescriptor",
+      "line": 61
+    },
+    {
+      "kind": "callable",
+      "name": "_videoIdFromUrl",
+      "line": 69
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "4ec415f8c21238f9db314add9681658ded101ad28724f5f921a11776026dd752"
+}

@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>VoyagerM · Architecture Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f2ede3;
+      --surface: #fffdf8;
+      --surface-2: #e8dfd0;
+      --ink: #292724;
+      --muted: #71695d;
+      --border: #c9bda9;
+      --accent: #6c3028;
+      --accent-2: #263b35;
+      --gold: #a8894e;
+      --blue: #536f82;
+      --warning: #8d5c11;
+      --danger: #8b3029;
+      --shadow: 0 12px 32px rgb(41 39 36 / 9%);
+      font: 14px/1.5 Inter, "Segoe UI", system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --page: #201f1d;
+      --surface: #2a2825;
+      --surface-2: #36332e;
+      --ink: #eee8dc;
+      --muted: #b7ad9e;
+      --border: #544e44;
+      --accent: #d2917e;
+      --accent-2: #9ab4a5;
+      --gold: #d2b56c;
+      --blue: #9bb9cd;
+      --warning: #e2b65d;
+      --danger: #f09386;
+      --shadow: 0 12px 32px rgb(0 0 0 / 22%);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 360px; min-height: 100vh; color: var(--ink); background: var(--page); }
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--gold); outline-offset: 2px;
+    }
+    .topbar {
+      min-height: 68px; display: flex; align-items: center; gap: 18px; padding: 12px 22px;
+      background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow);
+    }
+    .brand { display: flex; align-items: center; gap: 11px; min-width: 215px; }
+    .brand-mark { width: 35px; height: 35px; display: grid; place-items: center; border: 1px solid var(--accent); color: var(--accent); font: 700 20px Georgia, serif; }
+    .brand h1 { margin: 0; font: 600 18px/1.15 Georgia, "Times New Roman", serif; letter-spacing: .01em; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+    .toolbar { display: flex; flex: 1; align-items: center; gap: 8px; min-width: 0; }
+    .search-wrap { position: relative; flex: 1; max-width: 520px; }
+    .search-wrap input { width: 100%; min-height: 38px; padding: 7px 12px 7px 34px; color: var(--ink); background: var(--page); border: 1px solid var(--border); border-radius: 6px; }
+    .search-icon { position: absolute; left: 11px; top: 8px; color: var(--muted); pointer-events: none; }
+    .search-results { position: absolute; z-index: 4; top: calc(100% + 5px); left: 0; right: 0; max-height: 320px; overflow: auto; padding: 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; box-shadow: var(--shadow); }
+    .search-results[hidden] { display: none; }
+    .search-result { display: block; width: 100%; padding: 8px 10px; text-align: left; background: transparent; border: 0; border-radius: 4px; cursor: pointer; }
+    .search-result:hover { background: var(--surface-2); }
+    .search-result small { display: block; color: var(--muted); }
+    .toolbar-actions { display: flex; gap: 6px; margin-left: auto; }
+    .button, .icon-button, .tab-button, .crumb, .zoom-button {
+      min-height: 36px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface);
+      cursor: pointer; transition: background .15s, border-color .15s;
+    }
+    .button { padding: 7px 11px; white-space: nowrap; }
+    .icon-button, .zoom-button { min-width: 36px; padding: 5px 8px; font-size: 15px; }
+    .button:hover, .icon-button:hover, .zoom-button:hover, .crumb:hover, .tab-button:hover { background: var(--surface-2); }
+    .button.primary { color: #fff; background: var(--accent-2); border-color: var(--accent-2); }
+    [data-theme="dark"] .button.primary { color: #171b18; }
+    .button.primary:hover { filter: brightness(1.1); }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 14px; padding: 14px; min-height: calc(100vh - 68px); }
+    .workspace, .inspector { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); }
+    .workspace { display: flex; flex-direction: column; min-height: 650px; overflow: hidden; }
+    .workspace-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .breadcrumbs { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 200px; flex-wrap: wrap; }
+    .crumb { min-height: 29px; padding: 3px 8px; font-size: 12px; }
+    .crumb.current { font-weight: 700; background: var(--surface-2); }
+    .crumb-sep { color: var(--muted); }
+    .mode-switch { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .mode-switch input { accent-color: var(--accent-2); }
+    .tabs { display: flex; gap: 5px; padding: 10px 14px 0; overflow: auto; }
+    .tab-button { min-height: 32px; padding: 5px 10px; color: var(--muted); font-size: 12px; }
+    .tab-button[aria-selected="true"] { color: var(--ink); background: var(--surface-2); border-color: var(--accent); }
+    .stage { position: relative; flex: 1; min-height: 430px; margin: 10px; overflow: hidden; border: 1px solid var(--border); border-radius: 6px; background-color: var(--page); background-image: radial-gradient(var(--border) .7px, transparent .7px); background-size: 18px 18px; }
+    .graph-svg { display: block; width: 100%; height: 100%; min-height: 430px; touch-action: none; cursor: grab; }
+    .graph-svg.dragging { cursor: grabbing; }
+    .edge { fill: none; stroke: var(--blue); stroke-width: 1.5; opacity: .46; marker-end: url(#arrow); }
+    .edge[data-type="data"] { stroke: var(--gold); }
+    .edge[data-type="navigation"] { stroke: var(--accent); }
+    .edge[data-type="platform-integration"] { stroke: var(--accent-2); stroke-dasharray: 5 4; }
+    .edge[data-type="http"] { stroke: var(--warning); stroke-dasharray: 3 4; }
+    .edge-label { fill: var(--muted); font-size: 9px; text-anchor: middle; paint-order: stroke; stroke: var(--page); stroke-width: 3px; }
+    .node-card { cursor: pointer; }
+    .node-card rect { fill: var(--surface); stroke: var(--border); stroke-width: 1.2; rx: 7; }
+    .node-card:hover rect { stroke: var(--accent); stroke-width: 2; }
+    .node-card.selected rect { stroke: var(--accent); stroke-width: 2.4; }
+    .node-card.highlight rect { stroke: var(--gold); stroke-width: 3; filter: drop-shadow(0 0 5px var(--gold)); animation: pulse 1.25s ease-in-out infinite alternate; }
+    .node-card.changed rect { stroke: #53825d; stroke-width: 2.5; }
+    .node-title { fill: var(--ink); font-size: 13px; font-weight: 700; pointer-events: none; }
+    .node-summary { fill: var(--muted); font-size: 10px; pointer-events: none; }
+    .node-meta { fill: var(--muted); font-size: 9px; pointer-events: none; }
+    .node-kind { font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .legend { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; padding: 7px 14px 12px; color: var(--muted); font-size: 11px; }
+    .legend strong { color: var(--ink); }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .swatch { width: 9px; height: 9px; border: 1px solid currentColor; border-radius: 2px; }
+    .swatch.ui { color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, transparent); }
+    .swatch.domain { color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 18%, transparent); }
+    .swatch.data { color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, transparent); }
+    .swatch.infrastructure { color: var(--blue); background: color-mix(in srgb, var(--blue) 18%, transparent); }
+    .swatch.external { color: var(--warning); background: color-mix(in srgb, var(--warning) 18%, transparent); }
+    .swatch.configuration { color: var(--muted); background: var(--surface-2); }
+    .swatch.test { color: #53825d; background: #53825d22; }
+    .graph-tools { position: absolute; z-index: 2; right: 12px; top: 12px; display: flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow); }
+    .graph-tools output { min-width: 46px; align-self: center; text-align: center; color: var(--muted); font-size: 11px; }
+    .inspector { align-self: start; max-height: calc(100vh - 96px); overflow: auto; }
+    .panel-head { position: sticky; z-index: 1; top: 0; display: flex; align-items: start; justify-content: space-between; gap: 10px; padding: 17px 17px 12px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .panel-head h2 { margin: 0; font: 600 19px/1.2 Georgia, "Times New Roman", serif; }
+    .panel-head p { margin: 5px 0 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+    .panel-body { padding: 14px 17px 20px; }
+    .eyebrow { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .status { display: inline-block; margin: 8px 0 12px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; }
+    .status.partial { color: var(--warning); border-color: var(--warning); }
+    .status.implemented { color: var(--accent-2); border-color: var(--accent-2); }
+    .panel-section { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }
+    .panel-section h3 { margin: 0 0 7px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+    .panel-section p { margin: 6px 0; }
+    .panel-section ul { margin: 7px 0 0; padding-left: 18px; }
+    .panel-section li { margin: 5px 0; overflow-wrap: anywhere; }
+    .path, code { color: var(--accent); font: 11px/1.5 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+    .symbol-list, .risk-list { display: grid; gap: 6px; }
+    .symbol-button, .link-button { text-align: left; padding: 6px 8px; color: var(--accent); background: var(--page); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; overflow-wrap: anywhere; }
+    .symbol-button:hover, .link-button:hover { border-color: var(--accent); }
+    .status-message { min-height: 18px; padding: 0 14px 8px; color: var(--muted); font-size: 11px; }
+    .view-panel { padding: 15px; }
+    .view-panel h2 { margin: 0 0 6px; font: 600 21px Georgia, serif; }
+    .view-panel > p { margin: 4px 0 14px; color: var(--muted); }
+    .flow-select { min-width: 220px; min-height: 36px; padding: 6px 9px; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+    .flow-card, .finding-card, .change-card, .question-card { margin: 10px 0; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+    .flow-card.current { border-color: var(--accent); box-shadow: inset 3px 0 var(--accent); }
+    .flow-card h3, .finding-card h3, .change-card h3 { margin: 0 0 5px; font-size: 14px; }
+    .flow-card p, .finding-card p, .change-card p { margin: 5px 0; }
+    .flow-card small, .finding-card small, .change-card small { color: var(--muted); }
+    .flow-controls { display: flex; gap: 8px; margin: 12px 0; }
+    .flow-progress { color: var(--muted); font-size: 12px; align-self: center; }
+    .severity { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .severity.critical, .severity.high { color: var(--danger); }
+    .severity.medium { color: var(--warning); }
+    .severity.low, .severity.informational { color: var(--accent-2); }
+    .finding-card details { margin-top: 7px; }
+    .finding-card summary { color: var(--accent); cursor: pointer; font-size: 12px; }
+    .finding-card .confidence { float: right; color: var(--muted); font-size: 10px; }
+    .question-input { width: 100%; min-height: 78px; padding: 9px; color: var(--ink); background: var(--page); border: 1px solid var(--border); border-radius: 5px; resize: vertical; }
+    .prompt-output { width: 100%; min-height: 180px; margin-top: 9px; padding: 9px; color: var(--ink); background: var(--page); border: 1px solid var(--border); border-radius: 5px; resize: vertical; font: 11px/1.45 Consolas, "Courier New", monospace; }
+    .notice { margin: 10px 0; padding: 9px 10px; color: var(--muted); background: var(--surface-2); border-left: 3px solid var(--gold); font-size: 12px; }
+    dialog { width: min(560px, calc(100vw - 24px)); max-height: 85vh; padding: 0; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 9px; box-shadow: var(--shadow); }
+    dialog::backdrop { background: rgb(18 17 16 / 56%); backdrop-filter: blur(2px); }
+    .dialog-content { padding: 20px; }
+    .dialog-content h2 { margin: 0; font: 600 22px Georgia, serif; }
+    .dialog-content p { color: var(--muted); }
+    .dialog-actions { display: flex; justify-content: end; gap: 8px; margin-top: 17px; }
+    .checkbox-row { display: flex; gap: 8px; align-items: center; margin: 9px 0; }
+    .empty { padding: 25px; text-align: center; color: var(--muted); }
+    @keyframes pulse { from { opacity: .7; } to { opacity: 1; } }
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: minmax(0, 1fr) 310px; }
+      .brand { min-width: 190px; }
+      .button .wide-label { display: none; }
+    }
+    @media (max-width: 760px) {
+      .topbar { flex-wrap: wrap; gap: 9px; padding: 10px 12px; }
+      .brand { min-width: 0; flex: 1; }
+      .toolbar { order: 2; flex-basis: 100%; }
+      .toolbar-actions { gap: 4px; }
+      .layout { display: flex; flex-direction: column; padding: 8px; }
+      .workspace { min-height: 560px; }
+      .stage, .graph-svg { min-height: 390px; }
+      .inspector { max-height: none; }
+      .workspace-head { padding: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">V</div>
+      <div><h1>VoyagerM · Floorplan</h1><p>Interactive architecture explorer</p></div>
+    </div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="search" type="search" autocomplete="off" placeholder="Search components, files, symbols, tables…" aria-label="Search the architecture">
+        <div id="search-results" class="search-results" role="listbox" hidden></div>
+      </div>
+      <div class="toolbar-actions">
+        <button class="button" id="tour-button" title="Start the guided tour">Tour</button>
+        <button class="button" id="export-button" title="Create a sanitized standalone HTML export">Export</button>
+        <button class="icon-button" id="theme-button" title="Toggle light and dark themes" aria-label="Toggle theme">◐</button>
+      </div>
+    </div>
+  </header>
+  <main class="layout">
+    <section class="workspace" aria-label="Architecture map">
+      <div class="workspace-head">
+        <nav id="breadcrumbs" class="breadcrumbs" aria-label="Map location"></nav>
+        <label class="mode-switch"><input id="developer-mode" type="checkbox"> Developer detail</label>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Explorer views">
+        <button class="tab-button" data-view="map" role="tab" aria-selected="true">Architecture</button>
+        <button class="tab-button" data-view="flows" role="tab" aria-selected="false">Workflows</button>
+        <button class="tab-button" data-view="health" role="tab" aria-selected="false">Health check</button>
+        <button class="tab-button" data-view="recent" role="tab" aria-selected="false">Recent work</button>
+        <button class="tab-button" data-view="ask" role="tab" aria-selected="false">Ask the map</button>
+      </nav>
+      <div id="map-panel">
+        <div class="graph-tools" aria-label="Map controls">
+          <button class="zoom-button" id="zoom-out" aria-label="Zoom out">−</button>
+          <output id="zoom-level">100%</output>
+          <button class="zoom-button" id="zoom-in" aria-label="Zoom in">+</button>
+          <button class="zoom-button" id="reset-view" title="Reset zoom and layout" aria-label="Reset map view">↺</button>
+        </div>
+        <div class="stage" id="stage">
+          <svg id="graph" class="graph-svg" role="img" aria-label="Interactive application architecture graph" viewBox="0 0 1200 650">
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,4 L0,8 z" fill="context-stroke"></path>
+              </marker>
+            </defs>
+            <g id="scene"></g>
+          </svg>
+        </div>
+      </div>
+      <div id="flow-panel" class="view-panel" hidden></div>
+      <div id="health-panel" class="view-panel" hidden></div>
+      <div id="recent-panel" class="view-panel" hidden></div>
+      <div id="ask-panel" class="view-panel" hidden></div>
+      <div class="legend" aria-label="Architecture legend">
+        <strong>Legend</strong>
+        <span class="legend-item"><i class="swatch ui"></i>UI / screens</span>
+        <span class="legend-item"><i class="swatch domain"></i>Domain</span>
+        <span class="legend-item"><i class="swatch data"></i>Data / repositories</span>
+        <span class="legend-item"><i class="swatch infrastructure"></i>Infrastructure</span>
+        <span class="legend-item"><i class="swatch external"></i>External</span>
+        <span class="legend-item"><i class="swatch configuration"></i>Configuration</span>
+        <span class="legend-item"><i class="swatch test"></i>Tests</span>
+        <span>Solid arrows are source-backed imports/registrations; dashed links are platform or network boundaries.</span>
+      </div>
+      <div id="status-message" class="status-message" role="status" aria-live="polite"></div>
+    </section>
+    <aside id="inspector" class="inspector" aria-label="Selected component details"></aside>
+  </main>
+  <dialog id="tour-dialog">
+    <div class="dialog-content" id="tour-content"></div>
+  </dialog>
+  <dialog id="export-dialog">
+    <div class="dialog-content">
+      <h2>Export a standalone map</h2>
+      <p>The export embeds the current architecture and works offline. Repository paths remain relative; scan fingerprints and machine-specific paths are excluded.</p>
+      <label class="checkbox-row"><input type="checkbox" id="export-flows" checked> Include guided workflows</label>
+      <label class="checkbox-row"><input type="checkbox" id="export-notes" checked> Include component notes</label>
+      <label class="checkbox-row"><input type="checkbox" id="export-recent" checked> Include recent-work changes</label>
+      <label class="checkbox-row"><input type="checkbox" id="export-health" checked> Include preliminary health findings</label>
+      <div class="dialog-actions">
+        <button class="button" data-close="export-dialog">Cancel</button>
+        <button class="button primary" id="export-confirm">Download HTML</button>
+      </div>
+    </div>
+  </dialog>
+  <script type="application/json" id="floorplan-data">@@FLOORPLAN_DATA@@</script>
+  <script>
+    (() => {
+      'use strict';
+      const model = JSON.parse(document.getElementById('floorplan-data').textContent);
+      const graph = model.graph;
+      const architecture = model.architecture;
+      const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
+      const indexById = new Map(graph.searchIndex.map((node) => [node.id, node]));
+      const changedPaths = new Set((model.recentWork.changes ?? []).map((change) => change.path).filter(Boolean));
+      const elements = {
+        breadcrumbs: document.getElementById('breadcrumbs'),
+        search: document.getElementById('search'),
+        searchResults: document.getElementById('search-results'),
+        scene: document.getElementById('scene'),
+        svg: document.getElementById('graph'),
+        stage: document.getElementById('stage'),
+        inspector: document.getElementById('inspector'),
+        zoomLevel: document.getElementById('zoom-level'),
+        status: document.getElementById('status-message'),
+        mode: document.getElementById('developer-mode'),
+      };
+      const viewPanels = {
+        map: document.getElementById('map-panel'),
+        flows: document.getElementById('flow-panel'),
+        health: document.getElementById('health-panel'),
+        recent: document.getElementById('recent-panel'),
+        ask: document.getElementById('ask-panel'),
+      };
+      let scopeStack = ['app'];
+      let selectedId = 'app';
+      let activeView = 'map';
+      let zoom = 1;
+      let pan = { x: 0, y: 0 };
+      let positions = new Map();
+      let activeFlow = null;
+      let flowStep = 0;
+      let tourStep = 0;
+      let lastSearchResults = [];
+      let drag = null;
+      let movedNode = false;
+      let flowHighlight = new Set();
+      let developerMode = false;
+
+      function currentScope() {
+        return scopeStack.at(-1);
+      }
+      function currentNode() {
+        return nodeById.get(selectedId) ?? nodeById.get('app');
+      }
+      function text(element, value) {
+        element.textContent = value ?? '';
+        return element;
+      }
+      function element(tag, className, value) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (value !== undefined) node.textContent = value;
+        return node;
+      }
+      function setStatus(message) {
+        text(elements.status, message);
+      }
+      function kindColor(kind) {
+        return ({
+          ui: 'var(--accent)',
+          domain: 'var(--accent-2)',
+          data: 'var(--gold)',
+          infrastructure: 'var(--blue)',
+          external: 'var(--warning)',
+          configuration: 'var(--muted)',
+          test: '#53825d',
+          application: 'var(--accent-2)',
+        })[kind] ?? 'var(--muted)';
+      }
+      function childrenOf(nodeId) {
+        return graph.nodes.filter((node) => node.parentId === nodeId);
+      }
+      function canExplore(node) {
+        return childrenOf(node.id).length > 0;
+      }
+      function directDescription(node) {
+        return developerMode ? (node.developerSummary || node.summary) : node.summary;
+      }
+      function visibleNodes() {
+        const scope = currentScope();
+        return childrenOf(scope);
+      }
+      function crumbs() {
+        elements.breadcrumbs.replaceChildren();
+        scopeStack.forEach((id, index) => {
+          if (index) elements.breadcrumbs.append(element('span', 'crumb-sep', '›'));
+          const node = nodeById.get(id);
+          const button = element('button', `crumb${index === scopeStack.length - 1 ? ' current' : ''}`, node?.name ?? id);
+          button.type = 'button';
+          button.addEventListener('click', () => {
+            scopeStack = scopeStack.slice(0, index + 1);
+            selectedId = id;
+            render();
+          });
+          elements.breadcrumbs.append(button);
+        });
+      }
+      function applyTransform() {
+        elements.scene.setAttribute('transform', `translate(${pan.x} ${pan.y}) scale(${zoom})`);
+        elements.zoomLevel.value = `${Math.round(zoom * 100)}%`;
+      }
+      function positionFor(node, index, columns) {
+        const stored = positions.get(node.id);
+        if (stored) return stored;
+        return { x: 30 + (index % columns) * 285, y: 30 + Math.floor(index / columns) * 150 };
+      }
+      function addSvg(tag, attrs, parent = elements.scene) {
+        const child = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (const [key, value] of Object.entries(attrs)) child.setAttribute(key, value);
+        parent.append(child);
+        return child;
+      }
+      function linkPath(source, target) {
+        const sourceCenter = source.x + 121;
+        const targetCenter = target.x + 121;
+        if (target.x >= source.x + 242) {
+          const startX = source.x + 242;
+          const endX = target.x;
+          const middleX = (startX + endX) / 2;
+          return `M ${startX} ${source.y + 49} C ${middleX} ${source.y + 49}, ${middleX} ${target.y + 49}, ${endX} ${target.y + 49}`;
+        }
+        if (source.x >= target.x + 242) {
+          const startX = source.x;
+          const endX = target.x + 242;
+          const middleX = (startX + endX) / 2;
+          return `M ${startX} ${source.y + 49} C ${middleX} ${source.y + 49}, ${middleX} ${target.y + 49}, ${endX} ${target.y + 49}`;
+        }
+        const startY = source.y + 98;
+        const endY = target.y;
+        const middleY = (startY + endY) / 2;
+        return `M ${sourceCenter} ${startY} C ${sourceCenter} ${middleY}, ${targetCenter} ${middleY}, ${targetCenter} ${endY}`;
+      }
+      function drawGraph() {
+        elements.scene.replaceChildren();
+        const visible = visibleNodes();
+        const width = Math.max(360, elements.stage.clientWidth - 20);
+        const columns = Math.max(1, Math.min(4, Math.floor(width / 285)));
+        const rows = Math.max(1, Math.ceil(visible.length / columns));
+        const height = Math.max(500, 60 + rows * 150);
+        elements.svg.setAttribute('viewBox', `0 0 ${Math.max(320, columns * 285 + 35)} ${height}`);
+        const layout = new Map();
+        visible.forEach((node, index) => layout.set(node.id, positionFor(node, index, columns)));
+
+        const visibleIds = new Set(visible.map((node) => node.id));
+        const overviewEdges = new Set(['navigation', 'service', 'platform-integration', 'data', 'http']);
+        const filteredEdges = graph.edges.filter((edge) =>
+          visibleIds.has(edge.source) &&
+          visibleIds.has(edge.target) &&
+          (currentScope() !== 'app' || overviewEdges.has(edge.type)));
+        for (const edge of filteredEdges) {
+          const source = layout.get(edge.source);
+          const target = layout.get(edge.target);
+          if (!source || !target || edge.source === edge.target) continue;
+          addSvg('path', {
+            d: linkPath(source, target),
+            class: 'edge',
+            'data-type': edge.type,
+            'data-edge-id': edge.id,
+          });
+          if (edge.count > 1) {
+            addSvg('text', {
+              x: (source.x + target.x + 242) / 2,
+              y: (source.y + target.y + 96) / 2 - 3,
+              class: 'edge-label',
+            }).textContent = `${edge.type} · ${edge.count}`;
+          }
+        }
+
+        for (const node of visible) {
+          const point = layout.get(node.id);
+          const group = addSvg('g', {
+            class: [
+              'node-card',
+              node.id === selectedId ? 'selected' : '',
+              flowHighlight.has(node.id) ? 'highlight' : '',
+              node.path && changedPaths.has(node.path) ? 'changed' : '',
+            ].filter(Boolean).join(' '),
+            transform: `translate(${point.x} ${point.y})`,
+            tabindex: '0',
+            role: 'button',
+            'aria-label': `${node.name}. ${node.status ?? ''}. ${canExplore(node) ? 'Double click to explore.' : 'Click to inspect.'}`,
+            'data-node-id': node.id,
+          });
+          addSvg('rect', { x: 0, y: 0, width: 242, height: 98 }, group);
+          const badge = addSvg('text', { x: 13, y: 18, class: 'node-kind', fill: kindColor(node.kind) }, group);
+          badge.textContent = `${(node.kind ?? node.type ?? 'component').replaceAll('-', ' ')}${node.status === 'Partial' ? ' · partial' : ''}`;
+          const title = addSvg('text', { x: 13, y: 39, class: 'node-title' }, group);
+          title.textContent = node.name.length > 29 ? `${node.name.slice(0, 27)}…` : node.name;
+          const summary = addSvg('text', { x: 13, y: 58, class: 'node-summary' }, group);
+          const summaryText = directDescription(node);
+          summary.textContent = summaryText.length > 43 ? `${summaryText.slice(0, 40)}…` : summaryText;
+          const meta = addSvg('text', { x: 13, y: 81, class: 'node-meta' }, group);
+          const fileCount = node.files?.length ?? childrenOf(node.id).filter((child) => child.type === 'file').length;
+          meta.textContent = node.type === 'file'
+            ? `${node.language} · ${node.lines} lines · ${node.symbols?.length ?? 0} declarations`
+            : `${fileCount} files · ${node.incoming?.length ?? 0} incoming · ${node.outgoing?.length ?? 0} outgoing`;
+          group.addEventListener('click', (event) => {
+            event.stopPropagation();
+            selectedId = node.id;
+            renderInspector();
+            drawGraph();
+          });
+          group.addEventListener('dblclick', (event) => {
+            event.stopPropagation();
+            selectedId = node.id;
+            if (canExplore(node)) scopeStack.push(node.id);
+            render();
+          });
+          group.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              selectedId = node.id;
+              if (event.key === 'Enter' && canExplore(node)) scopeStack.push(node.id);
+              render();
+            }
+          });
+          group.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) return;
+            const pointInSvg = toSvgPoint(event);
+            drag = { id: node.id, start: pointInSvg, original: point, moved: false };
+            movedNode = false;
+            event.stopPropagation();
+            group.setPointerCapture?.(event.pointerId);
+          });
+          group.addEventListener('pointermove', (event) => {
+            if (!drag || drag.id !== node.id) return;
+            const now = toSvgPoint(event);
+            const dx = (now.x - drag.start.x) / zoom;
+            const dy = (now.y - drag.start.y) / zoom;
+            if (Math.abs(dx) + Math.abs(dy) > 4) {
+              drag.moved = true;
+              movedNode = true;
+              positions.set(node.id, { x: drag.original.x + dx, y: drag.original.y + dy });
+              group.setAttribute('transform', `translate(${drag.original.x + dx} ${drag.original.y + dy})`);
+            }
+          });
+          group.addEventListener('pointerup', (event) => {
+            if (!drag || drag.id !== node.id) return;
+            const didMove = drag.moved;
+            drag = null;
+            if (!didMove) return;
+            event.stopPropagation();
+            drawGraph();
+          });
+        }
+        elements.svg.style.height = `${height}px`;
+        applyTransform();
+      }
+      function toSvgPoint(event) {
+        const point = elements.svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        const matrix = elements.svg.getScreenCTM();
+        const transformed = matrix ? point.matrixTransform(matrix.inverse()) : point;
+        return { x: transformed.x, y: transformed.y };
+      }
+      function dependencyPaths(node, incoming) {
+        const edges = graph.edges.filter((edge) =>
+          (incoming ? edge.target : edge.source) === node.id);
+        return edges.map((edge) => ({
+          node: nodeById.get(incoming ? edge.source : edge.target),
+          edge,
+        })).filter((item) => item.node);
+      }
+      function addNodeLinks(parent, links) {
+        const list = element('ul');
+        for (const { node, edge } of links) {
+          const row = element('li');
+          const button = element('button', 'link-button', `${node.name} · ${edge.type}`);
+          button.type = 'button';
+          button.addEventListener('click', () => focusNode(node));
+          row.append(button);
+          list.append(row);
+        }
+        parent.append(list);
+      }
+      function statusClass(status) {
+        return (status ?? '').toLowerCase().replaceAll(' ', '-');
+      }
+      function renderInspector() {
+        const node = currentNode();
+        elements.inspector.replaceChildren();
+        const header = element('header', 'panel-head');
+        const titleGroup = element('div');
+        titleGroup.append(element('h2', '', node.name));
+        if (node.path) titleGroup.append(element('p', 'path', node.path));
+        else titleGroup.append(element('p', '', node.type === 'application' ? architecture.project.summary : node.kind));
+        header.append(titleGroup);
+        elements.inspector.append(header);
+
+        const body = element('div', 'panel-body');
+        body.append(element('div', 'eyebrow', node.type === 'file' ? `${node.language} file` : `${node.type} · ${node.kind ?? ''}`));
+        if (node.status) body.append(element('span', `status ${statusClass(node.status)}`, node.status));
+        body.append(element('p', '', directDescription(node) || architecture.project.summary));
+        if (node.path) body.append(element('p', 'path', node.path));
+        if (node.type === 'file') {
+          body.append(element('p', '', `${node.lines} lines · ${Math.round(node.bytes / 1024 * 10) / 10} KB`));
+          if (node.symbols?.length) {
+            const list = element('div', 'symbol-list');
+            for (const symbol of node.symbols) {
+              const button = element('button', 'symbol-button', `${symbol.kind} ${symbol.name} · line ${symbol.line}`);
+              button.type = 'button';
+              button.addEventListener('click', () => {
+                if (canExplore(node)) {
+                  if (currentScope() !== node.id) scopeStack.push(node.id);
+                  selectedId = node.id;
+                  render();
+                }
+              });
+              list.append(button);
+            }
+            addSection(body, 'Detected declarations', list);
+          }
+          if (node.screens?.length) addSection(body, 'Screens and widgets', node.screens.map((screen) => `${screen.name} · line ${screen.line}`).join(', '));
+        }
+        if (node.notes?.length) addSection(body, 'Notes', node.notes.map((note) => `• ${note}`).join('\n'));
+        if (node.files?.length) {
+          addSection(body, 'Files in this component', `${node.files.length} files · double-click to explore`);
+        }
+        const outgoing = dependencyPaths(node, false);
+        const incoming = dependencyPaths(node, true);
+        if (outgoing.length) addSection(body, 'What it depends on', (section) => addNodeLinks(section, outgoing));
+        if (incoming.length) addSection(body, 'What depends on it', (section) => addNodeLinks(section, incoming));
+        if (node.path && node.incoming?.length === 0 && node.outgoing?.length === 0) {
+          addSection(body, 'Relationships', 'No verified direct graph relationship was extracted for this file.');
+        }
+        if (node.evidence?.length) addSection(body, 'Evidence', node.evidence.join(' · '));
+        const childNodes = childrenOf(node.id);
+        if (childNodes.length) {
+          const contents = element('div', 'symbol-list');
+          for (const child of childNodes.slice(0, 24)) {
+            const button = element('button', 'symbol-button', `${child.name}${child.path ? ` · ${child.path}` : ''}`);
+            button.type = 'button';
+            button.addEventListener('click', () => focusNode(child));
+            contents.append(button);
+          }
+          addSection(body, `Contained elements (${childNodes.length})`, contents);
+        }
+        elements.inspector.append(body);
+      }
+      function addSection(parent, heading, content) {
+        const section = element('section', 'panel-section');
+        section.append(element('h3', '', heading));
+        if (typeof content === 'string') section.append(element('p', '', content));
+        else if (typeof content === 'function') content(section);
+        else if (content instanceof Node) section.append(content);
+        parent.append(section);
+        return section;
+      }
+      function focusNode(node) {
+        if (!node) return;
+        let target = node;
+        if (target.type === 'symbol') target = nodeById.get(target.parentId);
+        if (target.type === 'file') {
+          const componentId = target.parentId;
+          scopeStack = ['app'];
+          if (componentId && componentId !== 'app') scopeStack.push(componentId);
+          scopeStack.push(target.id);
+          selectedId = target.id;
+        } else if (target.parentId) {
+          scopeStack = ['app', target.parentId];
+          selectedId = target.id;
+        } else {
+          scopeStack = ['app'];
+          selectedId = target.id;
+        }
+        setView('map');
+        render();
+      }
+      function render() {
+        crumbs();
+        drawGraph();
+        renderInspector();
+        renderCurrentView();
+      }
+      function setView(view) {
+        activeView = view;
+        document.querySelectorAll('.tab-button').forEach((button) => {
+          button.setAttribute('aria-selected', String(button.dataset.view === view));
+        });
+        for (const [key, panel] of Object.entries(viewPanels)) panel.hidden = key !== view && key !== 'map';
+        viewPanels.map.hidden = !(view === 'map' || view === 'flows');
+        if (view === 'map' || view === 'flows') document.querySelector('.legend').hidden = false;
+        else document.querySelector('.legend').hidden = true;
+        renderCurrentView();
+      }
+      function renderCurrentView() {
+        if (activeView === 'flows') renderFlows();
+        if (activeView === 'health') renderHealth();
+        if (activeView === 'recent') renderRecent();
+        if (activeView === 'ask') renderAsk();
+      }
+      function renderFlows() {
+        const panel = viewPanels.flows;
+        panel.replaceChildren();
+        panel.append(element('h2', '', 'Guided workflows'));
+        panel.append(element('p', '', 'Follow verified application paths step by step. Partial workflows are labeled instead of being completed with assumptions.'));
+        const select = document.createElement('select');
+        select.className = 'flow-select';
+        select.setAttribute('aria-label', 'Choose a workflow');
+        for (const flow of graph.workflows) {
+          const option = document.createElement('option');
+          option.value = flow.id;
+          option.textContent = `${flow.name}${flow.status === 'Partial' ? ' · partial' : ''}`;
+          option.selected = activeFlow?.id === flow.id;
+          select.append(option);
+        }
+        select.addEventListener('change', () => {
+          activeFlow = graph.workflows.find((flow) => flow.id === select.value) ?? null;
+          flowStep = 0;
+          renderFlows();
+          showFlowStep();
+        });
+        panel.append(select);
+        const flow = activeFlow ?? graph.workflows[0];
+        if (!activeFlow) activeFlow = flow;
+        panel.append(element('p', '', flow.summary));
+        const controls = element('div', 'flow-controls');
+        const start = element('button', 'button primary', 'Start from beginning');
+        start.type = 'button';
+        start.addEventListener('click', () => { flowStep = 0; showFlowStep(); });
+        const previous = element('button', 'button', 'Previous');
+        previous.type = 'button';
+        previous.disabled = flowStep <= 0;
+        previous.addEventListener('click', () => { flowStep = Math.max(0, flowStep - 1); showFlowStep(); });
+        const next = element('button', 'button', 'Next step');
+        next.type = 'button';
+        next.disabled = flowStep >= flow.steps.length - 1;
+        next.addEventListener('click', () => { flowStep = Math.min(flow.steps.length - 1, flowStep + 1); showFlowStep(); });
+        controls.append(start, previous, next, element('span', 'flow-progress', `${flowStep + 1} / ${flow.steps.length}`));
+        panel.append(controls);
+        flow.steps.forEach((step, index) => {
+          const card = element('article', `flow-card${index === flowStep ? ' current' : ''}`);
+          card.append(element('h3', '', `${index + 1}. ${step.title}`));
+          card.append(element('p', '', developerMode ? step.developer : step.simple));
+          card.append(element('small', '', `${step.status ?? 'Implemented'} · ${step.filePaths.join(' · ')}`));
+          card.addEventListener('click', () => { flowStep = index; showFlowStep(); });
+          panel.append(card);
+        });
+        const notice = element('div', 'notice', `Workflow status: ${flow.status}. Each step is grounded in the files listed with it.`);
+        panel.append(notice);
+        showFlowStep();
+      }
+      function showFlowStep() {
+        if (!activeFlow) return;
+        const step = activeFlow.steps[flowStep];
+        flowHighlight = new Set([
+          ...(step.componentIds ?? []),
+          ...(step.filePaths ?? []).map((filePath) => `file:${filePath}`),
+        ]);
+        if (activeView === 'flows') {
+          renderFlowsWithoutFocus();
+          drawGraph();
+        }
+      }
+      function renderFlowsWithoutFocus() {
+        const cards = viewPanels.flows.querySelectorAll('.flow-card');
+        cards.forEach((card, index) => card.classList.toggle('current', index === flowStep));
+        const progress = viewPanels.flows.querySelector('.flow-progress');
+        if (progress) progress.textContent = `${flowStep + 1} / ${activeFlow.steps.length}`;
+        const buttons = viewPanels.flows.querySelectorAll('.flow-controls .button');
+        if (buttons[1]) buttons[1].disabled = flowStep <= 0;
+        if (buttons[2]) buttons[2].disabled = flowStep >= activeFlow.steps.length - 1;
+      }
+      function renderHealth() {
+        const panel = viewPanels.health;
+        panel.replaceChildren();
+        panel.append(element('h2', '', 'Preliminary health check'));
+        panel.append(element('p', '', model.health.disclaimer));
+        const summary = model.health.summary;
+        panel.append(element('div', 'notice', `Findings: ${summary.critical ?? 0} critical · ${summary.high ?? 0} high · ${summary.medium ?? 0} medium · ${summary.low ?? 0} low · ${summary.informational ?? 0} informational`));
+        for (const finding of model.health.findings) {
+          const card = element('article', 'finding-card');
+          const head = element('div');
+          head.append(element('span', `severity ${finding.severity}`, `${finding.severity} · ${finding.category}`));
+          head.append(element('span', 'confidence', `Confidence ${finding.confidence}/10 · ${finding.confidenceLabel}`));
+          card.append(head);
+          card.append(element('h3', '', finding.title));
+          card.append(element('small', 'path', `${finding.file}${finding.line ? `:${finding.line}` : ''}`));
+          card.append(element('p', '', finding.explanation));
+          const details = document.createElement('details');
+          details.append(element('summary', '', 'Why it matters and suggested action'));
+          details.append(element('p', '', finding.whyItMatters));
+          details.append(element('p', '', finding.remediation));
+          if (finding.evidence?.length) details.append(element('small', '', `Evidence: ${finding.evidence.join(', ')}`));
+          card.append(details);
+          panel.append(card);
+        }
+      }
+      function renderRecent() {
+        const panel = viewPanels.recent;
+        panel.replaceChildren();
+        panel.append(element('h2', '', 'Recent work'));
+        panel.append(element('p', '', model.recentWork.summary));
+        if (model.recentWork.baseline) {
+          panel.append(element('div', 'notice', 'This is the initial scan. Run the refresh command after source changes to compare fingerprints and structure.'));
+          return;
+        }
+        if (!model.recentWork.changes.length) {
+          panel.append(element('div', 'empty', 'No file changes detected since the previous scan.'));
+          return;
+        }
+        for (const change of model.recentWork.changes) {
+          const card = element('article', 'change-card');
+          card.append(element('h3', '', `${change.type.toUpperCase()} · ${change.path}`));
+          if (change.from) card.append(element('p', '', `Renamed from ${change.from}`));
+          if (change.structuralChange) card.append(element('p', '', 'Imports, package declarations, or extracted structure changed; review its component description.'));
+          if (change.dependenciesChanged?.added.length) card.append(element('p', '', `Added dependencies: ${change.dependenciesChanged.added.join(', ')}`));
+          if (change.dependenciesChanged?.removed.length) card.append(element('p', '', `Removed dependencies: ${change.dependenciesChanged.removed.join(', ')}`));
+          if (change.changedSymbols?.added.length) card.append(element('p', '', `Added declarations: ${change.changedSymbols.added.join(', ')}`));
+          if (change.changedSymbols?.removed.length) card.append(element('p', '', `Removed declarations: ${change.changedSymbols.removed.join(', ')}`));
+          card.append(element('small', '', change.reason ?? 'No change reason is recorded; no reason has been inferred.'));
+          const button = element('button', 'link-button', 'Show on map');
+          button.type = 'button';
+          button.addEventListener('click', () => {
+            const node = graph.nodes.find((item) => item.path === change.path);
+            if (node) focusNode(node);
+          });
+          card.append(button);
+          panel.append(card);
+        }
+      }
+      function tokenize(query) {
+        return query.toLowerCase().split(/[^a-z0-9_]+/u).filter((word) => word.length > 2);
+      }
+      function findRelevant(query) {
+        const words = tokenize(query);
+        const flowMatches = graph.workflows
+          .map((flow) => ({
+            flow,
+            score: words.reduce((score, word) =>
+              score + `${flow.name} ${flow.summary} ${flow.steps.map((step) => `${step.title} ${step.simple} ${step.developer}`).join(' ')}`.toLowerCase().split(word).length - 1, 0),
+          }))
+          .sort((left, right) => right.score - left.score);
+        const fileMatches = graph.searchIndex
+          .map((item) => ({
+            item,
+            score: words.reduce((score, word) => score + (item.searchText?.split(word).length - 1 || 0), 0),
+          }))
+          .filter((match) => match.score > 0)
+          .sort((left, right) => right.score - left.score)
+          .slice(0, 8);
+        return { flow: flowMatches[0]?.score > 0 ? flowMatches[0].flow : null, files: fileMatches };
+      }
+      function renderAsk() {
+        const panel = viewPanels.ask;
+        panel.replaceChildren();
+        panel.append(element('h2', '', 'Ask the map'));
+        panel.append(element('p', '', 'This offline viewer does not call an AI service or access Copilot Chat. It builds a source-grounded prompt for you to copy into Copilot.'));
+        const input = document.createElement('textarea');
+        input.className = 'question-input';
+        input.placeholder = 'For example: How does YouTube playback work?';
+        input.setAttribute('aria-label', 'Question about the architecture');
+        input.value = panel.dataset.question ?? '';
+        const answer = element('div', 'question-card');
+        answer.setAttribute('aria-live', 'polite');
+        const promptOutput = document.createElement('textarea');
+        promptOutput.className = 'prompt-output';
+        promptOutput.readOnly = true;
+        promptOutput.setAttribute('aria-label', 'Contextual Copilot prompt');
+        const actions = element('div', 'flow-controls');
+        const prepare = element('button', 'button primary', 'Prepare grounded prompt');
+        prepare.type = 'button';
+        prepare.addEventListener('click', () => {
+          const question = input.value.trim();
+          panel.dataset.question = question;
+          if (!question) {
+            text(answer, 'Enter a question first.');
+            promptOutput.value = '';
+            return;
+          }
+          const relevant = findRelevant(question);
+          answer.replaceChildren();
+          if (relevant.flow) {
+            answer.append(element('h3', '', relevant.flow.name));
+            answer.append(element('p', '', relevant.flow.summary));
+            answer.append(element('p', '', `Status: ${relevant.flow.status}`));
+            for (const step of relevant.flow.steps) {
+              const row = element('p', '', `${step.title}: ${developerMode ? step.developer : step.simple}`);
+              answer.append(row);
+            }
+          } else {
+            answer.append(element('p', '', 'No curated workflow directly matches this question. The references below are the closest indexed source files; ask Copilot to inspect only those files and state uncertainty.'));
+          }
+          const references = relevant.files.map(({ item }) => item.path ?? item.name).filter(Boolean);
+          for (const { item } of relevant.files) {
+            const row = element('p', 'path', `${item.name}${item.path ? ` · ${item.path}` : ''}`);
+            answer.append(row);
+          }
+          const prompt = [
+            'Answer the architecture question using only the supplied VoyagerM repository references and this architecture-map context.',
+            'Do not assume undocumented behavior. Distinguish implemented, partial, planned, and unverified behavior.',
+            `Question: ${question}`,
+            `Relevant files/components: ${references.join(', ') || 'No direct source match; search the repository and explain the evidence.'}`,
+            relevant.flow ? `Verified workflow: ${relevant.flow.name} (${relevant.flow.status}). ${relevant.flow.steps.map((step) => `${step.title}: ${step.developer}`).join(' ')}` : '',
+            'Mention exact file paths and say when evidence is insufficient.',
+          ].filter(Boolean).join('\n\n');
+          promptOutput.value = prompt;
+        });
+        const copy = element('button', 'button', 'Copy prompt');
+        copy.type = 'button';
+        copy.addEventListener('click', async () => {
+          if (!promptOutput.value) {
+            setStatus('Prepare a prompt before copying.');
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(promptOutput.value);
+            setStatus('Contextual prompt copied. Paste it into Copilot Chat.');
+          } catch {
+            promptOutput.focus();
+            promptOutput.select();
+            setStatus('Clipboard access is unavailable here. The prompt is selected for manual copy.');
+          }
+        });
+        actions.append(prepare, copy);
+        panel.append(input, actions, answer, promptOutput);
+      }
+      function renderSearch(query) {
+        const normalized = query.trim().toLowerCase();
+        elements.searchResults.replaceChildren();
+        if (!normalized) {
+          elements.searchResults.hidden = true;
+          return;
+        }
+        lastSearchResults = graph.searchIndex
+          .map((item) => ({ item, score: item.searchText.includes(normalized) ? 10 : tokenize(normalized).reduce((score, word) => score + (item.searchText.split(word).length - 1 || 0), 0) }))
+          .filter((result) => result.score > 0)
+          .sort((left, right) => right.score - left.score)
+          .slice(0, 12);
+        for (const { item } of lastSearchResults) {
+          const result = element('button', 'search-result');
+          result.type = 'button';
+          result.setAttribute('role', 'option');
+          result.append(element('span', '', item.name));
+          result.append(element('small', '', item.path ?? item.type ?? item.kind));
+          result.addEventListener('click', () => {
+            const node = nodeById.get(item.id);
+            if (node) focusNode(node);
+            else {
+              const symbol = graph.nodes.find((candidate) => candidate.parentId === item.parentId && candidate.name === item.name);
+              if (symbol) focusNode(symbol);
+            }
+            elements.search.value = '';
+            elements.searchResults.hidden = true;
+          });
+          elements.searchResults.append(result);
+        }
+        if (!lastSearchResults.length) elements.searchResults.append(element('div', 'empty', 'No matches.'));
+        elements.searchResults.hidden = false;
+      }
+      function startTour() {
+        const dialog = document.getElementById('tour-dialog');
+        const content = document.getElementById('tour-content');
+        const tour = architecture.tour ?? [];
+        const item = tour[tourStep];
+        if (!item) {
+          dialog.close();
+          return;
+        }
+        content.replaceChildren();
+        content.append(element('div', 'eyebrow', `Guided tour · ${tourStep + 1} of ${tour.length}`));
+        content.append(element('h2', '', item.title));
+        const component = nodeById.get(item.componentId);
+        content.append(element('p', '', component ? directDescription(component) : architecture.project.summary));
+        content.append(element('div', 'notice', 'Double-click a component to move one level deeper. Use the breadcrumbs to go back.'));
+        const actions = element('div', 'dialog-actions');
+        const skip = element('button', 'button', 'Close');
+        skip.type = 'button';
+        skip.addEventListener('click', () => dialog.close());
+        const next = element('button', 'button primary', tourStep === tour.length - 1 ? 'Finish' : 'Next');
+        next.type = 'button';
+        next.addEventListener('click', () => {
+          if (component) focusNode(component);
+          tourStep += 1;
+          if (tourStep >= tour.length) {
+            dialog.close();
+            return;
+          }
+          startTour();
+        });
+        actions.append(skip, next);
+        content.append(actions);
+        if (!dialog.open) dialog.showModal();
+      }
+      function downloadExport() {
+        const exportModel = structuredClone(model);
+        if (!document.getElementById('export-flows').checked) exportModel.graph.workflows = [];
+        if (!document.getElementById('export-notes').checked) {
+          exportModel.architecture.components.forEach((component) => { component.notes = []; });
+          exportModel.graph.nodes.forEach((node) => { node.notes = []; });
+        }
+        if (!document.getElementById('export-recent').checked) {
+          exportModel.recentWork = { baseline: true, summary: 'Recent work was excluded from this export.', changes: [], affectedComponents: [] };
+        }
+        if (!document.getElementById('export-health').checked) {
+          exportModel.health = { disclaimer: 'Health findings were excluded from this export.', findings: [], summary: {} };
+        }
+        exportModel.architecture.repository = { name: exportModel.architecture.repository.name };
+        exportModel.graph.repository = { name: exportModel.graph.repository.name };
+        delete exportModel.scan;
+        for (const node of exportModel.graph.nodes) {
+          delete node.fingerprint;
+          delete node.structuralSignature;
+        }
+        const safeData = JSON.stringify(exportModel).replaceAll('<', '\\u003c');
+        const original = document.documentElement.outerHTML;
+        const dataElement = document.getElementById('floorplan-data');
+        const exported = original.replace(dataElement.textContent, safeData);
+        const blob = new Blob([exported], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'voyagerm-architecture.html';
+        link.click();
+        URL.revokeObjectURL(url);
+        document.getElementById('export-dialog').close();
+        setStatus('Standalone sanitized HTML export downloaded.');
+      }
+      function loadPreferences() {
+        try {
+          const theme = localStorage.getItem('voyager-floorplan-theme');
+          if (theme === 'dark') document.documentElement.dataset.theme = 'dark';
+          developerMode = localStorage.getItem('voyager-floorplan-developer') === 'true';
+          elements.mode.checked = developerMode;
+        } catch {
+          setStatus('Local preferences are unavailable; default display settings are active.');
+        }
+      }
+      function savePreference(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch {
+          setStatus('This browser could not save the display preference.');
+        }
+      }
+      document.querySelectorAll('.tab-button').forEach((button) =>
+        button.addEventListener('click', () => setView(button.dataset.view)));
+      elements.search.addEventListener('input', () => renderSearch(elements.search.value));
+      elements.search.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          elements.searchResults.hidden = true;
+          elements.search.value = '';
+        } else if (event.key === 'Enter' && lastSearchResults[0]) {
+          const item = lastSearchResults[0].item;
+          const node = nodeById.get(item.id);
+          if (node) focusNode(node);
+        }
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.search-wrap')) elements.searchResults.hidden = true;
+      });
+      document.getElementById('zoom-in').addEventListener('click', () => { zoom = Math.min(2.5, zoom + .1); applyTransform(); });
+      document.getElementById('zoom-out').addEventListener('click', () => { zoom = Math.max(.45, zoom - .1); applyTransform(); });
+      document.getElementById('reset-view').addEventListener('click', () => { zoom = 1; pan = { x: 0, y: 0 }; positions = new Map(); drawGraph(); });
+      elements.svg.addEventListener('pointerdown', (event) => {
+        if (event.target.closest('.node-card')) return;
+        drag = { id: null, start: { x: event.clientX, y: event.clientY }, pan: { ...pan } };
+        elements.svg.classList.add('dragging');
+        elements.svg.setPointerCapture(event.pointerId);
+      });
+      elements.svg.addEventListener('pointermove', (event) => {
+        if (!drag || drag.id !== null) return;
+        const rect = elements.svg.getBoundingClientRect();
+        const sx = elements.svg.viewBox.baseVal.width / rect.width;
+        const sy = elements.svg.viewBox.baseVal.height / rect.height;
+        pan = { x: drag.pan.x + (event.clientX - drag.start.x) * sx, y: drag.pan.y + (event.clientY - drag.start.y) * sy };
+        applyTransform();
+      });
+      elements.svg.addEventListener('pointerup', () => { drag = null; elements.svg.classList.remove('dragging'); });
+      elements.svg.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        zoom = Math.max(.45, Math.min(2.5, zoom + (event.deltaY < 0 ? .06 : -.06)));
+        applyTransform();
+      }, { passive: false });
+      elements.mode.addEventListener('change', () => {
+        developerMode = elements.mode.checked;
+        savePreference('voyager-floorplan-developer', String(developerMode));
+        render();
+      });
+      document.getElementById('theme-button').addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        savePreference('voyager-floorplan-theme', next);
+      });
+      document.getElementById('tour-button').addEventListener('click', () => startTour());
+      document.getElementById('export-button').addEventListener('click', () => document.getElementById('export-dialog').showModal());
+      document.getElementById('export-confirm').addEventListener('click', downloadExport);
+      document.querySelectorAll('[data-close]').forEach((button) =>
+        button.addEventListener('click', () => document.getElementById(button.dataset.close).close()));
+      window.addEventListener('resize', () => drawGraph());
+      loadPreferences();
+      render();
+      if (!sessionStorage.getItem('voyager-floorplan-tour-seen')) {
+        sessionStorage.setItem('voyager-floorplan-tour-seen', 'true');
+        startTour();
+      }
+    })();
+  </script>
+</body>
+</html>

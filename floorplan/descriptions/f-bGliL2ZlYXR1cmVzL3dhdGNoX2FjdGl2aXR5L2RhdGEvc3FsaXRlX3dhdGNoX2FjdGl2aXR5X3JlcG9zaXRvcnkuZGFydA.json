@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+  "name": "SqliteWatchActivityRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for watch_activity.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: watch_activity.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/watch_activity/domain/watch_activity.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteWatchActivityRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteWatchActivityRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getActivities",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "addEligibleSeconds",
+      "line": 26
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "e11380db34f0a5d431243a5b3382ac70d78894650f6f97e440da369a94743fe8"
+}

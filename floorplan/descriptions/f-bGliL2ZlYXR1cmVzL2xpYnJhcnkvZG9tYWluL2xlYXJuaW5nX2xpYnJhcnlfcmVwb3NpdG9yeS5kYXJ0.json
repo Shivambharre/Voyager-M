@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/library/domain/learning_library_repository.dart",
+  "name": "LearningLibraryRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the LearningLibraryRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/features/library/library_playlist_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LearningLibraryRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getVideos",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "getVideo",
+      "line": 4
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideo",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "saveVideoMetadata",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "deleteVideo",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylists",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylist",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylist",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "deletePlaylist",
+      "line": 12
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistEntries",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "savePlaylistEntries",
+      "line": 15
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "aa9b6cb66a35afde6f01ec541728825dfca88b9fe97a853e4844b5a06ad45b10"
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/design/app_theme.dart",
+  "name": "AppTheme",
+  "simple": "Supports the shared visual system by defining AppTheme.",
+  "developer": "Dart file classified as design; detected declarations: AppTheme.",
+  "responsibility": "Defines shared colors, typography, themes, reusable controls, and a debug showcase.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "AppTheme",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "light",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "dark",
+      "line": 6
+    },
+    {
+      "kind": "callable",
+      "name": "_buildTheme",
+      "line": 8
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "7cfe0a99d7e5f7eca82007e24236186e3a70aafb2c174eaf615b05f32216c236"
+}

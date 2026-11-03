@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "README.md",
+  "name": "README",
+  "simple": "Supports the project documentation and configuration by defining project configuration or documentation.",
+  "developer": "Markdown file classified as configuration; detected declarations: none.",
+  "responsibility": "Holds package/platform build configuration and explanatory documents; docs can lag behind active source.",
+  "status": "Unverified",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [],
+  "screens": [],
+  "notes": [
+    "docs/development-roadmap.md conflicts with currently wired progress/settings flows; source and tests are treated as authoritative."
+  ],
+  "lastScannedFingerprint": "641446958910455020109a74defa952b7a8e8e6bd058777d32537651170fe782"
+}

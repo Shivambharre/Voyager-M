@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/data/browser_note_storage_stub.dart",
+  "name": "browser_note_storage_stub data adapter",
+  "simple": "Implements or supports the data feature’s local data access.",
+  "developer": "browser storage adapter in the data feature. Storage calls are delegated through the feature boundary.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "readNotes",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "writeNotes",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "UnsupportedError",
+      "line": 3
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "ed1921f6e4fbfc514005a3986cc17d25fcf3013b59774f306dbce768b703392f"
+}

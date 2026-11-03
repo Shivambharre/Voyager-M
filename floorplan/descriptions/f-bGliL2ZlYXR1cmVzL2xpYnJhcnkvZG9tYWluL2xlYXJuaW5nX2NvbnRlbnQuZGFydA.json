@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/library/domain/learning_content.dart",
+  "name": "LearningVideo",
+  "simple": "Supports the domain feature by defining LearningVideo, LearningPlaylist, PlaylistEntry.",
+  "developer": "Dart file classified as feature:features:library; detected declarations: LearningVideo, LearningPlaylist, PlaylistEntry.",
+  "responsibility": "Stores saved videos and playlists and opens playlist entries in the learning player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/data/in_memory_learning_library_repository.dart",
+    "lib/features/library/data/sqlite_learning_library_repository.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/features/library/library_playlist_test.dart",
+    "test/features/notes/notes_home_page_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LearningVideo",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "LearningPlaylist",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlaylist",
+      "line": 21
+    },
+    {
+      "kind": "class",
+      "name": "PlaylistEntry",
+      "line": 37
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntry",
+      "line": 39
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "a8d644073b3e1fc2357d6c8a7cb988af811fb3d99a3ff28228229cc51645c917"
+}

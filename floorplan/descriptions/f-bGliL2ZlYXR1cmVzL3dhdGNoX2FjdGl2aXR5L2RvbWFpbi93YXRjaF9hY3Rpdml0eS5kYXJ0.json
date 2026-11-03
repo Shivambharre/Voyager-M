@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/watch_activity/domain/watch_activity.dart",
+  "name": "WatchActivity",
+  "simple": "Supports the domain feature by defining WatchActivity.",
+  "developer": "Dart file classified as feature:features:watch_activity; detected declarations: WatchActivity.",
+  "responsibility": "Accumulates eligible watch time by local date and calculates streaks and activity summaries.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/data/sqlite_watch_activity_repository.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/features/watch_activity/watch_activity_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "WatchActivity",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "dateKeyFor",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "heatmapLevelFor",
+      "line": 19
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "884dfd1eb3e69fc353d3f55a64343fb158a6981669d685cfb3668b1f3d19a901"
+}

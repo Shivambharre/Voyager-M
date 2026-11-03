@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/notes/domain/notes_repository.dart",
+  "name": "NotesRepository contract",
+  "simple": "Defines the operations that the domain feature needs without choosing a storage engine.",
+  "developer": "Declares the NotesRepository app-owned contract; implementations are registered in the composition root.",
+  "responsibility": "Creates, edits, organizes, and retrieves local study notes, including timestamped notes and embedded images.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/note_image_store.dart",
+    "lib/features/notes/data/sqlite_notes_repository.dart",
+    "lib/features/notes/presentation/note_editor_page.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/architecture/mock_mode_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "NotesRepository",
+      "line": 1
+    },
+    {
+      "kind": "callable",
+      "name": "getNotes",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "saveNote",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "deleteNote",
+      "line": 12
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Image embeds are implemented: IO platforms save image files under the application documents directory; Web stores image data URLs with browser-local notes.",
+    "This does not imply support for arbitrary file attachments."
+  ],
+  "lastScannedFingerprint": "8d33a4b9e7cde410ca545c478820ea96cc56fa48f4e9ea54c1bc4cae7364d7f5"
+}

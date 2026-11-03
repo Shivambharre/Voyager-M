@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/notes/note_image_store_test.dart",
+  "name": "note image store test test",
+  "simple": "Checks selected behavior around notes using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 10 detected test/helper declarations and 7 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/note_image_store.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependencies": [
+    "lib/features/notes/data/in_memory_notes_repository.dart",
+    "lib/features/notes/data/note_image_store.dart",
+    "lib/features/notes/domain/study_note.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 8
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "MissingPluginException",
+      "line": 23
+    },
+    {
+      "kind": "callable",
+      "name": "addTearDown",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "StudyNote",
+      "line": 45
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 60
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 67
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 68
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 72
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "3faa96fd036a1e1f5ef2d003c8025ba5b64062a243554beba4c18f6050aa4876"
+}

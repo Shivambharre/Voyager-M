@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/progress/domain/learning_progress.dart",
+  "name": "LearningProgress",
+  "simple": "Supports the domain feature by defining LearningProgress, LearningBookmark.",
+  "developer": "Dart file classified as feature:features:progress; detected declarations: LearningProgress, LearningBookmark.",
+  "responsibility": "Saves playback progress and completion and lists or removes saved playback moments.",
+  "status": "Partial",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/home/presentation/app_shell.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/progress/data/in_memory_progress_repository.dart",
+    "lib/features/progress/data/sqlite_progress_repository.dart",
+    "test/database/sqlite_repositories_test.dart",
+    "test/features/library/library_playlist_test.dart",
+    "test/media/player_features_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "LearningProgress",
+      "line": 1
+    },
+    {
+      "kind": "class",
+      "name": "LearningBookmark",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "LearningBookmark",
+      "line": 18
+    }
+  ],
+  "screens": [],
+  "notes": [
+    "Bookmark listing/deletion is wired in the home shell; no saveBookmark call is present in the current player screen."
+  ],
+  "lastScannedFingerprint": "e44c9966b62592133c2288207a7d31c4ce99f566013010e047421c0958fb7bcf"
+}

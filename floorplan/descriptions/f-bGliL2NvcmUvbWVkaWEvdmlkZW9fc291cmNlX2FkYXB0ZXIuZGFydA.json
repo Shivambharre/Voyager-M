@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/video_source_adapter.dart",
+  "name": "VideoSourceFailure",
+  "simple": "Supports the media pipeline by defining VideoSourceFailure, VideoSourceException, VideoSourceAdapter.",
+  "developer": "Dart file classified as media; detected declarations: VideoSourceFailure, VideoSourceException, VideoSourceAdapter.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "test/media/mit_ocw_adapter_test.dart",
+    "test/media/playback_controller_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "enum",
+      "name": "VideoSourceFailure",
+      "line": 2
+    },
+    {
+      "kind": "class",
+      "name": "VideoSourceException",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "toString",
+      "line": 23
+    },
+    {
+      "kind": "class",
+      "name": "VideoSourceAdapter",
+      "line": 25
+    },
+    {
+      "kind": "callable",
+      "name": "canHandle",
+      "line": 27
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "getFastVideoInfo",
+      "line": 30
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 32
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistInfo",
+      "line": 33
+    },
+    {
+      "kind": "callable",
+      "name": "getStreams",
+      "line": 35
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 37
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "9c5feb86d33ff28a15292da9733b09ade5e53ca74753cd5e1a3559dfdb2df371"
+}

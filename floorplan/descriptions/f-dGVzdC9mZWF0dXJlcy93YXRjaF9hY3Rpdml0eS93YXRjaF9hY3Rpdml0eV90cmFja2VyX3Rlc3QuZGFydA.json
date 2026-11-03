@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "test/features/watch_activity/watch_activity_tracker_test.dart",
+  "name": " FixedOffsetWatchCalendar test",
+  "simple": "Checks selected behavior around watch activity using controlled inputs instead of relying on live services.",
+  "developer": "Test source with 48 detected test/helper declarations and 5 imports.",
+  "responsibility": "Exercises repository behavior, media rules, app flows, and selected widgets with controlled inputs.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:flutter_test",
+    "lib/core/media/playback_state.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+    "lib/features/watch_activity/domain/watch_calendar.dart"
+  ],
+  "dependencies": [
+    "lib/core/media/playback_state.dart",
+    "lib/features/watch_activity/data/in_memory_watch_activity_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_tracker.dart",
+    "lib/features/watch_activity/domain/watch_calendar.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "callable",
+      "name": "main",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "setUp",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 28
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 36
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 49
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 57
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 66
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 69
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 72
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 79
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 86
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 91
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 95
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 106
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 111
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 115
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 118
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 121
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 126
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 131
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 136
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 140
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 143
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 147
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 152
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 158
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 163
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 172
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 184
+    },
+    {
+      "kind": "callable",
+      "name": "test",
+      "line": 186
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 189
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 195
+    },
+    {
+      "kind": "callable",
+      "name": "snapshot",
+      "line": 200
+    },
+    {
+      "kind": "callable",
+      "name": "expect",
+      "line": 204
+    },
+    {
+      "kind": "class",
+      "name": "_FixedOffsetWatchCalendar",
+      "line": 208
+    },
+    {
+      "kind": "callable",
+      "name": "_FixedOffsetWatchCalendar",
+      "line": 210
+    },
+    {
+      "kind": "callable",
+      "name": "localDateTime",
+      "line": 215
+    },
+    {
+      "kind": "callable",
+      "name": "nextMidnightAfter",
+      "line": 218
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "e469553d1c4c86636a6101406eb02394ce8296b4dd68a9c018d0d8db27cec9cb"
+}

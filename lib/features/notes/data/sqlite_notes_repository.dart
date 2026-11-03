@@ -27,9 +27,7 @@ class SqliteNotesRepository implements NotesRepository {
       arguments.add(topicId);
     }
     if (libraryId != null) {
-      conditions.add(
-        "resource_type = 'library' AND resource_id = ?",
-      );
+      conditions.add("resource_type = 'library' AND resource_id = ?");
       arguments.add(libraryId);
     }
     if (resourceId != null) {
@@ -59,27 +57,34 @@ class SqliteNotesRepository implements NotesRepository {
 
   @override
   Future<void> saveNote(StudyNote note) async {
-    await _database.upsert('notes', {
-      'id': note.id,
-      'title': note.title,
-      'content': note.content,
-      'content_json': note.contentJson ?? '',
-      'video_id': note.videoId ??
-          (note.resolvedResourceType == NoteResourceType.video
-              ? note.resolvedResourceId
-              : null),
-      'topic_id': note.topicId ??
-          (note.resolvedResourceType == NoteResourceType.lesson
-              ? note.resolvedResourceId
-              : null),
-      'timestamp_seconds': note.timestampSeconds,
-      'resource_type': note.resolvedResourceType?.name,
-      'resource_id': note.resolvedResourceId,
-      'resource_name': note.resourceName,
-      'resource_archived': note.isResourceArchived ? 1 : 0,
-      'created_at': note.createdAt.toUtc().toIso8601String(),
-      'updated_at': note.updatedAt.toUtc().toIso8601String(),
-    }, keyWhere: 'id = ?', keyArgs: [note.id]);
+    await _database.upsert(
+      'notes',
+      {
+        'id': note.id,
+        'title': note.title,
+        'content': note.content,
+        'content_json': note.contentJson ?? '',
+        'video_id':
+            note.videoId ??
+            (note.resolvedResourceType == NoteResourceType.video
+                ? note.resolvedResourceId
+                : null),
+        'topic_id':
+            note.topicId ??
+            (note.resolvedResourceType == NoteResourceType.lesson
+                ? note.resolvedResourceId
+                : null),
+        'timestamp_seconds': note.timestampSeconds,
+        'resource_type': note.resolvedResourceType?.name,
+        'resource_id': note.resolvedResourceId,
+        'resource_name': note.resourceName,
+        'resource_archived': note.isResourceArchived ? 1 : 0,
+        'created_at': note.createdAt.toUtc().toIso8601String(),
+        'updated_at': note.updatedAt.toUtc().toIso8601String(),
+      },
+      keyWhere: 'id = ?',
+      keyArgs: [note.id],
+    );
   }
 
   @override

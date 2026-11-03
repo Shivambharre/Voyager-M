@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/config/app_config.dart",
+  "name": "AppConfig",
+  "simple": "Supports the build-time configuration by defining AppConfig.",
+  "developer": "Dart file classified as configuration; detected declarations: AppConfig.",
+  "responsibility": "Reads build-time configuration used to enable or disable supported media extraction.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "lib/core/media/playback_controller.dart",
+    "test/media/playback_controller_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "AppConfig",
+      "line": 1
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "2bdd132d84121bde4b54ed93ec751fc0f95ccf69c82960c90776ef1d78b388e5"
+}

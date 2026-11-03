@@ -1,0 +1,1745 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/home/presentation/app_shell.dart",
+  "name": "AppShell",
+  "simple": "Presents the presentation experience and forwards user actions to the app’s domain or repository contracts.",
+  "developer": "Flutter presentation code in presentation feature; detected screen/widget types: AppShell, _HomePage, _WatchHistoryPage, _DailyGoalsPage, _ProgressPage, _BookmarksPage, _LibraryPage, _SettingsPage.",
+  "responsibility": "Hosts the main tabs and opens the app’s library, history, progress, bookmarks, profile, and player flows.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_system_showcase.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/core/di/service_locator.dart",
+    "lib/core/share/shared_video_intent_source.dart",
+    "lib/core/share/shared_youtube_link.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/profile/domain/local_profile_repository.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart"
+  ],
+  "dependencies": [
+    "lib/core/design/brutalist_components.dart",
+    "lib/core/design/design_system_showcase.dart",
+    "lib/core/design/design_tokens.dart",
+    "lib/core/di/service_locator.dart",
+    "lib/core/share/shared_video_intent_source.dart",
+    "lib/core/share/shared_youtube_link.dart",
+    "lib/features/history/domain/recent_watch_entry.dart",
+    "lib/features/history/domain/recent_watch_history_repository.dart",
+    "lib/features/library/domain/learning_content.dart",
+    "lib/features/library/domain/learning_library_repository.dart",
+    "lib/features/library/presentation/playlist_detail_page.dart",
+    "lib/features/notes/domain/notes_repository.dart",
+    "lib/features/notes/presentation/notes_home_page.dart",
+    "lib/features/goals/domain/daily_goal_repository.dart",
+    "lib/features/goals/domain/daily_goal_summary.dart",
+    "lib/features/progress/domain/learning_progress.dart",
+    "lib/features/progress/domain/progress_repository.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/profile/domain/local_profile_repository.dart",
+    "lib/features/profile/presentation/profile_page.dart",
+    "lib/features/roadmap/domain/roadmap_repository.dart",
+    "lib/features/watch_activity/domain/watch_activity_repository.dart",
+    "lib/features/player/presentation/learning_player_screen.dart",
+    "lib/features/roadmap/presentation/roadmaps_page.dart"
+  ],
+  "dependents": [],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "AppShell",
+      "line": 29
+    },
+    {
+      "kind": "callable",
+      "name": "AppShell",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 45
+    },
+    {
+      "kind": "class",
+      "name": "_AppShellState",
+      "line": 47
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 55
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 62
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 63
+    },
+    {
+      "kind": "callable",
+      "name": "_toggleAppearance",
+      "line": 66
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 77
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "_HomePage",
+      "line": 88
+    },
+    {
+      "kind": "callable",
+      "name": "RoadmapsPage",
+      "line": 101
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryPage",
+      "line": 105
+    },
+    {
+      "kind": "callable",
+      "name": "NotesHomePage",
+      "line": 110
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsPage",
+      "line": 116
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 121
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 134
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 145
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 152
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 165
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 183
+    },
+    {
+      "kind": "callable",
+      "name": "_openPlayer",
+      "line": 206
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 212
+    },
+    {
+      "kind": "callable",
+      "name": "serviceLocator",
+      "line": 216
+    },
+    {
+      "kind": "callable",
+      "name": "_resumeLastLesson",
+      "line": 226
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 234
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 243
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 246
+    },
+    {
+      "kind": "callable",
+      "name": "_openPlayer",
+      "line": 250
+    },
+    {
+      "kind": "callable",
+      "name": "_openDailyGoals",
+      "line": 255
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 258
+    },
+    {
+      "kind": "callable",
+      "name": "_openProfile",
+      "line": 266
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 269
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 277
+    },
+    {
+      "kind": "callable",
+      "name": "_openProfileWatchHistory",
+      "line": 283
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 286
+    },
+    {
+      "kind": "callable",
+      "name": "_openProgress",
+      "line": 294
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 297
+    },
+    {
+      "kind": "callable",
+      "name": "_openBookmarks",
+      "line": 306
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 309
+    },
+    {
+      "kind": "callable",
+      "name": "_handleSharedText",
+      "line": 318
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 324
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 330
+    },
+    {
+      "kind": "class",
+      "name": "_BrutalistNavigationBar",
+      "line": 333
+    },
+    {
+      "kind": "callable",
+      "name": "_BrutalistNavigationBar",
+      "line": 335
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 352
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 353
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 366
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 384
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 391
+    },
+    {
+      "kind": "callable",
+      "name": "FittedBox",
+      "line": 392
+    },
+    {
+      "kind": "class",
+      "name": "_PagePadding",
+      "line": 417
+    },
+    {
+      "kind": "callable",
+      "name": "_PagePadding",
+      "line": 419
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 424
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 425
+    },
+    {
+      "kind": "typedef",
+      "name": "_PlayerLauncher",
+      "line": 431
+    },
+    {
+      "kind": "class",
+      "name": "_HomePage",
+      "line": 436
+    },
+    {
+      "kind": "callable",
+      "name": "_HomePage",
+      "line": 438
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 459
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 460
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 461
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 462
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 465
+    },
+    {
+      "kind": "class",
+      "name": "_HomePageState",
+      "line": 467
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 472
+    },
+    {
+      "kind": "callable",
+      "name": "_loadSummary",
+      "line": 476
+    },
+    {
+      "kind": "callable",
+      "name": "_SavedPlaylistSummary",
+      "line": 484
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeSummary",
+      "line": 491
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 493
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 496
+    },
+    {
+      "kind": "callable",
+      "name": "_openPlaylist",
+      "line": 500
+    },
+    {
+      "kind": "callable",
+      "name": "_beginLearning",
+      "line": 505
+    },
+    {
+      "kind": "callable",
+      "name": "_resumeLastLesson",
+      "line": 510
+    },
+    {
+      "kind": "callable",
+      "name": "_openWatchHistory",
+      "line": 515
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 518
+    },
+    {
+      "kind": "callable",
+      "name": "_openDailyGoals",
+      "line": 527
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 534
+    },
+    {
+      "kind": "callable",
+      "name": "_PagePadding",
+      "line": 535
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 537
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 542
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 543
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 548
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 549
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 554
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistButton",
+      "line": 555
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 562
+    },
+    {
+      "kind": "callable",
+      "name": "FutureBuilder",
+      "line": 563
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistErrorState",
+      "line": 567
+    },
+    {
+      "kind": "callable",
+      "name": "Column",
+      "line": 574
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 577
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 582
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 587
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 594
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 596
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 602
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 610
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 611
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 619
+    },
+    {
+      "kind": "callable",
+      "name": "_DailyGoalSummaryCard",
+      "line": 620
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 629
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 630
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 631
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 632
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeQuickAction",
+      "line": 641
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeQuickAction",
+      "line": 647
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeQuickAction",
+      "line": 653
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeQuickAction",
+      "line": 659
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 668
+    },
+    {
+      "kind": "class",
+      "name": "_HomeQuickAction",
+      "line": 673
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeQuickAction",
+      "line": 675
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 687
+    },
+    {
+      "kind": "callable",
+      "name": "Semantics",
+      "line": 691
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 702
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 711
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 712
+    },
+    {
+      "kind": "class",
+      "name": "_SavedPlaylistSummary",
+      "line": 728
+    },
+    {
+      "kind": "callable",
+      "name": "_SavedPlaylistSummary",
+      "line": 730
+    },
+    {
+      "kind": "class",
+      "name": "_HomeSummary",
+      "line": 735
+    },
+    {
+      "kind": "callable",
+      "name": "_HomeSummary",
+      "line": 737
+    },
+    {
+      "kind": "class",
+      "name": "_WatchHistoryPage",
+      "line": 743
+    },
+    {
+      "kind": "callable",
+      "name": "_WatchHistoryPage",
+      "line": 745
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 754
+    },
+    {
+      "kind": "class",
+      "name": "_WatchHistoryPageState",
+      "line": 756
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 761
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 763
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 765
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 771
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 772
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 778
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 788
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 796
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 800
+    },
+    {
+      "kind": "callable",
+      "name": "_watchedTime",
+      "line": 803
+    },
+    {
+      "kind": "callable",
+      "name": "_watchedTime",
+      "line": 818
+    },
+    {
+      "kind": "class",
+      "name": "_DailyGoalSummaryCard",
+      "line": 827
+    },
+    {
+      "kind": "callable",
+      "name": "_DailyGoalSummaryCard",
+      "line": 829
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 837
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 840
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 851
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 856
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 857
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 858
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 862
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 863
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 864
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 868
+    },
+    {
+      "kind": "class",
+      "name": "_DailyGoalsPage",
+      "line": 874
+    },
+    {
+      "kind": "callable",
+      "name": "_DailyGoalsPage",
+      "line": 876
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 882
+    },
+    {
+      "kind": "class",
+      "name": "_DailyGoalsPageState",
+      "line": 884
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 889
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 891
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 893
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 899
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 900
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 906
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 917
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 920
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 921
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 922
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 926
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 929
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 933
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 934
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 937
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 943
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 944
+    },
+    {
+      "kind": "class",
+      "name": "_ProgressPage",
+      "line": 959
+    },
+    {
+      "kind": "callable",
+      "name": "_ProgressPage",
+      "line": 961
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 972
+    },
+    {
+      "kind": "class",
+      "name": "_ProgressPageState",
+      "line": 974
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 979
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 981
+    },
+    {
+      "kind": "callable",
+      "name": "_load",
+      "line": 983
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 994
+    },
+    {
+      "kind": "callable",
+      "name": "_openProgressEntry",
+      "line": 998
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1008
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 1009
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1015
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1025
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 1033
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 1037
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1049
+    },
+    {
+      "kind": "class",
+      "name": "_ProgressEntry",
+      "line": 1058
+    },
+    {
+      "kind": "callable",
+      "name": "_ProgressEntry",
+      "line": 1060
+    },
+    {
+      "kind": "class",
+      "name": "_BookmarksPage",
+      "line": 1065
+    },
+    {
+      "kind": "callable",
+      "name": "_BookmarksPage",
+      "line": 1067
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 1078
+    },
+    {
+      "kind": "class",
+      "name": "_BookmarksPageState",
+      "line": 1080
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 1085
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 1087
+    },
+    {
+      "kind": "callable",
+      "name": "_load",
+      "line": 1089
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 1100
+    },
+    {
+      "kind": "callable",
+      "name": "_delete",
+      "line": 1104
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1112
+    },
+    {
+      "kind": "callable",
+      "name": "_openBookmark",
+      "line": 1116
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1126
+    },
+    {
+      "kind": "callable",
+      "name": "Scaffold",
+      "line": 1127
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1133
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1143
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 1151
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 1155
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1168
+    },
+    {
+      "kind": "class",
+      "name": "_BookmarkEntry",
+      "line": 1177
+    },
+    {
+      "kind": "callable",
+      "name": "_BookmarkEntry",
+      "line": 1179
+    },
+    {
+      "kind": "callable",
+      "name": "_formatPlaybackTime",
+      "line": 1184
+    },
+    {
+      "kind": "class",
+      "name": "_LibraryPage",
+      "line": 1197
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryPage",
+      "line": 1199
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 1210
+    },
+    {
+      "kind": "class",
+      "name": "_LibraryPageState",
+      "line": 1212
+    },
+    {
+      "kind": "callable",
+      "name": "initState",
+      "line": 1217
+    },
+    {
+      "kind": "callable",
+      "name": "_loadContents",
+      "line": 1221
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryPlaylistSummary",
+      "line": 1233
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryContents",
+      "line": 1242
+    },
+    {
+      "kind": "callable",
+      "name": "_reload",
+      "line": 1244
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1247
+    },
+    {
+      "kind": "callable",
+      "name": "_openPlaylist",
+      "line": 1251
+    },
+    {
+      "kind": "callable",
+      "name": "MaterialPageRoute",
+      "line": 1254
+    },
+    {
+      "kind": "callable",
+      "name": "_showCreatePlaylistDialog",
+      "line": 1265
+    },
+    {
+      "kind": "callable",
+      "name": "LearningPlaylist",
+      "line": 1276
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1289
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1295
+    },
+    {
+      "kind": "callable",
+      "name": "FutureBuilder",
+      "line": 1296
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1300
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 1311
+    },
+    {
+      "kind": "callable",
+      "name": "Row",
+      "line": 1314
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 1316
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 1319
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1327
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1328
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1333
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistEmptyState",
+      "line": 1335
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 1345
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1346
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 1348
+    },
+    {
+      "kind": "callable",
+      "name": "Container",
+      "line": 1353
+    },
+    {
+      "kind": "callable",
+      "name": "_playlistLibraryIcon",
+      "line": 1363
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1367
+    },
+    {
+      "kind": "callable",
+      "name": "Expanded",
+      "line": 1368
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1372
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1378
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1379
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1387
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1388
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1394
+    },
+    {
+      "kind": "callable",
+      "name": "LinearProgressIndicator",
+      "line": 1395
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1401
+    },
+    {
+      "kind": "callable",
+      "name": "Align",
+      "line": 1402
+    },
+    {
+      "kind": "callable",
+      "name": "IconButton",
+      "line": 1413
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1416
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1422
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1426
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistSectionHeader",
+      "line": 1427
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1428
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistListItem",
+      "line": 1430
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1443
+    },
+    {
+      "kind": "callable",
+      "name": "_deletePlaylist",
+      "line": 1451
+    },
+    {
+      "kind": "callable",
+      "name": "_deleteVideo",
+      "line": 1456
+    },
+    {
+      "kind": "class",
+      "name": "_LibraryContents",
+      "line": 1462
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryContents",
+      "line": 1464
+    },
+    {
+      "kind": "class",
+      "name": "_LibraryPlaylistSummary",
+      "line": 1469
+    },
+    {
+      "kind": "callable",
+      "name": "_LibraryPlaylistSummary",
+      "line": 1471
+    },
+    {
+      "kind": "class",
+      "name": "_CreatePlaylistDialog",
+      "line": 1483
+    },
+    {
+      "kind": "callable",
+      "name": "_CreatePlaylistDialog",
+      "line": 1485
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 1488
+    },
+    {
+      "kind": "class",
+      "name": "_CreatePlaylistDialogState",
+      "line": 1490
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 1497
+    },
+    {
+      "kind": "callable",
+      "name": "_create",
+      "line": 1502
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1506
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1513
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 1518
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1527
+    },
+    {
+      "kind": "callable",
+      "name": "TextField",
+      "line": 1528
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 1539
+    },
+    {
+      "kind": "callable",
+      "name": "TextButton",
+      "line": 1543
+    },
+    {
+      "kind": "callable",
+      "name": "_playlistLibraryIcon",
+      "line": 1547
+    },
+    {
+      "kind": "class",
+      "name": "_SettingsPage",
+      "line": 1562
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsPage",
+      "line": 1564
+    },
+    {
+      "kind": "callable",
+      "name": "Function",
+      "line": 1570
+    },
+    {
+      "kind": "callable",
+      "name": "createState",
+      "line": 1573
+    },
+    {
+      "kind": "class",
+      "name": "_SettingsPageState",
+      "line": 1575
+    },
+    {
+      "kind": "callable",
+      "name": "didUpdateWidget",
+      "line": 1581
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1585
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1588
+    },
+    {
+      "kind": "callable",
+      "name": "setState",
+      "line": 1594
+    },
+    {
+      "kind": "callable",
+      "name": "SnackBar",
+      "line": 1596
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1604
+    },
+    {
+      "kind": "callable",
+      "name": "ListView",
+      "line": 1617
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1620
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1624
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsSectionLabel",
+      "line": 1625
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 1626
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 1633
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 1637
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 1641
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1647
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1652
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsSectionLabel",
+      "line": 1653
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 1654
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1658
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownButton",
+      "line": 1662
+    },
+    {
+      "kind": "callable",
+      "name": "DropdownMenuItem",
+      "line": 1667
+    },
+    {
+      "kind": "callable",
+      "name": "unawaited",
+      "line": 1676
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1677
+    },
+    {
+      "kind": "callable",
+      "name": "Material",
+      "line": 1684
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1694
+    },
+    {
+      "kind": "callable",
+      "name": "Material",
+      "line": 1698
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1708
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1717
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsSectionLabel",
+      "line": 1718
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 1719
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1723
+    },
+    {
+      "kind": "callable",
+      "name": "Slider",
+      "line": 1727
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1744
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1749
+    },
+    {
+      "kind": "callable",
+      "name": "Slider",
+      "line": 1753
+    },
+    {
+      "kind": "callable",
+      "name": "_save",
+      "line": 1768
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1774
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsSectionLabel",
+      "line": 1775
+    },
+    {
+      "kind": "callable",
+      "name": "BrutalistCard",
+      "line": 1776
+    },
+    {
+      "kind": "callable",
+      "name": "Icon",
+      "line": 1779
+    },
+    {
+      "kind": "callable",
+      "name": "SizedBox",
+      "line": 1780
+    },
+    {
+      "kind": "callable",
+      "name": "Text",
+      "line": 1781
+    },
+    {
+      "kind": "class",
+      "name": "_SettingsSectionLabel",
+      "line": 1789
+    },
+    {
+      "kind": "callable",
+      "name": "_SettingsSectionLabel",
+      "line": 1791
+    },
+    {
+      "kind": "callable",
+      "name": "build",
+      "line": 1796
+    },
+    {
+      "kind": "callable",
+      "name": "Padding",
+      "line": 1797
+    }
+  ],
+  "screens": [
+    {
+      "name": "AppShell",
+      "line": 29
+    },
+    {
+      "name": "_HomePage",
+      "line": 436
+    },
+    {
+      "name": "_WatchHistoryPage",
+      "line": 743
+    },
+    {
+      "name": "_DailyGoalsPage",
+      "line": 874
+    },
+    {
+      "name": "_ProgressPage",
+      "line": 959
+    },
+    {
+      "name": "_BookmarksPage",
+      "line": 1065
+    },
+    {
+      "name": "_LibraryPage",
+      "line": 1197
+    },
+    {
+      "name": "_SettingsPage",
+      "line": 1562
+    }
+  ],
+  "notes": [],
+  "lastScannedFingerprint": "f11bf027939fae0951425998cd44db9f9437adc3c47f979cb4c035df2a3950ae"
+}

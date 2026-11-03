@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/media_player.dart",
+  "name": "MediaPlayer",
+  "simple": "Supports the media pipeline by defining MediaPlayer, FlutterMediaPlayer.",
+  "developer": "Dart file classified as media; detected declarations: MediaPlayer, FlutterMediaPlayer.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "package:video_player"
+  ],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/playback_controller_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "MediaPlayer",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 11
+    },
+    {
+      "kind": "callable",
+      "name": "replaceStream",
+      "line": 13
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 14
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 15
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 16
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 17
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 20
+    },
+    {
+      "kind": "class",
+      "name": "FlutterMediaPlayer",
+      "line": 22
+    },
+    {
+      "kind": "callable",
+      "name": "load",
+      "line": 38
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 39
+    },
+    {
+      "kind": "callable",
+      "name": "UnsupportedError",
+      "line": 41
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 46
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 58
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 59
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 73
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 74
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 84
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 85
+    },
+    {
+      "kind": "callable",
+      "name": "replaceStream",
+      "line": 99
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 100
+    },
+    {
+      "kind": "callable",
+      "name": "UnsupportedError",
+      "line": 102
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 107
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 127
+    },
+    {
+      "kind": "callable",
+      "name": "_onValueChanged",
+      "line": 136
+    },
+    {
+      "kind": "callable",
+      "name": "play",
+      "line": 141
+    },
+    {
+      "kind": "callable",
+      "name": "pause",
+      "line": 148
+    },
+    {
+      "kind": "callable",
+      "name": "seekTo",
+      "line": 154
+    },
+    {
+      "kind": "callable",
+      "name": "setPlaybackSpeed",
+      "line": 166
+    },
+    {
+      "kind": "callable",
+      "name": "_requireController",
+      "line": 170
+    },
+    {
+      "kind": "callable",
+      "name": "buildSurface",
+      "line": 174
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "Center",
+      "line": 181
+    },
+    {
+      "kind": "callable",
+      "name": "_onValueChanged",
+      "line": 192
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 204
+    },
+    {
+      "kind": "callable",
+      "name": "PlayerSnapshot",
+      "line": 205
+    },
+    {
+      "kind": "callable",
+      "name": "_requireController",
+      "line": 215
+    },
+    {
+      "kind": "callable",
+      "name": "StateError",
+      "line": 219
+    },
+    {
+      "kind": "callable",
+      "name": "_emit",
+      "line": 223
+    },
+    {
+      "kind": "callable",
+      "name": "_ensureOpen",
+      "line": 229
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 235
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "63f4b1d639d1aa87006610943649afe97b7099059bc624e9658bb914e94dce3c"
+}

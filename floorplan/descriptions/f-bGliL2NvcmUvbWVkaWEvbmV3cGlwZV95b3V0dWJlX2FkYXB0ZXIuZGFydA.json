@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/core/media/newpipe_youtube_adapter.dart",
+  "name": "NewPipeYoutubeAdapter",
+  "simple": "Supports the media pipeline by defining NewPipeYoutubeAdapter.",
+  "developer": "Dart file classified as media; detected declarations: NewPipeYoutubeAdapter.",
+  "responsibility": "Recognizes supported links, resolves YouTube/OCW content, selects streams, and drives the platform player.",
+  "status": "Implemented",
+  "importantDependencies": [],
+  "dependencies": [],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/media/newpipe_youtube_adapter_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "NewPipeYoutubeAdapter",
+      "line": 7
+    },
+    {
+      "kind": "callable",
+      "name": "NewPipeYoutubeAdapter",
+      "line": 9
+    },
+    {
+      "kind": "callable",
+      "name": "canHandle",
+      "line": 19
+    },
+    {
+      "kind": "callable",
+      "name": "getVideoInfo",
+      "line": 26
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 31
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 43
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 52
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 65
+    },
+    {
+      "kind": "callable",
+      "name": "getFastVideoInfo",
+      "line": 73
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 78
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 90
+    },
+    {
+      "kind": "callable",
+      "name": "VideoInfo",
+      "line": 98
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 112
+    },
+    {
+      "kind": "callable",
+      "name": "getPlaylistInfo",
+      "line": 120
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 125
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 141
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistEntryInfo",
+      "line": 160
+    },
+    {
+      "kind": "callable",
+      "name": "Duration",
+      "line": 167
+    },
+    {
+      "kind": "callable",
+      "name": "PlaylistInfo",
+      "line": 177
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 190
+    },
+    {
+      "kind": "callable",
+      "name": "getStreams",
+      "line": 198
+    },
+    {
+      "kind": "callable",
+      "name": "_parseStreams",
+      "line": 208
+    },
+    {
+      "kind": "callable",
+      "name": "VideoSourceException",
+      "line": 210
+    },
+    {
+      "kind": "callable",
+      "name": "_parseStreams",
+      "line": 216
+    },
+    {
+      "kind": "callable",
+      "name": "MediaStreamInfo",
+      "line": 238
+    },
+    {
+      "kind": "callable",
+      "name": "dispose",
+      "line": 259
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "b295ab529c20179508b675b37bf8eedafc90fca46ca85d0b7c914f196123cb71"
+}

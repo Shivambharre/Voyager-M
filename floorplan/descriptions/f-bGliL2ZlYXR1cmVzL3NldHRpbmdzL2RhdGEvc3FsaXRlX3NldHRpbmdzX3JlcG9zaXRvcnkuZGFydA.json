@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "lib/features/settings/data/sqlite_settings_repository.dart",
+  "name": "SqliteSettingsRepository data adapter",
+  "simple": "Implements or supports the data feature’s local data access for settings.",
+  "developer": "SQLite-backed repository in the data feature. Observed database tables: settings.",
+  "responsibility": "Persists appearance, playback, resume, completion-confirmation, and daily-goal preferences locally.",
+  "status": "Implemented",
+  "importantDependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart"
+  ],
+  "dependencies": [
+    "lib/core/database/database.dart",
+    "lib/features/settings/domain/learning_settings.dart",
+    "lib/features/settings/domain/settings_repository.dart"
+  ],
+  "dependents": [
+    "lib/core/di/service_locator.dart",
+    "test/database/sqlite_repositories_test.dart"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "name": "SqliteSettingsRepository",
+      "line": 3
+    },
+    {
+      "kind": "callable",
+      "name": "SqliteSettingsRepository",
+      "line": 5
+    },
+    {
+      "kind": "callable",
+      "name": "getSettings",
+      "line": 10
+    },
+    {
+      "kind": "callable",
+      "name": "LearningSettings",
+      "line": 18
+    },
+    {
+      "kind": "callable",
+      "name": "saveSettings",
+      "line": 32
+    }
+  ],
+  "screens": [],
+  "notes": [],
+  "lastScannedFingerprint": "b3fb92c33ca06eb151401594c6d30cbdaa93f432c1475f8c80110f00c00c1ab3"
+}

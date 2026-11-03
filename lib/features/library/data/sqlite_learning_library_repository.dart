@@ -89,10 +89,7 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
       if (videos.isNotEmpty) {
         await transaction.update(
           'notes',
-          {
-            'resource_name': videos.first['title'],
-            'resource_archived': 1,
-          },
+          {'resource_name': videos.first['title'], 'resource_archived': 1},
           where: "resource_type = 'video' AND resource_id = ?",
           whereArgs: [id],
         );
@@ -149,10 +146,7 @@ class SqliteLearningLibraryRepository implements LearningLibraryRepository {
       if (playlists.isNotEmpty) {
         await transaction.update(
           'notes',
-          {
-            'resource_name': playlists.first['title'],
-            'resource_archived': 1,
-          },
+          {'resource_name': playlists.first['title'], 'resource_archived': 1},
           where: "resource_type = 'library' AND resource_id = ?",
           whereArgs: [id],
         );
